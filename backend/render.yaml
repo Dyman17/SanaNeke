@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: sananeke-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sananeke-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://sananeke.vercel.app
+
+databases:
+  - name: sananeke-db
+    plan: free
+    region: oregon
+    databaseName: sananeke
+    user: sananeke_user

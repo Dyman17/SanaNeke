@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SanaNeke — Саналы некеге қадам</title>
+  <meta name="description" content="SanaNeke — Психологиялық және қаржылық дайындықты превентивті бағалау платформасы"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{font-family:'Inter',sans-serif;}
+    html{scroll-behavior:smooth;}
+    .hero-gradient{background:linear-gradient(135deg,#0f1f5c 0%,#1E3A8A 40%,#0e5f80 100%);}
+    .auth-gradient{background:linear-gradient(135deg,#0f1f5c 0%,#1E3A8A 50%,#0e5f80 100%);}
+    .glass{background:rgba(255,255,255,0.08);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.18);}
+    .glass-white{background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    @keyframes popIn{from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);}}
+    @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(200%);}}
+    @keyframes float{0%{transform:translateY(100vh) scale(0);opacity:0;}10%{opacity:1;}90%{opacity:.6;}100%{transform:translateY(-10vh) scale(1.2);opacity:0;}}
+    @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+    @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-fadeInUp{animation:fadeInUp .5s ease both;}
+    .animate-fadeIn{animation:fadeIn .4s ease both;}
+    .animate-popIn{animation:popIn .5s cubic-bezier(.175,.885,.32,1.275) both;}
+    .floating-badge{animation:bob 3s ease-in-out infinite;}
+    .particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+    .particle{position:absolute;border-radius:50%;background:rgba(6,182,212,.25);animation:float linear infinite;}
+    .btn-primary{background:linear-gradient(135deg,#1E3A8A,#2563eb);color:#fff;font-weight:700;padding:12px 28px;border-radius:50px;border:none;cursor:pointer;transition:all .3s;box-shadow:0 6px 20px rgba(30,58,138,.35);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(30,58,138,.5);}
+    .btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none !important;}
+    .btn-cyan{background:linear-gradient(135deg,#06B6D4,#0891b2);color:#fff;font-weight:700;padding:12px 28px;border-radius:50px;border:none;cursor:pointer;transition:all .3s;box-shadow:0 6px 20px rgba(6,182,212,.35);}
+    .btn-cyan:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(6,182,212,.5);}
+    .btn-ghost{background:transparent;color:#1E3A8A;font-weight:600;padding:10px 24px;border-radius:50px;border:2px solid #1E3A8A;cursor:pointer;transition:all .3s;}
+    .btn-ghost:hover{background:#1E3A8A;color:#fff;}
+    .btn-sm{padding:8px 18px;font-size:.85rem;border-radius:30px;}
+    .btn-danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;font-weight:600;padding:8px 18px;border-radius:30px;border:none;cursor:pointer;transition:all .3s;}
+    .btn-danger:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(220,38,38,.4);}
+    .btn-green{background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-weight:600;padding:8px 18px;border-radius:30px;border:none;cursor:pointer;transition:all .3s;}
+    .btn-green:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(5,150,105,.4);}
+    .inp{border:2px solid #e2e8f0;border-radius:12px;padding:11px 16px;width:100%;font-size:.95rem;transition:border-color .2s,box-shadow .2s;outline:none;background:#fff;color:#1e293b;}
+    .inp:focus{border-color:#06B6D4;box-shadow:0 0 0 3px rgba(6,182,212,.12);}
+    select.inp{cursor:pointer;}
+    .inp-label{display:block;font-size:.8rem;font-weight:600;color:#475569;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+    .likert-btn{transition:all .18s ease;cursor:pointer;border:2px solid #cbd5e1;background:#fff;border-radius:10px;width:48px;height:48px;font-weight:700;color:#64748b;font-size:.95rem;}
+    .likert-btn:hover{border-color:#06B6D4;background:#ecfeff;transform:translateY(-2px);box-shadow:0 4px 12px rgba(6,182,212,.2);}
+    .likert-btn.selected{border-color:#1E3A8A;background:linear-gradient(135deg,#1E3A8A,#06B6D4);color:#fff;transform:translateY(-2px);box-shadow:0 6px 18px rgba(30,58,138,.35);}
+    .card{background:#fff;border-radius:20px;box-shadow:0 2px 16px rgba(0,0,0,.06);border:1px solid #f1f5f9;transition:box-shadow .3s,transform .3s;}
+    .card:hover{box-shadow:0 8px 32px rgba(30,58,138,.1);transform:translateY(-2px);}
+    .card-flat{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.05);border:1px solid #f1f5f9;}
+    .pbar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#1E3A8A,#06B6D4);transition:width 1s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;}
+    .pbar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2s infinite;}
+    .score-ring{position:relative;width:150px;height:150px;}
+    .score-ring svg{transform:rotate(-90deg);}
+    .score-ring .ring-bg{fill:none;stroke:#e2e8f0;stroke-width:10;}
+    .score-ring .ring-fill{fill:none;stroke-width:10;stroke-linecap:round;stroke:url(#rg);stroke-dasharray:408;stroke-dashoffset:408;transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1);}
+    .score-ring .score-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+    .tab-bar{background:#fff;border-bottom:1px solid #e2e8f0;box-shadow:0 1px 8px rgba(0,0,0,.06);}
+    .tab-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 12px;border:none;background:transparent;cursor:pointer;color:#94a3b8;font-size:.7rem;font-weight:600;transition:color .2s;border-bottom:3px solid transparent;white-space:nowrap;min-width:60px;}
+    .tab-btn.active{color:#1E3A8A;border-bottom-color:#1E3A8A;}
+    .tab-btn .tab-icon{font-size:1.3rem;line-height:1;}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+    .role-user{background:#dbeafe;color:#1d4ed8;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;}
+    .role-psych{background:#d1fae5;color:#065f46;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;}
+    .risk-high{background:#fee2e2;color:#b91c1c;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;}
+    .risk-med{background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;}
+    .risk-low{background:#d1fae5;color:#065f46;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;}
+    .rec-high{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-left:5px solid #059669;}
+    .rec-med{background:linear-gradient(135deg,#fef3c7,#fde68a);border-left:5px solid #d97706;}
+    .rec-low{background:linear-gradient(135deg,#fee2e2,#fecaca);border-left:5px solid #dc2626;}
+    #auth-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;}
+    .confetti-piece{position:fixed;pointer-events:none;z-index:99999;animation:confettiFall linear forwards;}
+    .spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
+    #toast{position:fixed;bottom:24px;right:24px;z-index:99998;transform:translateX(120%);transition:transform .35s cubic-bezier(.175,.885,.32,1.275);}
+    #toast.show{transform:translateX(0);}
+    ::-webkit-scrollbar{width:6px;}
+    ::-webkit-scrollbar-track{background:#f1f5f9;}
+    ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+    ::-webkit-scrollbar-thumb:hover{background:#94a3b8;}
+    input[type=range]{-webkit-appearance:none;height:6px;border-radius:999px;background:linear-gradient(90deg,#06B6D4 var(--val,50%),#e2e8f0 var(--val,50%));outline:none;cursor:pointer;}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#1E3A8A;box-shadow:0 2px 6px rgba(30,58,138,.4);}
+    @media(max-width:480px){.tab-btn{min-width:50px;padding:8px 6px;font-size:.62rem;}.likert-btn{width:40px;height:40px;}}
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+<!-- ══════════════════════════════════════
+     CONFIG — set your Render URL here
+══════════════════════════════════════ -->
+<script>
+  // ⚠️  Change this to your actual Render backend URL after deploying
+  const API_BASE = 'https://sananeke-backend.onrender.com';
+</script>
+
+<!-- ══════════════════════════════════════
+     AUTH OVERLAY
+══════════════════════════════════════ -->
+<div id="auth-overlay" class="auth-gradient">
+  <div class="particles" id="auth-particles"></div>
+  <div class="absolute top-10 right-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-10 left-10 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="relative z-10 w-full max-w-md mx-auto px-4 py-8 overflow-y-auto max-h-screen">
+
+    <!-- Logo -->
+    <div class="text-center mb-8 animate-fadeInUp">
+      <div class="floating-badge inline-flex items-center gap-2 glass text-cyan-300 text-sm font-medium px-5 py-2 rounded-full mb-6">
+        <span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+        Қазақстандағы ажырасуды азайту жобасы
+      </div>
+      <h1 class="text-5xl font-black text-white mb-2">
+        Sana<span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-sky-300">Neke</span>
+      </h1>
+      <p class="text-blue-200 text-sm">Саналы некеге қадам</p>
+    </div>
+
+    <div class="glass-white rounded-3xl p-8 shadow-2xl animate-fadeInUp" style="animation-delay:.15s">
+
+      <!-- Landing -->
+      <div id="auth-landing">
+        <h2 class="text-2xl font-black text-slate-800 mb-2 text-center">Қош келдіңіз!</h2>
+        <p class="text-slate-500 text-center text-sm mb-8">Платформаны пайдалану үшін кіріңіз немесе тіркеліңіз</p>
+        <div class="flex flex-col gap-3">
+          <button class="btn-primary w-full py-3 text-base" onclick="showAuthForm('login')">🔑 Кіру</button>
+          <button class="btn-cyan w-full py-3 text-base" onclick="showAuthForm('register')">✨ Тіркелу</button>
+        </div>
+      </div>
+
+      <!-- Login -->
+      <div id="auth-login" style="display:none">
+        <div class="flex items-center gap-3 mb-6">
+          <button onclick="showAuthForm('landing')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">←</button>
+          <h2 class="text-xl font-black text-slate-800">Кіру</h2>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="inp-label">Email</label>
+            <input type="email" id="login-email" class="inp" placeholder="email@example.com" onkeydown="if(event.key==='Enter') doLogin()"/>
+          </div>
+          <div>
+            <label class="inp-label">Пароль</label>
+            <input type="password" id="login-password" class="inp" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()"/>
+          </div>
+          <p class="text-red-500 text-xs font-medium hidden" id="login-error"></p>
+          <button id="login-btn" class="btn-primary w-full py-3 mt-2" onclick="doLogin()">Кіру →</button>
+        </div>
+        <p class="text-center text-sm text-slate-500 mt-4">Аккаунт жоқ па?
+          <button onclick="showAuthForm('register')" class="text-blue-600 font-semibold hover:underline">Тіркелу</button></p>
+      </div>
+
+      <!-- Register -->
+      <div id="auth-register" style="display:none">
+        <div class="flex items-center gap-3 mb-6">
+          <button onclick="showAuthForm('landing')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">←</button>
+          <h2 class="text-xl font-black text-slate-800">Тіркелу</h2>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="inp-label">Аты</label>
+            <input type="text" id="reg-name" class="inp" placeholder="Аты-жөніңіз"/>
+          </div>
+          <div>
+            <label class="inp-label">Email</label>
+            <input type="email" id="reg-email" class="inp" placeholder="email@example.com"/>
+          </div>
+          <div>
+            <label class="inp-label">Пароль</label>
+            <input type="password" id="reg-password" class="inp" placeholder="Кем дегенде 6 символ"/>
+          </div>
+          <div>
+            <label class="inp-label">Рөлі</label>
+            <select id="reg-role" class="inp" onchange="togglePsychFields()">
+              <option value="user">👤 Қолданушы</option>
+              <option value="psychologist">🩺 Психолог</option>
+            </select>
+          </div>
+          <div id="psych-extra" style="display:none" class="space-y-3 animate-fadeIn">
+            <div>
+              <label class="inp-label">Мамандық</label>
+              <input type="text" id="reg-spec" class="inp" placeholder="мыс. Отбасылық психолог"/>
+            </div>
+            <div>
+              <label class="inp-label">Қысқаша сипаттама</label>
+              <textarea id="reg-bio" class="inp" rows="2" placeholder="Өзіңіз туралы..."></textarea>
+            </div>
+            <div>
+              <label class="inp-label">Сессия бағасы (₸)</label>
+              <input type="number" id="reg-price" class="inp" placeholder="15000" min="0"/>
+            </div>
+          </div>
+          <p class="text-red-500 text-xs font-medium hidden" id="reg-error"></p>
+          <button id="reg-btn" class="btn-cyan w-full py-3 mt-2" onclick="doRegister()">Тіркелу ✓</button>
+        </div>
+        <p class="text-center text-sm text-slate-500 mt-4">Аккаунт бар ма?
+          <button onclick="showAuthForm('login')" class="text-blue-600 font-semibold hover:underline">Кіру</button></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════ -->
+<div id="main-app" style="display:none" class="min-h-screen flex flex-col">
+
+  <header class="hero-gradient text-white px-5 py-4 flex items-center justify-between shadow-lg">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow">
+        <span class="text-white font-black text-sm">SN</span>
+      </div>
+      <div>
+        <div class="font-black text-lg leading-tight">SanaNeke</div>
+        <div class="text-blue-200 text-xs" id="header-greeting"></div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="header-role-badge"></span>
+      <button onclick="doLogout()" class="text-xs text-blue-200 hover:text-white transition-colors bg-white/10 px-3 py-1.5 rounded-full">Шығу</button>
+    </div>
+  </header>
+
+  <div class="tab-bar sticky top-0 z-40">
+    <div class="flex overflow-x-auto max-w-3xl mx-auto px-2" id="tab-bar-inner"></div>
+  </div>
+
+  <div class="flex-1 max-w-3xl mx-auto w-full px-4 py-6" id="tab-contents"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast">
+  <div class="bg-slate-800 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2">
+    <span id="toast-icon">✅</span><span id="toast-msg"></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+/* ══════════════════════════════════════
+   API CLIENT
+══════════════════════════════════════ */
+let _token = localStorage.getItem('sn_token') || null;
+
+async function api(method, path, body = null, requireAuth = true) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (requireAuth && _token) headers['Authorization'] = 'Bearer ' + _token;
+
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+
+  const res  = await fetch(API_BASE + path, opts);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Сервер қатесі');
+  return data;
+}
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let currentUser = null;
+let testState   = { answers: { comm:{}, emot:{}, vals:{}, fin:{} }, currentCat: 0 };
+
+/* ══════════════════════════════════════
+   AUTH FORMS
+══════════════════════════════════════ */
+function showAuthForm(form) {
+  ['landing','login','register'].forEach(f => {
+    document.getElementById('auth-'+f).style.display = f === form ? 'block' : 'none';
+  });
+  document.getElementById('login-error').classList.add('hidden');
+  document.getElementById('reg-error').classList.add('hidden');
+}
+
+function togglePsychFields() {
+  const role = document.getElementById('reg-role').value;
+  document.getElementById('psych-extra').style.display = role === 'psychologist' ? 'block' : 'none';
+}
+
+function setBtnLoading(id, loading) {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  if (loading) {
+    btn._text = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span>';
+    btn.disabled = true;
+  } else {
+    btn.innerHTML = btn._text || 'OK';
+    btn.disabled = false;
+  }
+}
+
+async function doLogin() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl    = document.getElementById('login-error');
+  if (!email || !password) { showFormErr(errEl,'Email және пароль қажет'); return; }
+  setBtnLoading('login-btn', true);
+  try {
+    const data = await api('POST', '/api/auth/login', { email, password }, false);
+    _token = data.token;
+    localStorage.setItem('sn_token', _token);
+    currentUser = data.user;
+    enterApp(currentUser);
+  } catch(e) {
+    showFormErr(errEl, e.message);
+  } finally {
+    setBtnLoading('login-btn', false);
+  }
+}
+
+async function doRegister() {
+  const name     = document.getElementById('reg-name').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const role     = document.getElementById('reg-role').value;
+  const errEl    = document.getElementById('reg-error');
+  if (!name||!email||!password) { showFormErr(errEl,'Барлық өрістерді толтырыңыз'); return; }
+  setBtnLoading('reg-btn', true);
+  try {
+    const body = { name, email, password, role };
+    if (role === 'psychologist') {
+      body.specialization = document.getElementById('reg-spec').value.trim();
+      body.bio            = document.getElementById('reg-bio').value.trim();
+      body.price          = parseInt(document.getElementById('reg-price').value) || 0;
+    }
+    const data = await api('POST', '/api/auth/register', body, false);
+    _token = data.token;
+    localStorage.setItem('sn_token', _token);
+    currentUser = data.user;
+    enterApp(currentUser);
+  } catch(e) {
+    showFormErr(errEl, e.message);
+  } finally {
+    setBtnLoading('reg-btn', false);
+  }
+}
+
+function doLogout() {
+  _token = null;
+  currentUser = null;
+  localStorage.removeItem('sn_token');
+  document.getElementById('main-app').style.display    = 'none';
+  document.getElementById('auth-overlay').style.display = 'flex';
+  showAuthForm('landing');
+  resetTestState();
+}
+
+function showFormErr(el, msg) {
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
+/* ══════════════════════════════════════
+   ENTER APP
+══════════════════════════════════════ */
+function enterApp(user) {
+  document.getElementById('auth-overlay').style.display = 'none';
+  document.getElementById('main-app').style.display     = 'flex';
+  document.getElementById('header-greeting').textContent = `Сәлем, ${user.name.split(' ')[0]}! 👋`;
+  const badge = document.getElementById('header-role-badge');
+  badge.className   = user.role === 'psychologist' ? 'role-psych' : 'role-user';
+  badge.textContent = user.role === 'psychologist' ? '🩺 Психолог' : '👤 Пайдаланушы';
+  buildTabs(user);
+  switchTab('home');
+}
+
+/* ══════════════════════════════════════
+   TABS
+══════════════════════════════════════ */
+const USER_TABS  = [
+  { id:'home',    icon:'🏠', label:'Главная'    },
+  { id:'diag',    icon:'🧠', label:'Диагностика'},
+  { id:'results', icon:'📊', label:'Нәтижелер'  },
+  { id:'psychs',  icon:'👨‍⚕️', label:'Психологи' },
+  { id:'profile', icon:'👤', label:'Профиль'    },
+];
+const PSYCH_TABS = [
+  { id:'home',     icon:'🏠', label:'Главная' },
+  { id:'requests', icon:'📥', label:'Запросы' },
+  { id:'profile',  icon:'👤', label:'Профиль' },
+];
+
+function buildTabs(user) {
+  const tabs   = user.role === 'psychologist' ? PSYCH_TABS : USER_TABS;
+  const barEl  = document.getElementById('tab-bar-inner');
+  const contEl = document.getElementById('tab-contents');
+  barEl.innerHTML = contEl.innerHTML = '';
+  tabs.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn'; btn.id = 'tab-btn-'+t.id;
+    btn.innerHTML = `<span class="tab-icon">${t.icon}</span><span>${t.label}</span>`;
+    btn.onclick   = () => switchTab(t.id);
+    barEl.appendChild(btn);
+
+    const div = document.createElement('div');
+    div.className = 'tab-content'; div.id = 'tab-'+t.id;
+    div.innerHTML = scaffoldTab(t.id);
+    contEl.appendChild(div);
+  });
+}
+
+function scaffoldTab(id) {
+  if (id === 'diag') return buildDiagScaffold();
+  return `<div id="${id}-inner" class="animate-fadeIn"><div class="flex justify-center py-16"><span class="spinner" style="border-color:rgba(30,58,138,.2);border-top-color:#1E3A8A;width:32px;height:32px;"></span></div></div>`;
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-btn-'+id)?.classList.add('active');
+  document.getElementById('tab-'+id)?.classList.add('active');
+  onTabActivate(id);
+}
+
+function onTabActivate(id) {
+  if (id === 'home')     renderHome();
+  if (id === 'results')  renderResults();
+  if (id === 'psychs')   renderPsychs();
+  if (id === 'requests') renderRequests();
+  if (id === 'profile')  renderProfile();
+  if (id === 'diag')     initDiagIfNeeded();
+}
+
+/* ══════════════════════════════════════
+   HOME
+══════════════════════════════════════ */
+async function renderHome() {
+  const el = document.getElementById('home-inner');
+  if (!el) return;
+  const isPsych = currentUser.role === 'psychologist';
+  try {
+    if (isPsych) {
+      const reqs = await api('GET', '/api/requests');
+      const pending = reqs.filter(r=>!r.responded).length;
+      el.innerHTML = `
+        <div class="animate-fadeInUp space-y-5">
+          <div class="hero-gradient rounded-3xl p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-8 -top-8 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
+            <div class="text-4xl mb-3">🩺</div>
+            <h2 class="text-2xl font-black mb-1">Сәлем, ${currentUser.name.split(' ')[0]}!</h2>
+            <p class="text-blue-200 text-sm">Психолог кабинетіне қош келдіңіз</p>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="card p-5 text-center"><div class="text-4xl font-black text-blue-700">${reqs.length}</div><div class="text-xs text-slate-500 mt-1">Барлық сұраулар</div></div>
+            <div class="card p-5 text-center"><div class="text-4xl font-black text-orange-500">${pending}</div><div class="text-xs text-slate-500 mt-1">Жауапты күтуде</div></div>
+          </div>
+          ${pending > 0 ? `<div class="card p-5 flex items-center gap-4 bg-orange-50 border-orange-200">
+            <div class="text-3xl">🔔</div>
+            <div><div class="font-bold text-orange-700">${pending} жаңа сұрау!</div><div class="text-sm text-orange-600">"Запросы" қойындысына өтіңіз</div></div>
+            <button class="btn-primary btn-sm ml-auto" onclick="switchTab('requests')">Көру →</button>
+          </div>` : '<div class="card p-5 text-center text-slate-400 text-sm">Жаңа сұраулар жоқ</div>'}
+        </div>`;
+    } else {
+      const results = await api('GET', '/api/results');
+      const psychs  = await api('GET', '/api/psychologists');
+      const last    = results[0];
+      el.innerHTML = `
+        <div class="animate-fadeInUp space-y-5">
+          <div class="hero-gradient rounded-3xl p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-8 -top-8 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
+            <div class="floating-badge inline-flex items-center gap-2 bg-white/10 text-cyan-300 text-xs px-3 py-1.5 rounded-full mb-4">
+              <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span>Некеге дайындық платформасы
+            </div>
+            <h2 class="text-2xl font-black mb-1">Сәлем, ${currentUser.name.split(' ')[0]}! 👋</h2>
+            <p class="text-blue-200 text-sm">Диагностика жүргізіп, кеңес алыңыз</p>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="card p-4 text-center"><div class="text-3xl font-black text-blue-700">${results.length}</div><div class="text-xs text-slate-500 mt-1">Тест өтті</div></div>
+            <div class="card p-4 text-center"><div class="text-3xl font-black text-cyan-600">${last ? last.total+'%' : '—'}</div><div class="text-xs text-slate-500 mt-1">Соңғы балл</div></div>
+            <div class="card p-4 text-center"><div class="text-3xl font-black text-emerald-600">${psychs.length}</div><div class="text-xs text-slate-500 mt-1">Психолог</div></div>
+          </div>
+          <div class="card p-6">
+            <h3 class="font-bold text-slate-700 mb-3">🚀 Жылдам іс-қимыл</h3>
+            <div class="flex flex-col gap-3">
+              <button class="btn-primary w-full py-3" onclick="switchTab('diag')">🧠 Диагностиканы бастау</button>
+              <button class="btn-ghost w-full py-3" onclick="switchTab('psychs')">👨‍⚕️ Психологтар тізімі</button>
+            </div>
+          </div>
+        </div>`;
+    }
+  } catch(e) {
+    el.innerHTML = errCard(e.message);
+  }
+}
+
+/* ══════════════════════════════════════
+   DIAGNOSTIC TEST — 20 Questions
+══════════════════════════════════════ */
+const QUESTIONS = {
+  comm: { label:'💬 Коммуникация', questions:[
+    'Біз қиын тақырыптарды дауыс көтермей тыныш талқылай аламыз',
+    'Серіктесім менің пікірімді аяғына дейін тыңдайды',
+    'Жанжал болғанда компромисс табуға тырысамыз',
+    'Мен серіктесіме өз сезімдерімді ашық айта аламын',
+    'Шешімдер бірлесіп, тең дәрежеде қабылданады',
+  ]},
+  emot: { label:'❤️ Эмоционалдық жақындық', questions:[
+    'Серіктесім менің эмоцияларымды түсінеді деп сенемін',
+    'Қиын жағдайда серіктесіме сүйене аламын',
+    'Арамызда терең сенім мен ашықтық бар',
+    'Серіктесім мені мадақтап, қолдайды',
+    'Бірге болғанда өзімді қауіпсіз сеземін',
+  ]},
+  vals: { label:'🌟 Құндылықтар & Болашақ', questions:[
+    'Балаларды тәрбиелеу туралы көзқарасымыз ұқсас',
+    'Болашақ отбасы рөлдерін бөлу туралы пікіріміз сәйкеседі',
+    'Дін, рухани құндылықтар бойынша үйлесімді',
+    'Орта мерзімді және ұзақ мерзімді мақсаттарымыз ортақ',
+    'Тұрмыс, кәсіп, ұзақ мерзімдегі өмір жоспарлары сәйкес',
+  ]},
+  fin: { label:'💰 Қаржылық дайындық', questions:[
+    'Қаржылық мәселелерді ашық талқылай аламыз',
+    'Шығындар мен жинақ жоспарлау жайлы пікірімізде алшақтық жоқ',
+    'Серіктесімнің несие немесе қарыз жағдайы маған белгілі',
+    'Ортақ отбасылық бюджет жүргізуге дайынмыз',
+    'Күтпеген шығындар үшін қаржылық "жастықша" бар',
+  ]},
+};
+const CAT_KEYS = ['comm','emot','vals','fin'];
+
+function resetTestState() {
+  testState = { answers:{ comm:{},emot:{},vals:{},fin:{} }, currentCat:0 };
+}
+let _diagInited = false;
+function initDiagIfNeeded() {
+  if (!_diagInited) { _diagInited = true; renderCatQuestions(0); }
+}
+
+function buildDiagScaffold() {
+  return `
+  <div id="diag-inner">
+    <div id="diag-test-view">
+      <div class="mb-5">
+        <div class="flex justify-between text-xs font-semibold text-slate-500 mb-2">
+          <span id="cat-label-display">Категория 1 / 4</span>
+          <span id="cat-q-count">0 / 5</span>
+        </div>
+        <div class="h-2.5 bg-slate-200 rounded-full overflow-hidden">
+          <div class="pbar-fill" id="cat-pbar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="flex gap-2 mb-6">
+        ${CAT_KEYS.map((_,i)=>`<div class="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-blue-700 to-cyan-400 transition-all duration-500" style="width:0%" id="step-fill-${i}"></div></div>`).join('')}
+      </div>
+      <div id="question-area"></div>
+      <div class="flex gap-3 mt-6">
+        <button class="btn-ghost flex-1 py-3 hidden" id="diag-back-btn" onclick="diagNav(-1)">← Артқа</button>
+        <button class="btn-primary flex-1 py-3" id="diag-next-btn" onclick="diagNav(1)" disabled>Келесі →</button>
+      </div>
+    </div>
+
+    <div id="diag-finance-tool" style="display:none" class="animate-fadeInUp">
+      <div class="card p-6 mb-4">
+        <h3 class="font-black text-slate-800 mb-1">🧮 Қосымша: Қаржылық калькулятор</h3>
+        <p class="text-sm text-slate-500 mb-5">Міндетті емес, бірақ нақтырақ нәтиже береді</p>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="inp-label">Ай табысы (₸)</label>
+            <input type="number" id="fc-income" class="inp" placeholder="500000" min="0" oninput="updateFCPreview()"/>
+          </div>
+          <div>
+            <label class="inp-label">Тұрақты шығын (₸)</label>
+            <input type="number" id="fc-expense" class="inp" placeholder="250000" min="0" oninput="updateFCPreview()"/>
+          </div>
+        </div>
+        <div class="mb-4">
+          <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
+            <span>MKD деңгейі</span><span id="fc-thr-display">150,000 ₸</span>
+          </div>
+          <input type="range" id="fc-threshold" min="50000" max="500000" step="10000" value="150000" class="w-full" oninput="updateFCThreshold(this.value)"/>
+        </div>
+        <div id="fc-preview" class="grid grid-cols-3 gap-3 text-center hidden">
+          <div class="bg-slate-50 rounded-xl p-3"><div class="text-lg font-black text-slate-700" id="fc-d-i">—</div><div class="text-xs text-slate-400">Табыс</div></div>
+          <div class="bg-slate-50 rounded-xl p-3"><div class="text-lg font-black text-slate-700" id="fc-d-e">—</div><div class="text-xs text-slate-400">Шығын</div></div>
+          <div class="bg-slate-50 rounded-xl p-3"><div class="text-lg font-black" id="fc-d-n">—</div><div class="text-xs text-slate-400">Таза кіріс</div></div>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn-ghost flex-1 py-3" onclick="showTestView()">← Артқа</button>
+        <button class="btn-primary flex-1 py-3" id="finish-diag-btn" onclick="finishDiag()">Нәтижені есептеу ✦</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCatQuestions(catIdx) {
+  testState.currentCat = catIdx;
+  const key = CAT_KEYS[catIdx];
+  const cat = QUESTIONS[key];
+  document.getElementById('cat-label-display').textContent = `${cat.label} — ${catIdx+1}/4 категория`;
+  document.getElementById('diag-back-btn').classList.toggle('hidden', catIdx === 0);
+  document.getElementById('diag-next-btn').textContent = catIdx < 3 ? 'Келесі →' : 'Нәтижені көру';
+  updateCatProgress(catIdx);
+  checkCatDone(catIdx);
+  document.getElementById('question-area').innerHTML = `
+    <div class="animate-fadeInUp space-y-4">
+      <div class="card-flat p-4 flex items-center gap-3">
+        <div class="text-2xl">${cat.label.split(' ')[0]}</div>
+        <div><div class="font-bold text-slate-700">${cat.label}</div><div class="text-xs text-slate-400">5 сұраққа жауап беріңіз (1–5 шкала)</div></div>
+      </div>
+      <div class="flex justify-between text-xs text-slate-400 font-medium px-1">
+        <span>1 — Мүлдем келіспеймін</span><span>5 — Толық келісемін</span>
+      </div>
+      ${cat.questions.map((q,qi)=>`
+        <div class="card p-4">
+          <p class="text-sm font-medium text-slate-700 mb-3 leading-relaxed"><span class="text-blue-600 font-bold">${qi+1}.</span> ${q}</p>
+          <div class="flex justify-center gap-2" id="qopts-${key}-${qi}">
+            ${[1,2,3,4,5].map(v=>`<button class="likert-btn ${testState.answers[key][qi]===v?'selected':''}" onclick="selectQ('${key}',${qi},${v})">${v}</button>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function selectQ(catKey, qi, val) {
+  testState.answers[catKey][qi] = val;
+  document.querySelectorAll(`#qopts-${catKey}-${qi} .likert-btn`).forEach((b,i)=>{
+    b.classList.toggle('selected', i+1 === val);
+  });
+  updateCatProgress(CAT_KEYS.indexOf(catKey));
+  checkCatDone(CAT_KEYS.indexOf(catKey));
+}
+
+function updateCatProgress(catIdx) {
+  const key      = CAT_KEYS[catIdx];
+  const answered = Object.keys(testState.answers[key]).length;
+  const pct      = (answered/5)*100;
+  document.getElementById('cat-pbar').style.width = pct+'%';
+  document.getElementById('cat-q-count').textContent = `${answered} / 5`;
+  document.getElementById('step-fill-'+catIdx).style.width = pct+'%';
+}
+
+function checkCatDone(catIdx) {
+  const key = CAT_KEYS[catIdx];
+  const ok  = Object.keys(testState.answers[key]).length === 5;
+  document.getElementById('diag-next-btn').disabled = !ok;
+}
+
+function diagNav(dir) {
+  const next = testState.currentCat + dir;
+  if (next < 0) return;
+  if (next > 3) {
+    document.getElementById('diag-test-view').style.display    = 'none';
+    document.getElementById('diag-finance-tool').style.display = 'block';
+    updateFCThreshold(150000);
+    return;
+  }
+  renderCatQuestions(next);
+}
+
+function showTestView() {
+  document.getElementById('diag-test-view').style.display    = 'block';
+  document.getElementById('diag-finance-tool').style.display = 'none';
+  renderCatQuestions(3);
+}
+
+function updateFCThreshold(val) {
+  const slider = document.getElementById('fc-threshold');
+  if (slider) { slider.value = val; const pct = ((val-slider.min)/(slider.max-slider.min))*100; slider.style.setProperty('--val',pct+'%'); }
+  const d = document.getElementById('fc-thr-display');
+  if (d) d.textContent = fmtKZT(val)+' ₸';
+  updateFCPreview();
+}
+
+function updateFCPreview() {
+  const income  = parseFloat(document.getElementById('fc-income').value)   || 0;
+  const expense = parseFloat(document.getElementById('fc-expense').value)  || 0;
+  const net     = income - expense;
+  if (income > 0) {
+    document.getElementById('fc-preview').classList.remove('hidden');
+    document.getElementById('fc-d-i').textContent = fmtKZT(income);
+    document.getElementById('fc-d-e').textContent = fmtKZT(expense);
+    const netEl = document.getElementById('fc-d-n');
+    netEl.textContent = fmtKZT(net);
+    netEl.className   = `text-lg font-black ${net>=0?'text-emerald-600':'text-red-500'}`;
+  }
+}
+
+async function finishDiag() {
+  const scores = {};
+  CAT_KEYS.forEach(k=>{
+    const vals = Object.values(testState.answers[k]);
+    scores[k]  = vals.length ? Math.round((vals.reduce((a,b)=>a+b,0)/(vals.length*5))*100) : 0;
+  });
+
+  const income    = parseFloat(document.getElementById('fc-income').value)    || null;
+  const expense   = parseFloat(document.getElementById('fc-expense').value)   || null;
+  const threshold = parseInt(document.getElementById('fc-threshold').value)   || 150000;
+  let calcBonus   = null;
+  if (income) {
+    const net = income - (expense||0);
+    calcBonus = Math.min(100, Math.round(Math.max(0,net)/Math.max(threshold,1)*100));
+    scores.fin = Math.round(scores.fin*0.6 + calcBonus*0.4);
+  }
+  const total = Math.round((scores.comm+scores.emot+scores.vals+scores.fin)/4);
+
+  setBtnLoading('finish-diag-btn', true);
+  try {
+    await api('POST', '/api/results', { scores, total, calc_bonus:calcBonus, income, expense });
+    showToast('✅','Нәтиже сақталды!');
+    resetTestState();
+    _diagInited = false;
+    switchTab('results');
+  } catch(e) {
+    showToast('❌', e.message);
+  } finally {
+    setBtnLoading('finish-diag-btn', false);
+  }
+}
+
+/* ══════════════════════════════════════
+   RESULTS
+══════════════════════════════════════ */
+async function renderResults() {
+  const el = document.getElementById('results-inner');
+  if (!el) return;
+  try {
+    const [results, responses] = await Promise.all([api('GET','/api/results'), api('GET','/api/responses')]);
+    if (!results.length) {
+      el.innerHTML = `<div class="animate-fadeInUp text-center py-16"><div class="text-6xl mb-4">📊</div>
+        <h3 class="font-black text-slate-700 text-xl mb-2">Нәтиже жоқ</h3>
+        <p class="text-slate-500 text-sm mb-6">Алдымен диагностика өтіңіз</p>
+        <button class="btn-primary" onclick="switchTab('diag')">🧠 Диагностикаға өту</button></div>`;
+      return;
+    }
+    const latest = results[0];
+    const s      = latest.scores;
+    el.innerHTML = `
+      <div class="animate-fadeInUp space-y-5">
+        <h2 class="font-black text-slate-800 text-xl">📊 Менің нәтижелерім</h2>
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div><div class="text-xs text-slate-400 font-semibold uppercase tracking-widest">Соңғы нәтиже</div>
+              <div class="text-sm text-slate-500">${new Date(latest.created_at).toLocaleDateString('ru-RU')}</div></div>
+            ${riskBadge(latest.total)}
+          </div>
+          <div class="flex gap-6 items-center flex-wrap mb-5">
+            <div class="score-ring shrink-0 mx-auto">
+              <svg viewBox="0 0 150 150" width="150" height="150">
+                <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#1E3A8A"/><stop offset="100%" stop-color="#06B6D4"/>
+                </linearGradient></defs>
+                <circle class="ring-bg" cx="75" cy="75" r="65"/>
+                <circle class="ring-fill" id="res-ring" cx="75" cy="75" r="65"/>
+              </svg>
+              <div class="score-text">
+                <span class="text-3xl font-black text-slate-800" id="res-score-num">0%</span>
+                <span class="text-xs text-slate-500">Жалпы балл</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-[180px] space-y-3">
+              ${catRow('💬 Коммуникация', s.comm,'blue')}
+              ${catRow('❤️ Эмоция', s.emot,'pink')}
+              ${catRow('🌟 Құндылықтар', s.vals,'purple')}
+              ${catRow('💰 Қаржы', s.fin,'green')}
+            </div>
+          </div>
+          <canvas id="res-radar" height="220"></canvas>
+          ${recCard(latest.total)}
+        </div>
+        ${results.length > 1 ? `
+          <div class="card p-5">
+            <h3 class="font-bold text-slate-700 mb-3">🕓 Тарих</h3>
+            <div class="space-y-2">
+              ${results.slice(1).map(r=>`
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                  <div class="text-sm text-slate-600">${new Date(r.created_at).toLocaleDateString('ru-RU')}</div>
+                  <div class="flex items-center gap-2"><div class="font-bold text-blue-700">${r.total}%</div>${riskBadge(r.total)}</div>
+                </div>`).join('')}
+            </div>
+          </div>` : ''}
+        ${responses.length ? `
+          <div class="card p-5">
+            <h3 class="font-bold text-slate-700 mb-3">🩺 Психолог жауаптары</h3>
+            <div class="space-y-3">
+              ${responses.map(resp=>`
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white text-xs font-bold">${(resp.psych_name||'?')[0]}</div>
+                    <div class="font-semibold text-emerald-800">${resp.psych_name||'Психолог'}</div>
+                    <div class="text-xs text-emerald-600 ml-auto">${new Date(resp.created_at).toLocaleDateString('ru-RU')}</div>
+                  </div>
+                  <p class="text-sm text-emerald-700 leading-relaxed mb-2">${resp.feedback}</p>
+                  ${resp.price ? `<div class="text-sm font-bold text-emerald-800">💰 ${fmtKZT(resp.price)} ₸/сессия</div>` : ''}
+                </div>`).join('')}
+            </div>
+          </div>` : ''}
+      </div>`;
+
+    setTimeout(()=>{
+      const circ = 2*Math.PI*65;
+      const ring = document.getElementById('res-ring');
+      if (!ring) return;
+      ring.style.strokeDasharray = circ; ring.style.strokeDashoffset = circ;
+      setTimeout(()=>{
+        ring.style.strokeDashoffset = circ-(latest.total/100)*circ;
+        animNum('res-score-num', 0, latest.total, 1200,'%');
+      },200);
+      const ctx = document.getElementById('res-radar');
+      if (!ctx) return;
+      if (window._rr) window._rr.destroy();
+      window._rr = new Chart(ctx.getContext('2d'),{
+        type:'radar',
+        data:{labels:['Коммуникация','Эмоция','Құндылықтар','Қаржы'],
+          datasets:[{data:[s.comm,s.emot,s.vals,s.fin],backgroundColor:'rgba(6,182,212,.15)',borderColor:'#1E3A8A',borderWidth:2,pointBackgroundColor:'#06B6D4',pointRadius:5}]},
+        options:{responsive:true,scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:9}},grid:{color:'rgba(0,0,0,.05)'},pointLabels:{font:{size:11,weight:'600'},color:'#475569'}}},plugins:{legend:{display:false}}}
+      });
+      if (latest.total > 80) launchConfetti();
+    },300);
+  } catch(e) {
+    el.innerHTML = errCard(e.message);
+  }
+}
+
+/* ══════════════════════════════════════
+   PSYCHOLOGISTS
+══════════════════════════════════════ */
+async function renderPsychs() {
+  const el = document.getElementById('psychs-inner');
+  if (!el) return;
+  try {
+    const [psychs, myResults, myRequests, myResponses] = await Promise.all([
+      api('GET','/api/psychologists'),
+      api('GET','/api/results'),
+      api('GET','/api/requests'),
+      api('GET','/api/responses'),
+    ]);
+    const hasResult = myResults.length > 0;
+    const latestId  = hasResult ? myResults[0].id : null;
+
+    el.innerHTML = `
+      <div class="animate-fadeInUp space-y-5">
+        <h2 class="font-black text-slate-800 text-xl">👨‍⚕️ Психологтар</h2>
+        ${!hasResult ? `<div class="card p-5 bg-yellow-50 border-yellow-200 text-center">
+          <div class="text-3xl mb-2">⚠️</div>
+          <p class="text-yellow-800 font-semibold text-sm">Сұрау жіберу үшін алдымен диагностика өтіңіз</p>
+          <button class="btn-primary btn-sm mt-3" onclick="switchTab('diag')">Диагностикаға өту</button>
+        </div>` : ''}
+        ${!psychs.length ? '<div class="card p-8 text-center text-slate-400">Психологтар тіркелмеген</div>' :
+          psychs.map(p => {
+            const myReq  = myRequests.find(r=>r.psych_id===p.id);
+            const resp   = myReq ? myResponses.find(r=>r.request_id===myReq.id) : null;
+            return `
+              <div class="card p-5">
+                <div class="flex items-start gap-4">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center text-white text-xl font-black shrink-0">${p.name[0]}</div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <div class="font-bold text-slate-800">${p.name}</div>
+                      <span class="role-psych">🩺 Психолог</span>
+                    </div>
+                    <div class="text-sm text-blue-600 font-medium mt-0.5">${p.specialization||'Жалпы психолог'}</div>
+                    ${p.bio ? `<p class="text-xs text-slate-500 mt-1.5 leading-relaxed">${p.bio}</p>` : ''}
+                    ${p.price ? `<div class="text-sm font-bold text-emerald-700 mt-2">💰 ${fmtKZT(p.price)} ₸ / сессия</div>` : ''}
+                  </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                  ${resp ? `<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-2">
+                    <div class="text-xs font-bold text-emerald-700 mb-1">✅ Психолог жауабы:</div>
+                    <p class="text-sm text-emerald-800 leading-relaxed">${resp.feedback}</p>
+                    ${resp.price ? `<div class="text-xs font-bold text-emerald-700 mt-1">💰 ${fmtKZT(resp.price)} ₸/сессия</div>` : ''}
+                  </div>` : ''}
+                  ${myReq
+                    ? `<div class="text-sm font-semibold ${resp?'text-emerald-600':'text-orange-500'}">${resp?'✅ Жауап берілді':'⏳ Жауапты күтуде...'}</div>`
+                    : hasResult
+                      ? `<button class="btn-primary btn-sm w-full" onclick="sendRequest('${p.id}','${latestId}')">📤 Сұрау жіберу</button>`
+                      : `<button class="btn-ghost btn-sm w-full" disabled>Алдымен диагностика өтіңіз</button>`
+                  }
+                </div>
+              </div>`;}).join('')}
+      </div>`;
+  } catch(e) {
+    el.innerHTML = errCard(e.message);
+  }
+}
+
+async function sendRequest(psychId, resultId) {
+  try {
+    await api('POST','/api/requests',{ psych_id:psychId, result_id:resultId });
+    showToast('✅','Сұрау жіберілді!');
+    renderPsychs();
+  } catch(e) {
+    showToast('❌', e.message);
+  }
+}
+
+/* ══════════════════════════════════════
+   REQUESTS (Psychologist)
+══════════════════════════════════════ */
+async function renderRequests() {
+  const el = document.getElementById('requests-inner');
+  if (!el) return;
+  try {
+    const [reqs, resps] = await Promise.all([api('GET','/api/requests'), api('GET','/api/responses')]);
+    el.innerHTML = `
+      <div class="animate-fadeInUp space-y-5">
+        <div class="flex items-center justify-between">
+          <h2 class="font-black text-slate-800 text-xl">📥 Сұраулар</h2>
+          <span class="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1 rounded-full">${reqs.length} сұрау</span>
+        </div>
+        ${!reqs.length ? `<div class="card p-10 text-center text-slate-400"><div class="text-5xl mb-3">📭</div><p>Сұраулар жоқ</p></div>` :
+          reqs.map(req=>{
+            const resp = resps.find(r=>r.request_id===req.id);
+            const s    = req.scores || {};
+            return `
+              <div class="card p-5">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white font-bold text-sm">${(req.user_name||'?')[0]}</div>
+                    <div><div class="font-bold text-slate-800">${req.user_name||'Пайдаланушы'}</div>
+                    <div class="text-xs text-slate-400">${new Date(req.created_at).toLocaleDateString('ru-RU')}</div></div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    ${req.total != null ? riskBadge(req.total) : ''}
+                    ${resp?'<span class="text-xs bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded-full">✅ Жауапталды</span>':''}
+                  </div>
+                </div>
+                ${req.scores ? `
+                  <div class="grid grid-cols-2 gap-2 mb-4">
+                    ${[{k:'comm',l:'💬 Коммуникация'},{k:'emot',l:'❤️ Эмоция'},{k:'vals',l:'🌟 Құндылықтар'},{k:'fin',l:'💰 Қаржы'}].map(c=>`
+                      <div class="bg-slate-50 rounded-xl p-2.5 text-center">
+                        <div class="text-xs text-slate-500">${c.l}</div>
+                        <div class="font-black text-blue-700">${s[c.k]||0}%</div>
+                      </div>`).join('')}
+                  </div>
+                  <div class="flex items-center justify-between mb-4">
+                    <span class="font-semibold text-slate-700 text-sm">Жалпы балл:</span>
+                    <span class="font-black text-xl text-blue-700">${req.total}%</span>
+                  </div>` : ''}
+                ${resp
+                  ? `<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                      <div class="text-xs font-bold text-emerald-700 mb-2">✅ Сіздің жауабыңыз</div>
+                      <p class="text-sm text-emerald-800 mb-2">${resp.feedback}</p>
+                      ${resp.price?`<div class="text-sm font-bold text-emerald-800">💰 ${fmtKZT(resp.price)} ₸/сессия</div>`:''}
+                    </div>`
+                  : `<div class="bg-blue-50 rounded-2xl p-4 space-y-3">
+                      <div class="text-xs font-bold text-blue-700 uppercase tracking-widest">Жауап жазу</div>
+                      <div><label class="inp-label">Кеңес / Фидбэк</label>
+                        <textarea id="fb-${req.id}" class="inp" rows="3" placeholder="Пайдаланушыға арналған кеңес..."></textarea></div>
+                      <div><label class="inp-label">Бағасы (₸ / сессия)</label>
+                        <input type="number" id="pr-${req.id}" class="inp" placeholder="15000" min="0"/></div>
+                      <button class="btn-green w-full py-2.5" id="resp-btn-${req.id}" onclick="submitResponse('${req.id}','${req.user_id}','resp-btn-${req.id}')">📤 Жауап жіберу</button>
+                    </div>`}
+              </div>`;}).join('')}
+      </div>`;
+  } catch(e) {
+    el.innerHTML = errCard(e.message);
+  }
+}
+
+async function submitResponse(reqId, userId, btnId) {
+  const feedback = document.getElementById(`fb-${reqId}`)?.value.trim();
+  const price    = parseInt(document.getElementById(`pr-${reqId}`)?.value) || 0;
+  if (!feedback) { showToast('⚠️','Кеңес жазыңыз'); return; }
+  setBtnLoading(btnId, true);
+  try {
+    await api('POST','/api/responses',{ request_id:reqId, feedback, price });
+    showToast('✅','Жауап жіберілді!');
+    renderRequests();
+  } catch(e) {
+    showToast('❌', e.message);
+    setBtnLoading(btnId, false);
+  }
+}
+
+/* ══════════════════════════════════════
+   PROFILE
+══════════════════════════════════════ */
+async function renderProfile() {
+  const el = document.getElementById('profile-inner');
+  if (!el) return;
+  const u = currentUser;
+  try {
+    const results = await api('GET','/api/results');
+    el.innerHTML = `
+      <div class="animate-fadeInUp space-y-5">
+        <div class="card p-6 text-center">
+          <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center text-white text-3xl font-black mx-auto mb-4">${u.name[0]}</div>
+          <h2 class="font-black text-slate-800 text-xl mb-1">${u.name}</h2>
+          <p class="text-slate-500 text-sm mb-2">${u.email}</p>
+          <span class="${u.role==='psychologist'?'role-psych':'role-user'}">${u.role==='psychologist'?'🩺 Психолог':'👤 Пайдаланушы'}</span>
+        </div>
+        ${u.role==='psychologist'?`
+          <div class="card p-5">
+            <h3 class="font-bold text-slate-700 mb-4">🩺 Психолог профилі</h3>
+            <div class="space-y-3">
+              <div><label class="inp-label">Мамандық</label><input type="text" id="prof-spec" class="inp" value="${u.specialization||''}" placeholder="Отбасылық психолог"/></div>
+              <div><label class="inp-label">Сипаттама</label><textarea id="prof-bio" class="inp" rows="3" placeholder="Өзіңіз туралы...">${u.bio||''}</textarea></div>
+              <div><label class="inp-label">Сессия бағасы (₸)</label><input type="number" id="prof-price" class="inp" value="${u.price||0}" min="0"/></div>
+              <button class="btn-primary btn-sm" id="save-prof-btn" onclick="saveProfile()">💾 Сақтау</button>
+            </div>
+          </div>`:''}
+        <div class="card p-5">
+          <h3 class="font-bold text-slate-700 mb-3">📊 Статистика</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-slate-50 rounded-xl p-3 text-center"><div class="text-2xl font-black text-blue-700">${results.length}</div><div class="text-xs text-slate-500">Тест өтті</div></div>
+            <div class="bg-slate-50 rounded-xl p-3 text-center"><div class="text-2xl font-black text-cyan-600">${results.length?results[0].total+'%':'—'}</div><div class="text-xs text-slate-500">Соңғы балл</div></div>
+          </div>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-bold text-red-600 mb-3">⚠️ Аккаунт</h3>
+          <button class="btn-danger w-full py-3" onclick="doLogout()">🚪 Шығу</button>
+        </div>
+      </div>`;
+  } catch(e) {
+    el.innerHTML = errCard(e.message);
+  }
+}
+
+async function saveProfile() {
+  setBtnLoading('save-prof-btn', true);
+  try {
+    const updated = await api('PUT','/api/users/profile',{
+      specialization: document.getElementById('prof-spec').value.trim(),
+      bio:            document.getElementById('prof-bio').value.trim(),
+      price:          parseInt(document.getElementById('prof-price').value) || 0,
+    });
+    currentUser = updated;
+    showToast('✅','Профиль сақталды!');
+  } catch(e) {
+    showToast('❌', e.message);
+  } finally {
+    setBtnLoading('save-prof-btn', false);
+  }
+}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function catRow(label, pct, color) {
+  const cls = {blue:'bg-blue-600',pink:'bg-pink-500',purple:'bg-purple-600',green:'bg-emerald-500'};
+  const txt = {blue:'text-blue-700',pink:'text-pink-600',purple:'text-purple-700',green:'text-emerald-700'};
+  return `<div>
+    <div class="flex justify-between text-xs font-semibold mb-1">
+      <span class="text-slate-600">${label}</span><span class="${txt[color]||'text-blue-700'}">${pct}%</span>
+    </div>
+    <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+      <div class="h-full rounded-full ${cls[color]||'bg-blue-600'} transition-all duration-1000" style="width:${pct}%"></div>
+    </div>
+  </div>`;
+}
+
+function riskBadge(score) {
+  if (score>80) return `<span class="risk-low">🟢 Жоғары</span>`;
+  if (score>=50) return `<span class="risk-med">🟡 Орташа</span>`;
+  return `<span class="risk-high">🔴 Тәуекел</span>`;
+}
+
+function recCard(score) {
+  let cls,icon,title,body;
+  if (score>80){cls='rec-high';icon='🎉';title='Дайындық деңгейі жоғары. Некеге дайынсыз!';body='Психологиялық және қаржылық дайындығыңыз жоғары. Ашық диалог сақтаңыз.';}
+  else if(score>=50){cls='rec-med';icon='⚠️';title='Орташа деңгей. Медиация курсы ұсынылады.';body='Кейбір салаларда жұмыс жасау қажет. Психолог кеңесі ұсынылады.';}
+  else{cls='rec-low';icon='🚨';title='Қауіп жоғары. Кеңес алу қажет!';body='Психолог пен қаржылық кеңесшінің консультациясы алдында некеге кіруге асықпаңыз.';}
+  return `<div class="${cls} rounded-2xl p-4 mt-4 flex gap-3"><div class="text-2xl shrink-0">${icon}</div><div><div class="font-bold text-slate-800 mb-1">${title}</div><div class="text-sm text-slate-700">${body}</div></div></div>`;
+}
+
+function errCard(msg) {
+  return `<div class="card p-8 text-center"><div class="text-4xl mb-3">⚠️</div><p class="text-red-500 font-semibold">${msg}</p><button class="btn-ghost mt-4" onclick="onTabActivate(document.querySelector('.tab-btn.active')?.id?.replace('tab-btn-',''))">Қайталау</button></div>`;
+}
+
+function fmtKZT(n) { return Math.round(n).toLocaleString('ru-RU'); }
+
+function animNum(id, from, to, dur, suffix) {
+  const el = document.getElementById(id); if (!el) return;
+  const steps = Math.round(dur/(1000/60)); let step=0;
+  const iv = setInterval(()=>{ step++; el.textContent = Math.round(from+(to-from)*(step/steps))+suffix; if(step>=steps)clearInterval(iv); },1000/60);
+}
+
+let _toastTimer = null;
+function showToast(icon, msg) {
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent  = msg;
+  const t = document.getElementById('toast'); t.classList.add('show');
+  clearTimeout(_toastTimer); _toastTimer = setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+function launchConfetti() {
+  const colors=['#06B6D4','#1E3A8A','#a78bfa','#34d399','#fb923c','#f472b6'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div'); c.className='confetti-piece';
+    const s=Math.random()*8+4;
+    c.style.cssText=`left:${Math.random()*100}vw;top:-20px;width:${s}px;height:${s*1.5}px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*2+2}s;animation-delay:${Math.random()*.8}s;border-radius:${Math.random()>.5?'50%':'2px'};`;
+    document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove());
+  }
+}
+
+/* ── Particles ── */
+(function(){
+  const c=document.getElementById('auth-particles');
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div'); p.className='particle';
+    const s=Math.random()*12+4;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*10}s;`;
+    c.appendChild(p);
+  }
+})();
+
+/* ── Auto-login if token exists ── */
+(async function(){
+  if (!_token) return;
+  try {
+    const user = await api('GET','/api/auth/me');
+    currentUser = user;
+    enterApp(user);
+  } catch {
+    localStorage.removeItem('sn_token');
+    _token = null;
+  }
+})();
+</script>
+</body>
+</html>

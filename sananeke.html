@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SanaNeke — Саналы некеге қадам</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: "Inter", system-ui, sans-serif; }
+    html { scroll-behavior: smooth; }
+    .hero-gradient { background: linear-gradient(135deg, #0f1f5c 0%, #1E3A8A 45%, #0a7a9a 100%); }
+    .blob { position:absolute; border-radius:50%; filter:blur(70px); opacity:.12; animation:blobMove 8s ease-in-out infinite; }
+    @keyframes blobMove { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(30px,-20px) scale(1.08)} }
+    .likert-option input[type="radio"] { display:none; }
+    .likert-option label {
+      display:flex; align-items:center; justify-content:center;
+      width:46px; height:46px; border-radius:50%;
+      border:2px solid #cbd5e1; cursor:pointer;
+      font-weight:700; font-size:.95rem; color:#64748b;
+      transition:all .2s ease; user-select:none;
+    }
+    .likert-option label:hover { border-color:#06B6D4; color:#06B6D4; background:#ecfeff; transform:scale(1.1); }
+    .likert-option input[type="radio"]:checked + label {
+      background:linear-gradient(135deg,#1E3A8A,#06B6D4);
+      border-color:transparent; color:#fff;
+      transform:scale(1.15); box-shadow:0 4px 15px rgba(6,182,212,.4);
+    }
+    .card-hover { transition:transform .3s ease,box-shadow .3s ease; }
+    .card-hover:hover { transform:translateY(-4px); box-shadow:0 20px 40px rgba(30,58,138,.12); }
+    .progress-bar-fill { height:100%; border-radius:9999px; transition:width 1.4s cubic-bezier(.22,1,.36,1); }
+    .finance-input:focus { outline:none; border-color:#06B6D4 !important; box-shadow:0 0 0 3px rgba(6,182,212,.2); }
+    @keyframes scorePop { 0%{transform:scale(.5);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+    .score-pop { animation:scorePop .7s cubic-bezier(.34,1.56,.64,1) forwards; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+    .slide-in { animation:slideIn .5s ease-out forwards; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp .7s ease-out forwards; }
+    .section-anim { opacity:0; transform:translateY(36px); transition:opacity .7s ease,transform .7s ease; }
+    .section-anim.visible { opacity:1; transform:translateY(0); }
+    @keyframes pulseSlow { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .pulse-slow { animation:pulseSlow 3s ease-in-out infinite; }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:#f1f5f9; }
+    ::-webkit-scrollbar-thumb { background:#1E3A8A; border-radius:3px; }
+  </style>
+</head>
+<body style="background:#f8fafc;color:#1e293b;margin:0;padding:0;">
+
+<!-- FLOATING NAV -->
+<nav id="sideNav" style="position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:12px;">
+  <button onclick="scrollToSection('hero')"    title="Басты бет"  style="width:12px;height:12px;border-radius:50%;background:#06B6D4;border:1px solid rgba(255,255,255,.7);cursor:pointer;transition:all .3s;padding:0;"></button>
+  <button onclick="scrollToSection('psych')"   title="Тест"       style="width:12px;height:12px;border-radius:50%;background:rgba(30,58,138,.3);border:1px solid rgba(30,58,138,.4);cursor:pointer;transition:all .3s;padding:0;"></button>
+  <button onclick="scrollToSection('finance')" title="Қаржы"      style="width:12px;height:12px;border-radius:50%;background:rgba(30,58,138,.3);border:1px solid rgba(30,58,138,.4);cursor:pointer;transition:all .3s;padding:0;"></button>
+  <button onclick="scrollToSection('results')" title="Нәтижелер" style="width:12px;height:12px;border-radius:50%;background:rgba(30,58,138,.3);border:1px solid rgba(30,58,138,.4);cursor:pointer;transition:all .3s;padding:0;"></button>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="hero-gradient" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 16px;box-sizing:border-box;">
+  <div class="blob" style="width:380px;height:380px;background:#06B6D4;top:40px;left:-60px;"></div>
+  <div class="blob" style="width:460px;height:460px;background:#3b82f6;bottom:-40px;right:-80px;animation-delay:3s;"></div>
+  <div class="blob" style="width:260px;height:260px;background:#22d3ee;top:45%;right:20%;animation-delay:5s;"></div>
+
+  <div class="fade-up" style="position:relative;z-index:10;text-align:center;max-width:760px;width:100%;margin:0 auto;">
+    <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:9999px;padding:8px 20px;margin-bottom:32px;">
+      <span style="font-size:1.4rem;">&#x1F48D;</span>
+      <span style="color:#67e8f9;font-weight:600;font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;">SanaNeke</span>
+    </div>
+
+    <h1 style="font-size:clamp(2rem,6vw,4.5rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:20px;">
+      SanaNeke
+      <span style="display:block;font-size:clamp(1.3rem,4vw,2.6rem);font-weight:700;background:linear-gradient(90deg,#67e8f9,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:8px;">
+        Саналы некеге қадам
+      </span>
+    </h1>
+
+    <p style="color:#bfdbfe;font-size:clamp(.9rem,2vw,1.15rem);font-weight:300;line-height:1.7;margin-bottom:40px;max-width:640px;margin-left:auto;margin-right:auto;">
+      Психологиялық және қаржылық дайындықты превентивті бағалау платформасы
+    </p>
+
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:32px;margin-bottom:44px;">
+      <div style="text-align:center;"><div style="font-size:2rem;font-weight:900;color:#fff;">55%</div><div style="color:#93c5fd;font-size:.75rem;margin-top:4px;">Ажырасу деңгейі (ҚР)</div></div>
+      <div style="width:1px;background:rgba(255,255,255,.2);"></div>
+      <div style="text-align:center;"><div style="font-size:2rem;font-weight:900;color:#67e8f9;">2 мин</div><div style="color:#93c5fd;font-size:.75rem;margin-top:4px;">Диагностика уақыты</div></div>
+      <div style="width:1px;background:rgba(255,255,255,.2);"></div>
+      <div style="text-align:center;"><div style="font-size:2rem;font-weight:900;color:#fff;">100%</div><div style="color:#93c5fd;font-size:.75rem;margin-top:4px;">Тегін қолжетімді</div></div>
+    </div>
+
+    <button onclick="scrollToSection('psych')"
+      style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#06B6D4,#0891b2);color:#fff;font-weight:700;font-size:1.05rem;padding:18px 44px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 10px 40px rgba(6,182,212,.35);transition:all .3s;"
+      onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+      Диагностиканы бастау &rarr;
+    </button>
+  </div>
+
+  <div class="pulse-slow" style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(191,219,254,.6);font-size:.75rem;">
+    <span>Төмен сырғытыңыз</span>
+    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+<!-- SECTION 1: PSYCH TEST -->
+<section id="psych" class="section-anim" style="padding:80px 16px;background:#fff;box-sizing:border-box;">
+  <div style="max-width:740px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(30,58,138,.08);color:#1E3A8A;font-weight:600;font-size:.85rem;padding:8px 16px;border-radius:9999px;margin-bottom:16px;">
+        &#x1F9E0; Бөлім 1 — 5 сұрақтан
+      </div>
+      <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;color:#1E3A8A;margin-bottom:12px;">Психологиялық дайындық тесті</h2>
+      <p style="color:#64748b;font-size:1rem;max-width:500px;margin:0 auto;">Әр сұраққа 1-ден 5-ке дейін баға беріңіз. Өзіңізге шынайы болыңыз.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <div class="card-hover" style="background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+        <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;">
+          <span style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,#1E3A8A,#06B6D4);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;">1</span>
+          <p style="font-weight:600;color:#1e293b;line-height:1.55;padding-top:6px;">Біз жанжалдарды тыңдау арқылы шеше аламыз ба?</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:.7rem;color:#94a3b8;text-align:right;width:72px;line-height:1.3;flex-shrink:0;">Мүлдем<br>келіспеймін</span>
+          <div style="display:flex;justify-content:center;gap:10px;flex:1;"><div class="likert-option"><input type="radio" name="q1" id="q1v1" value="1"><label for="q1v1">1</label></div><div class="likert-option"><input type="radio" name="q1" id="q1v2" value="2"><label for="q1v2">2</label></div><div class="likert-option"><input type="radio" name="q1" id="q1v3" value="3"><label for="q1v3">3</label></div><div class="likert-option"><input type="radio" name="q1" id="q1v4" value="4"><label for="q1v4">4</label></div><div class="likert-option"><input type="radio" name="q1" id="q1v5" value="5"><label for="q1v5">5</label></div></div>
+          <span style="font-size:.7rem;color:#94a3b8;width:72px;line-height:1.3;flex-shrink:0;">Толық<br>келісемін</span>
+        </div>
+      </div>
+
+      <div class="card-hover" style="background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+        <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;">
+          <span style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,#1E3A8A,#06B6D4);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;">2</span>
+          <p style="font-weight:600;color:#1e293b;line-height:1.55;padding-top:6px;">Жеке шекаралар мен отбасылық міндеттер бөлінген бе?</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:.7rem;color:#94a3b8;text-align:right;width:72px;line-height:1.3;flex-shrink:0;">Мүлдем<br>келіспеймін</span>
+          <div style="display:flex;justify-content:center;gap:10px;flex:1;"><div class="likert-option"><input type="radio" name="q2" id="q2v1" value="1"><label for="q2v1">1</label></div><div class="likert-option"><input type="radio" name="q2" id="q2v2" value="2"><label for="q2v2">2</label></div><div class="likert-option"><input type="radio" name="q2" id="q2v3" value="3"><label for="q2v3">3</label></div><div class="likert-option"><input type="radio" name="q2" id="q2v4" value="4"><label for="q2v4">4</label></div><div class="likert-option"><input type="radio" name="q2" id="q2v5" value="5"><label for="q2v5">5</label></div></div>
+          <span style="font-size:.7rem;color:#94a3b8;width:72px;line-height:1.3;flex-shrink:0;">Толық<br>келісемін</span>
+        </div>
+      </div>
+
+      <div class="card-hover" style="background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+        <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;">
+          <span style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,#1E3A8A,#06B6D4);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;">3</span>
+          <p style="font-weight:600;color:#1e293b;line-height:1.55;padding-top:6px;">Болашақ балаларды тәрбиелеу туралы көзқарасымыз ұқсас па?</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:.7rem;color:#94a3b8;text-align:right;width:72px;line-height:1.3;flex-shrink:0;">Мүлдем<br>келіспеймін</span>
+          <div style="display:flex;justify-content:center;gap:10px;flex:1;"><div class="likert-option"><input type="radio" name="q3" id="q3v1" value="1"><label for="q3v1">1</label></div><div class="likert-option"><input type="radio" name="q3" id="q3v2" value="2"><label for="q3v2">2</label></div><div class="likert-option"><input type="radio" name="q3" id="q3v3" value="3"><label for="q3v3">3</label></div><div class="likert-option"><input type="radio" name="q3" id="q3v4" value="4"><label for="q3v4">4</label></div><div class="likert-option"><input type="radio" name="q3" id="q3v5" value="5"><label for="q3v5">5</label></div></div>
+          <span style="font-size:.7rem;color:#94a3b8;width:72px;line-height:1.3;flex-shrink:0;">Толық<br>келісемін</span>
+        </div>
+      </div>
+
+      <div class="card-hover" style="background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+        <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;">
+          <span style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,#1E3A8A,#06B6D4);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;">4</span>
+          <p style="font-weight:600;color:#1e293b;line-height:1.55;padding-top:6px;">Күйзелісті жағдайда бір-бірімізге эмоционалды қолдау көрсете аламыз ба?</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:.7rem;color:#94a3b8;text-align:right;width:72px;line-height:1.3;flex-shrink:0;">Мүлдем<br>келіспеймін</span>
+          <div style="display:flex;justify-content:center;gap:10px;flex:1;"><div class="likert-option"><input type="radio" name="q4" id="q4v1" value="1"><label for="q4v1">1</label></div><div class="likert-option"><input type="radio" name="q4" id="q4v2" value="2"><label for="q4v2">2</label></div><div class="likert-option"><input type="radio" name="q4" id="q4v3" value="3"><label for="q4v3">3</label></div><div class="likert-option"><input type="radio" name="q4" id="q4v4" value="4"><label for="q4v4">4</label></div><div class="likert-option"><input type="radio" name="q4" id="q4v5" value="5"><label for="q4v5">5</label></div></div>
+          <span style="font-size:.7rem;color:#94a3b8;width:72px;line-height:1.3;flex-shrink:0;">Толық<br>келісемін</span>
+        </div>
+      </div>
+
+      <div class="card-hover" style="background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+        <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;">
+          <span style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,#1E3A8A,#06B6D4);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;">5</span>
+          <p style="font-weight:600;color:#1e293b;line-height:1.55;padding-top:6px;">Шешім қабылдауда серіктестің пікірі ескеріле ме?</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:.7rem;color:#94a3b8;text-align:right;width:72px;line-height:1.3;flex-shrink:0;">Мүлдем<br>келіспеймін</span>
+          <div style="display:flex;justify-content:center;gap:10px;flex:1;"><div class="likert-option"><input type="radio" name="q5" id="q5v1" value="1"><label for="q5v1">1</label></div><div class="likert-option"><input type="radio" name="q5" id="q5v2" value="2"><label for="q5v2">2</label></div><div class="likert-option"><input type="radio" name="q5" id="q5v3" value="3"><label for="q5v3">3</label></div><div class="likert-option"><input type="radio" name="q5" id="q5v4" value="4"><label for="q5v4">4</label></div><div class="likert-option"><input type="radio" name="q5" id="q5v5" value="5"><label for="q5v5">5</label></div></div>
+          <span style="font-size:.7rem;color:#94a3b8;width:72px;line-height:1.3;flex-shrink:0;">Толық<br>келісемін</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="psychError" style="display:none;margin-top:16px;align-items:center;gap:8px;color:#dc2626;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:12px 16px;font-size:.875rem;font-weight:500;">
+      &#x26A0;&#xFE0F; Барлық 5 сұраққа жауап беріңіз
+    </div>
+
+    <div style="text-align:center;margin-top:32px;">
+      <button onclick="nextToFinance()"
+        style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#1E3A8A,#2d4fa3);color:#fff;font-weight:700;font-size:1rem;padding:16px 40px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(30,58,138,.25);transition:all .3s;"
+        onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        Қаржылық тестке өту &rarr;
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: FINANCE CALCULATOR -->
+<section id="finance" class="section-anim" style="padding:80px 16px;background:#f8fafc;box-sizing:border-box;">
+  <div style="max-width:740px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,.1);color:#0e7490;font-weight:600;font-size:.85rem;padding:8px 16px;border-radius:9999px;margin-bottom:16px;">
+        &#x1F4B0; Бөлім 2 — Қаржылық талдау
+      </div>
+      <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;color:#1E3A8A;margin-bottom:12px;">Қаржылық тұрақтылық есептеуіші</h2>
+      <p style="color:#64748b;font-size:1rem;max-width:500px;margin:0 auto;">Отбасылық бюджетіңізді бағалайық. Ай сайынғы деректерді енгізіңіз.</p>
+    </div>
+
+    <div style="background:#fff;border-radius:24px;box-shadow:0 10px 40px rgba(30,58,138,.08);border:1px solid #e2e8f0;overflow:hidden;">
+      <div style="height:4px;background:linear-gradient(90deg,#1E3A8A,#06B6D4,#22d3ee);"></div>
+      <div style="padding:36px 40px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+          <div>
+            <label style="display:block;font-size:.875rem;font-weight:600;color:#475569;margin-bottom:8px;">&#x1F4C8; Ай сайынғы жалпы табыс</label>
+            <div style="position:relative;">
+              <input type="number" id="income" placeholder="0" min="0" class="finance-input"
+                style="width:100%;border:2px solid #e2e8f0;border-radius:12px;padding:14px 48px 14px 16px;font-size:1.1rem;font-weight:700;color:#1e293b;background:#f8fafc;transition:all .2s;box-sizing:border-box;"
+                oninput="updateFinancePreview()" />
+              <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:.85rem;font-weight:600;color:#94a3b8;">&#x20B8;</span>
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-size:.875rem;font-weight:600;color:#475569;margin-bottom:8px;">&#x1F4C9; Тіркелген шығыстар</label>
+            <div style="position:relative;">
+              <input type="number" id="expenses" placeholder="0" min="0" class="finance-input"
+                style="width:100%;border:2px solid #e2e8f0;border-radius:12px;padding:14px 48px 14px 16px;font-size:1.1rem;font-weight:700;color:#1e293b;background:#f8fafc;transition:all .2s;box-sizing:border-box;"
+                oninput="updateFinancePreview()" />
+              <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:.85rem;font-weight:600;color:#94a3b8;">&#x20B8;</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:32px;">
+          <label style="display:block;font-size:.875rem;font-weight:600;color:#475569;margin-bottom:8px;">&#x1F3AF; Ең төменгі кепілдік деңгейі (шекті мән)</label>
+          <div style="position:relative;">
+            <input type="number" id="threshold" value="150000" min="0" class="finance-input"
+              style="width:100%;border:2px solid #e2e8f0;border-radius:12px;padding:14px 48px 14px 16px;font-size:1.1rem;font-weight:700;color:#1e293b;background:#f8fafc;transition:all .2s;box-sizing:border-box;"
+              oninput="updateFinancePreview()" />
+            <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:.85rem;font-weight:600;color:#94a3b8;">&#x20B8;</span>
+          </div>
+          <p style="font-size:.75rem;color:#94a3b8;margin-top:6px;">Әдепкі мән: 150 000 &#x20B8;/ай</p>
+        </div>
+
+        <!-- Live Preview -->
+        <div id="financePreview" style="display:none;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;margin-bottom:24px;">
+          <div style="background:linear-gradient(135deg,#f8fafc,#eff6ff);padding:12px 20px;border-bottom:1px solid #e2e8f0;">
+            <span style="font-weight:700;color:#64748b;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;">Алдын ала нәтиже</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;">
+            <div style="padding:20px;text-align:center;border-right:1px solid #e2e8f0;">
+              <div style="font-size:.7rem;color:#94a3b8;margin-bottom:4px;">Таза табыс</div>
+              <div id="previewNet" style="font-size:1.25rem;font-weight:900;color:#1E3A8A;">—</div>
+              <div style="font-size:.7rem;color:#94a3b8;margin-top:4px;">&#x20B8;/ай</div>
+            </div>
+            <div style="padding:20px;text-align:center;border-right:1px solid #e2e8f0;">
+              <div style="font-size:.7rem;color:#94a3b8;margin-bottom:4px;">Шекті мән</div>
+              <div id="previewThresh" style="font-size:1.25rem;font-weight:900;color:#0891b2;">—</div>
+              <div style="font-size:.7rem;color:#94a3b8;margin-top:4px;">&#x20B8;/ай</div>
+            </div>
+            <div style="padding:20px;text-align:center;">
+              <div style="font-size:.7rem;color:#94a3b8;margin-bottom:4px;">Қаржылық балл</div>
+              <div id="previewFScore" style="font-size:1.25rem;font-weight:900;">—</div>
+              <div style="font-size:.7rem;color:#94a3b8;margin-top:4px;">/ 100</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="financeError" style="display:none;align-items:center;gap:8px;color:#dc2626;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:12px 16px;font-size:.875rem;font-weight:500;margin-bottom:16px;">
+          &#x26A0;&#xFE0F; Табыс және шығыс деректерін толтырыңыз
+        </div>
+
+        <div style="text-align:center;">
+          <button onclick="calculateAndShowResults()"
+            style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#06B6D4,#0891b2);color:#fff;font-weight:700;font-size:1rem;padding:16px 40px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(6,182,212,.25);transition:all .3s;"
+            onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            &#x1F50D; Нәтижені есептеу &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: RESULTS -->
+<section id="results" class="section-anim" style="padding:80px 16px;background:#fff;box-sizing:border-box;">
+  <div style="max-width:900px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(30,58,138,.08);color:#1E3A8A;font-weight:600;font-size:.85rem;padding:8px 16px;border-radius:9999px;margin-bottom:16px;">
+        &#x1F4CA; Нәтижелер бақылау тақтасы
+      </div>
+      <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;color:#1E3A8A;margin-bottom:12px;">Сіздің дайындық деңгейіңіз</h2>
+      <p style="color:#64748b;font-size:1rem;">Психологиялық (60%) + Қаржылық (40%) бағалауға негізделген</p>
+    </div>
+
+    <!-- Gauge + bars -->
+    <div style="background:linear-gradient(135deg,rgba(30,58,138,.04),rgba(6,182,212,.06));border:1px solid rgba(30,58,138,.1);border-radius:24px;padding:48px 32px;margin-bottom:32px;text-align:center;box-shadow:0 10px 40px rgba(30,58,138,.06);">
+      <div style="width:280px;height:160px;margin:0 auto 8px;">
+        <svg viewBox="-10 0 240 138" style="width:100%;overflow:visible;">
+          <defs>
+            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#1E3A8A"/>
+              <stop offset="100%" stop-color="#06B6D4"/>
+            </linearGradient>
+          </defs>
+          <path d="M 10 110 A 100 100 0 0 1 210 110" fill="none" stroke="#e2e8f0" stroke-width="22" stroke-linecap="round"/>
+          <path id="gaugeArc" d="M 10 110 A 100 100 0 0 1 210 110" fill="none" stroke="url(#gaugeGrad)" stroke-width="22" stroke-linecap="round"
+            stroke-dasharray="314" stroke-dashoffset="314" style="transition:stroke-dashoffset 1.4s cubic-bezier(.22,1,.36,1);"/>
+          <text id="gaugeText" x="110" y="100" text-anchor="middle" font-size="34" font-weight="900" fill="#1E3A8A" font-family="Inter,system-ui,sans-serif">—</text>
+          <text x="110" y="120" text-anchor="middle" font-size="10" fill="#94a3b8" font-family="Inter,system-ui,sans-serif">некеге дайындық</text>
+        </svg>
+      </div>
+
+      <div id="scoreBadge" style="display:none;margin:12px 0 28px;"></div>
+
+      <!-- Progress bars -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:16px;text-align:left;">
+        <div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.04);border:1px solid #e2e8f0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.2rem;">&#x1F9E0;</span>
+              <span style="font-size:.85rem;font-weight:600;color:#475569;">Психологиялық балл</span>
+            </div>
+            <span id="psychScoreText" style="font-size:1.1rem;font-weight:900;color:#1E3A8A;">—</span>
+          </div>
+          <div style="height:12px;background:#f1f5f9;border-radius:9999px;overflow:hidden;">
+            <div id="psychBar" class="progress-bar-fill" style="background:linear-gradient(90deg,#1E3A8A,#06B6D4);width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:#94a3b8;margin-top:6px;">
+            <span>0</span><span style="color:#1E3A8A;font-weight:600;">60% ауырлық</span><span>100</span>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.04);border:1px solid #e2e8f0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.2rem;">&#x1F4B0;</span>
+              <span style="font-size:.85rem;font-weight:600;color:#475569;">Қаржылық балл</span>
+            </div>
+            <span id="finScoreText" style="font-size:1.1rem;font-weight:900;color:#0891b2;">—</span>
+          </div>
+          <div style="height:12px;background:#f1f5f9;border-radius:9999px;overflow:hidden;">
+            <div id="finBar" class="progress-bar-fill" style="background:linear-gradient(90deg,#06B6D4,#22d3ee);width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:#94a3b8;margin-top:6px;">
+            <span>0</span><span style="color:#0891b2;font-weight:600;">40% ауырлық</span><span>100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendation -->
+    <div id="recommendation" style="display:none;border-radius:24px;padding:40px;margin-bottom:32px;border:2px solid;box-shadow:0 10px 40px rgba(0,0,0,.06);" class="slide-in"></div>
+
+    <!-- Detail Cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;">
+      <div class="card-hover" style="background:#fff;border-radius:16px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,.04);text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:8px;">&#x1F4CB;</div>
+        <div style="font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Тест сұрақтары</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#1E3A8A;">5 / 5</div>
+      </div>
+      <div class="card-hover" style="background:#fff;border-radius:16px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,.04);text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:8px;">&#x1F4B5;</div>
+        <div style="font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Таза табыс</div>
+        <div id="netIncomeCard" style="font-size:1.3rem;font-weight:900;color:#0891b2;">—</div>
+      </div>
+      <div class="card-hover" style="background:#fff;border-radius:16px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,.04);text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:8px;">&#x2696;&#xFE0F;</div>
+        <div style="font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Бюджет деңгейі</div>
+        <div id="budgetStatus" style="font-size:1rem;font-weight:900;">—</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;">
+      <button onclick="resetAll()"
+        style="display:inline-flex;align-items:center;gap:8px;border:2px solid #1E3A8A;color:#1E3A8A;background:transparent;font-weight:700;padding:12px 32px;border-radius:12px;cursor:pointer;transition:all .2s;font-size:.95rem;"
+        onmouseover="this.style.background='#1E3A8A';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#1E3A8A'">
+        &#x21BA; Қайта бастау
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:linear-gradient(135deg,#0f1f5c,#1E3A8A,#0a7a9a);padding:40px 16px;text-align:center;">
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;">
+    <span style="font-size:2rem;">&#x1F48D;</span>
+    <span style="color:#fff;font-weight:900;font-size:1.3rem;letter-spacing:.05em;">SanaNeke</span>
+  </div>
+  <p style="color:#93c5fd;font-size:.875rem;margin-bottom:6px;">Саналы некеге қадам — Қазақстандағы ажырасу деңгейін төмендету платформасы</p>
+  <p style="color:rgba(147,197,253,.5);font-size:.75rem;">&#169; 2024 SanaNeke. Барлық құқықтар қорғалған.</p>
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.section-anim').forEach(s => observer.observe(s));
+
+function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+
+function fmt(n) { return new Intl.NumberFormat('kk-KZ').format(Math.round(n)); }
+function calcFin(net, thr) { if (thr<=0) return net>0?100:0; if (net<=0) return 0; return Math.min(100,Math.round((net/thr)*100)); }
+function scoreColor(s) { return s>=80?'#16a34a':s>=50?'#ca8a04':'#dc2626'; }
+
+function updateFinancePreview() {
+  const inc=parseFloat(document.getElementById('income').value)||0;
+  const exp=parseFloat(document.getElementById('expenses').value)||0;
+  const thr=parseFloat(document.getElementById('threshold').value)||150000;
+  if(inc===0){document.getElementById('financePreview').style.display='none';return;}
+  document.getElementById('financePreview').style.display='block';
+  const net=inc-exp; const fs=calcFin(net,thr);
+  const ne=document.getElementById('previewNet'); ne.textContent=fmt(net); ne.style.color=net>=0?'#1E3A8A':'#dc2626';
+  document.getElementById('previewThresh').textContent=fmt(thr);
+  const fse=document.getElementById('previewFScore'); fse.textContent=fs.toFixed(0); fse.style.color=scoreColor(fs);
+}
+
+function nextToFinance() {
+  const ok=[1,2,3,4,5].every(i=>document.querySelector('input[name="q'+i+'"]:checked'));
+  if(!ok){document.getElementById('psychError').style.display='flex';return;}
+  document.getElementById('psychError').style.display='none';
+  scrollToSection('finance');
+}
+
+function calculateAndShowResults() {
+  const inc=parseFloat(document.getElementById('income').value);
+  const exp=parseFloat(document.getElementById('expenses').value);
+  const thr=parseFloat(document.getElementById('threshold').value)||150000;
+  if(isNaN(inc)||isNaN(exp)){document.getElementById('financeError').style.display='flex';return;}
+  document.getElementById('financeError').style.display='none';
+  let ps=0; [1,2,3,4,5].forEach(i=>{const v=document.querySelector('input[name="q'+i+'"]:checked');ps+=v?parseInt(v.value):3;});
+  const psychScore=Math.round((ps/25)*100);
+  const net=inc-exp; const finScore=calcFin(net,thr);
+  const total=Math.round(0.6*psychScore+0.4*finScore);
+  renderResults(psychScore,finScore,total,net,thr);
+  scrollToSection('results');
+}
+
+function renderResults(ps,fs,total,net,thr) {
+  const arc=document.getElementById('gaugeArc');
+  setTimeout(()=>{arc.style.strokeDashoffset=314-(314*total/100);},200);
+  const gt=document.getElementById('gaugeText'); let c=0;
+  const step=()=>{if(c<total){c=Math.min(c+2,total);gt.textContent=c+'%';requestAnimationFrame(step);}else gt.textContent=total+'%';};
+  setTimeout(step,300);
+
+  const badge=document.getElementById('scoreBadge'); badge.style.display='inline-flex';
+  if(total>=80){badge.style.cssText='display:inline-flex;align-items:center;gap:8px;border-radius:9999px;padding:8px 24px;font-weight:700;font-size:.875rem;background:#dcfce7;color:#166534;animation:scorePop .7s cubic-bezier(.34,1.56,.64,1) forwards;';badge.innerHTML='&#x1F7E2; Жоғары дайындық деңгейі';}
+  else if(total>=50){badge.style.cssText='display:inline-flex;align-items:center;gap:8px;border-radius:9999px;padding:8px 24px;font-weight:700;font-size:.875rem;background:#fef9c3;color:#854d0e;animation:scorePop .7s cubic-bezier(.34,1.56,.64,1) forwards;';badge.innerHTML='&#x1F7E1; Орташа дайындық деңгейі';}
+  else{badge.style.cssText='display:inline-flex;align-items:center;gap:8px;border-radius:9999px;padding:8px 24px;font-weight:700;font-size:.875rem;background:#fee2e2;color:#991b1b;animation:scorePop .7s cubic-bezier(.34,1.56,.64,1) forwards;';badge.innerHTML='&#x1F534; Қауіп деңгейі жоғары';}
+
+  setTimeout(()=>{document.getElementById('psychBar').style.width=ps+'%';document.getElementById('finBar').style.width=fs+'%';},500);
+  const pst=document.getElementById('psychScoreText'); pst.textContent=ps+'%'; pst.style.color=scoreColor(ps);
+  const fst=document.getElementById('finScoreText'); fst.textContent=fs+'%'; fst.style.color=scoreColor(fs);
+
+  const rec=document.getElementById('recommendation'); rec.style.display='block';
+  if(total>=80){
+    rec.style.background='#f0fdf4'; rec.style.borderColor='#86efac';
+    rec.innerHTML='<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#dcfce7;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(22,163,74,.2);">&#x1F49A;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#bbf7d0;color:#166534;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Жоғары балл (&gt;80%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Дайындық деңгейі жоғары. Некеге дайынсыз!</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сіздің психологиялық және қаржылық дайындығыңыз некеге дайын екеніңізді көрсетеді. Бір-бірімен ашық диалог жалғастырыңыз, бірлескен мақсаттарды анықтаңыз және некені саналы шешім ретінде қабылдаңыз.</p></div></div>';
+  } else if(total>=50){
+    rec.style.background='#fffbeb'; rec.style.borderColor='#fcd34d';
+    rec.innerHTML='<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#fef3c7;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(202,138,4,.2);">&#x1F91D;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#fde68a;color:#92400e;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Орташа балл (50–79%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Орташа деңгей. Отбасылық медиация курсы ұсынылады.</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сізде жақсарту аймақтары бар. Медиация немесе некеге дайындық курсына қатысу ұсынылады. Коммуникация дағдыларыңызды дамытыңыз және қаржылық жоспарлауды бірге жасаңыз.</p></div></div>';
+  } else {
+    rec.style.background='#fff1f2'; rec.style.borderColor='#fca5a5';
+    rec.innerHTML='<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#fee2e2;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(220,38,38,.2);">&#x26A0;&#xFE0F;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#fecaca;color:#991b1b;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Қауіп жоғары (&lt;50%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Қауіп жоғары. Психолог пен қаржылық кеңесшінің консультациясы қажет.</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сіздің нәтижеңіз маңызды назар аударуды талап етеді. Психолог пен қаржылық кеңесшінің консультациясы қажет. Асықпаңыз — некеге дайындалу уақыты болашақ отбасылық бақыттың кепілі.</p></div></div>';
+  }
+
+  const ne=document.getElementById('netIncomeCard'); ne.textContent=(net>=0?'+':'')+fmt(net)+' \u20B8'; ne.style.color=net>=0?'#0891b2':'#dc2626';
+  const bs=document.getElementById('budgetStatus');
+  if(net>=thr){bs.textContent='\u2705 Тұрақты';bs.style.color='#16a34a';}
+  else if(net>=0){bs.textContent='\u26A0\uFE0F Орташа';bs.style.color='#ca8a04';}
+  else{bs.textContent='\u274C Жеткіліксіз';bs.style.color='#dc2626';}
+}
+
+function resetAll() {
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  ['income','expenses'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('threshold').value='150000';
+  document.getElementById('financePreview').style.display='none';
+  document.getElementById('psychError').style.display='none';
+  document.getElementById('financeError').style.display='none';
+  document.getElementById('gaugeArc').style.strokeDashoffset='314';
+  document.getElementById('gaugeText').textContent='—';
+  document.getElementById('scoreBadge').style.display='none';
+  document.getElementById('recommendation').style.display='none';
+  document.getElementById('psychBar').style.width='0%';
+  document.getElementById('finBar').style.width='0%';
+  document.getElementById('psychScoreText').textContent='—';
+  document.getElementById('finScoreText').textContent='—';
+  document.getElementById('netIncomeCard').textContent='—';
+  document.getElementById('budgetStatus').textContent='—';
+  scrollToSection('hero');
+}
+<\/script>
+</body>
+</html>
