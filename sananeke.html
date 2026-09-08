@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SanaNeke — Саналы некеге қадам</title>
-  <script src="https://cdn.tailwindcss.com"><\/script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     * { font-family: "Inter", system-ui, sans-serif; }
@@ -40,9 +40,10 @@
     .section-anim.visible { opacity:1; transform:translateY(0); }
     @keyframes pulseSlow { 0%,100%{opacity:1} 50%{opacity:.4} }
     .pulse-slow { animation:pulseSlow 3s ease-in-out infinite; }
-    ::-webkit-scrollbar { width:6px; }
-    ::-webkit-scrollbar-track { background:#f1f5f9; }
-    ::-webkit-scrollbar-thumb { background:#1E3A8A; border-radius:3px; }
+    @media(max-width:768px){
+      .shezhire-grid{grid-template-columns:1fr !important;}
+      .detail-cards-grid{grid-template-columns:repeat(2,1fr) !important;}
+    }
   </style>
 </head>
 <body style="background:#f8fafc;color:#1e293b;margin:0;padding:0;">
@@ -52,6 +53,7 @@
   <button onclick="scrollToSection('hero')"    title="Басты бет"  style="width:12px;height:12px;border-radius:50%;background:#06B6D4;border:1px solid rgba(255,255,255,.7);cursor:pointer;transition:all .3s;padding:0;"></button>
   <button onclick="scrollToSection('psych')"   title="Тест"       style="width:12px;height:12px;border-radius:50%;background:rgba(30,58,138,.3);border:1px solid rgba(30,58,138,.4);cursor:pointer;transition:all .3s;padding:0;"></button>
   <button onclick="scrollToSection('finance')" title="Қаржы"      style="width:12px;height:12px;border-radius:50%;background:rgba(30,58,138,.3);border:1px solid rgba(30,58,138,.4);cursor:pointer;transition:all .3s;padding:0;"></button>
+  <button onclick="scrollToSection('shezhire')" title="Шежіре"   style="width:12px;height:12px;border-radius:50%;background:rgba(30,58,138,.3);border:1px solid rgba(30,58,138,.4);cursor:pointer;transition:all .3s;padding:0;"></button>
   <button onclick="scrollToSection('results')" title="Нәтижелер" style="width:12px;height:12px;border-radius:50%;background:rgba(30,58,138,.3);border:1px solid rgba(30,58,138,.4);cursor:pointer;transition:all .3s;padding:0;"></button>
 </nav>
 
@@ -264,10 +266,10 @@
         </div>
 
         <div style="text-align:center;">
-          <button onclick="calculateAndShowResults()"
+          <button onclick="nextToShezhire()"
             style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#06B6D4,#0891b2);color:#fff;font-weight:700;font-size:1rem;padding:16px 40px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(6,182,212,.25);transition:all .3s;"
             onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            &#x1F50D; Нәтижені есептеу &rarr;
+            🧬 Шежіре және Жеті атаға өту &rarr;
           </button>
         </div>
       </div>
@@ -275,7 +277,191 @@
   </div>
 </section>
 
-<!-- SECTION 3: RESULTS -->
+<!-- SECTION 3: SHEZHIRE & 7 ATA -->
+<section id="shezhire" class="section-anim" style="padding:80px 16px;background:#fff;box-sizing:border-box;">
+  <div style="max-width:860px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:40px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,.1);color:#0891b2;font-weight:600;font-size:.85rem;padding:8px 16px;border-radius:9999px;margin-bottom:16px;">
+        🧬 Бөлім 3 — Қазақ дәстүрі мен тектілік
+      </div>
+      <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;color:#1E3A8A;margin-bottom:12px;">Шежіре және Жеті ата тексеруі</h2>
+      <p style="color:#64748b;font-size:1rem;max-width:620px;margin:0 auto;">
+        «Жеті атасын білмеген — жетесіз». Қазақ дәстүрінде жеті атаға толмай қыз алыспау — гендік тазалық пен ұрпақ саулығының мызғымас кепілі.
+      </p>
+    </div>
+
+    <!-- Info banner -->
+    <div style="background:linear-gradient(135deg,#f0fdfa,#e0f2fe);border:1px solid #bae6fd;border-radius:20px;padding:20px 24px;margin-bottom:32px;display:flex;align-items:center;gap:16px;">
+      <span style="font-size:2rem;flex-shrink:0;">📜</span>
+      <div style="font-size:.9rem;color:#0369a1;line-height:1.6;">
+        <strong>Қағида:</strong> Егер екі жастың руы бөлек болса, некеге толық рұқсат. Егер руы бірдей болса, ортақ ата кемінде <strong>7 атадан әрі (8-ші және одан жоғары)</strong> болуы шарт.
+      </div>
+    </div>
+
+    <!-- Main Clan Selection Form -->
+    <div style="background:#fff;border-radius:24px;box-shadow:0 10px 40px rgba(30,58,138,.08);border:1px solid #e2e8f0;padding:36px;margin-bottom:32px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" class="shezhire-grid">
+        <!-- Partner 1 -->
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:24px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#1E3A8A,#2563eb);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">1</div>
+            <div>
+              <div style="font-weight:800;color:#1e293b;font-size:1.05rem;">Жігіт (1-серіктес)</div>
+              <div style="font-size:.75rem;color:#94a3b8;">Ру мен шежіре деректері</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:.8rem;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Жүзі</label>
+            <select id="p1-zhuz" class="finance-input" style="width:100%;border:2px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:.95rem;background:#fff;" onchange="onZhuzChange(1)">
+              <option value="">Жүзді таңдаңыз...</option>
+              <option value="u">Ұлы жүз</option>
+              <option value="o">Орта жүз</option>
+              <option value="k">Кіші жүз</option>
+              <option value="x">Жүзден тыс (Төре, Қожа, т.б.)</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:.8rem;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Руы</label>
+            <select id="p1-ru" class="finance-input" style="width:100%;border:2px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:.95rem;background:#fff;" onchange="onRuSelectChange()">
+              <option value="">Алдымен жүзді таңдаңыз</option>
+            </select>
+            <div style="margin-top:6px;">
+              <input type="text" id="p1-ru-custom" placeholder="Немесе руды қолмен жазыңыз..." class="finance-input" style="width:100%;border:1px dashed #cbd5e1;border-radius:10px;padding:8px 12px;font-size:.85rem;background:#fff;box-sizing:border-box;" oninput="onRuSelectChange()"/>
+            </div>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:.8rem;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Аталық / Тармақ (міндетті емес)</label>
+            <input type="text" id="p1-branch" placeholder="мыс. Қаракесек, Жаныс, Мұңал..." class="finance-input" style="width:100%;border:2px solid #cbd5e1;border-radius:12px;padding:10px 14px;font-size:.9rem;background:#fff;box-sizing:border-box;"/>
+          </div>
+        </div>
+
+        <!-- Partner 2 -->
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:24px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#06B6D4,#0891b2);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">2</div>
+            <div>
+              <div style="font-weight:800;color:#1e293b;font-size:1.05rem;">Қыз (2-серіктес)</div>
+              <div style="font-size:.75rem;color:#94a3b8;">Ру мен шежіре деректері</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:.8rem;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Жүзі</label>
+            <select id="p2-zhuz" class="finance-input" style="width:100%;border:2px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:.95rem;background:#fff;" onchange="onZhuzChange(2)">
+              <option value="">Жүзді таңдаңыз...</option>
+              <option value="u">Ұлы жүз</option>
+              <option value="o">Орта жүз</option>
+              <option value="k">Кіші жүз</option>
+              <option value="x">Жүзден тыс (Төре, Қожа, т.б.)</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:.8rem;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Руы</label>
+            <select id="p2-ru" class="finance-input" style="width:100%;border:2px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:.95rem;background:#fff;" onchange="onRuSelectChange()">
+              <option value="">Алдымен жүзді таңдаңыз</option>
+            </select>
+            <div style="margin-top:6px;">
+              <input type="text" id="p2-ru-custom" placeholder="Немесе руды қолмен жазыңыз..." class="finance-input" style="width:100%;border:1px dashed #cbd5e1;border-radius:10px;padding:8px 12px;font-size:.85rem;background:#fff;box-sizing:border-box;" oninput="onRuSelectChange()"/>
+            </div>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:.8rem;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Аталық / Тармақ (міндетті емес)</label>
+            <input type="text" id="p2-branch" placeholder="мыс. Албан Сары, Тама Көкі..." class="finance-input" style="width:100%;border:2px solid #cbd5e1;border-radius:12px;padding:10px 14px;font-size:.9rem;background:#fff;box-sizing:border-box;"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Comparison Verdict Bar -->
+      <div id="ruVerdictBox" style="display:none;margin-top:24px;border-radius:16px;padding:18px 24px;border:2px solid;transition:all .3s;"></div>
+
+      <!-- 7 Ata Compare Accordion / Toggle -->
+      <div id="sevenAtaSection" style="margin-top:28px;border-top:1px dashed #cbd5e1;padding-top:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+          <div>
+            <div style="font-weight:800;color:#1e293b;font-size:1.1rem;">🌳 Жеті атаны салыстыру (7 буын)</div>
+            <div style="font-size:.8rem;color:#64748b;">Ата-бабаларыңыздың есімдерін енгізіп, ортақ атаның 7 ата ішінде бар-жоғын тексеріңіз</div>
+          </div>
+          <button type="button" onclick="toggleSevenAtaInputs()" id="toggleAtaBtn" style="background:#f1f5f9;color:#1E3A8A;border:1px solid #cbd5e1;padding:8px 18px;border-radius:10px;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;">
+            + 7 ата өрістерін ашу
+          </button>
+        </div>
+
+        <div id="sevenAtaInputsWrap" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="shezhire-grid">
+            <!-- 7 ata Partner 1 -->
+            <div style="background:#f8fafc;border-radius:16px;padding:18px;border:1px solid #e2e8f0;">
+              <div style="font-weight:700;color:#1E3A8A;font-size:.9rem;margin-bottom:12px;">Жігіттің 7 атасы:</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <input type="text" id="p1-ata-1" placeholder="1. Әкесі (Отец)" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p1-ata-2" placeholder="2. Атасы (Дедушка)" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p1-ata-3" placeholder="3. Бабасы (Прадедушка)" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p1-ata-4" placeholder="4. Арғы атасы" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p1-ata-5" placeholder="5. Түп атасы" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p1-ata-6" placeholder="6. Тек атасы" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p1-ata-7" placeholder="7. Түп бабасы (7-ші ата)" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+              </div>
+            </div>
+
+            <!-- 7 ata Partner 2 -->
+            <div style="background:#f8fafc;border-radius:16px;padding:18px;border:1px solid #e2e8f0;">
+              <div style="font-weight:700;color:#0891b2;font-size:.9rem;margin-bottom:12px;">Қыздың 7 атасы:</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <input type="text" id="p2-ata-1" placeholder="1. Әкесі (Отец)" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p2-ata-2" placeholder="2. Атасы (Дедушка)" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p2-ata-3" placeholder="3. Бабасы (Прадедушка)" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p2-ata-4" placeholder="4. Арғы атасы" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p2-ata-5" placeholder="5. Түп атасы" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p2-ata-6" placeholder="6. Тек атасы" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+                <input type="text" id="p2-ata-7" placeholder="7. Түп бабасы (7-ші ата)" class="finance-input" style="border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;font-size:.85rem;background:#fff;" oninput="runSevenAtaMatch()"/>
+              </div>
+            </div>
+          </div>
+
+          <div id="sevenAtaMatchResult" style="display:none;margin-top:16px;border-radius:14px;padding:14px 20px;font-size:.9rem;font-weight:600;"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tumalas.kz Portal Integration Banner -->
+    <div style="background:linear-gradient(135deg,#0f1f5c,#1E3A8A);border-radius:24px;padding:32px;color:#fff;margin-bottom:32px;position:relative;overflow:hidden;box-shadow:0 12px 36px rgba(30,58,138,.2);">
+      <div style="position:absolute;right:-20px;bottom:-20px;width:160px;height:160px;background:rgba(6,182,212,.15);border-radius:50%;filter:blur(40px);"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;position:relative;z-index:2;">
+        <div style="max-width:560px;">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);padding:4px 14px;border-radius:999px;font-size:.75rem;font-weight:700;color:#67e8f9;margin-bottom:12px;">
+            🌐 Серіктес ресурс: Tumalas.kz
+          </div>
+          <h3 style="font-size:1.35rem;font-weight:900;margin-bottom:8px;">Шежіреңізді Tumalas.kz онлайн қорынан табыңыз</h3>
+          <p style="font-size:.9rem;color:#bfdbfe;line-height:1.6;margin:0;">
+            Tumalas.kz — қазақ рулары мен шежіресінің ең ірі электронды деректер базасы. Егер 7 атаңызды толық білмесеңіз, сайттан өз руыңыз бен аталық шежіреңізді іздеп, нақтылай аласыз.
+          </p>
+        </div>
+        <a href="https://tumalas.kz/" target="_blank" rel="noopener noreferrer"
+           style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#06B6D4,#0891b2);color:#fff;font-weight:700;font-size:.95rem;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 6px 20px rgba(6,182,212,.4);transition:transform .2s;"
+           onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          Tumalas.kz-тен іздеу ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- Proceed to Results Button -->
+    <div style="text-align:center;">
+      <button onclick="calculateAndShowResults()"
+        style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#1E3A8A,#06B6D4);color:#fff;font-weight:700;font-size:1.05rem;padding:18px 48px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 10px 40px rgba(30,58,138,.3);transition:all .3s;"
+        onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        📊 Барлық нәтижені есептеу &rarr;
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 4: RESULTS -->
 <section id="results" class="section-anim" style="padding:80px 16px;background:#fff;box-sizing:border-box;">
   <div style="max-width:900px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:48px;">
@@ -346,7 +532,7 @@
     <div id="recommendation" style="display:none;border-radius:24px;padding:40px;margin-bottom:32px;border:2px solid;box-shadow:0 10px 40px rgba(0,0,0,.06);" class="slide-in"></div>
 
     <!-- Detail Cards -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;" class="detail-cards-grid">
       <div class="card-hover" style="background:#fff;border-radius:16px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,.04);text-align:center;">
         <div style="font-size:1.8rem;margin-bottom:8px;">&#x1F4CB;</div>
         <div style="font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Тест сұрақтары</div>
@@ -361,6 +547,11 @@
         <div style="font-size:1.8rem;margin-bottom:8px;">&#x2696;&#xFE0F;</div>
         <div style="font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Бюджет деңгейі</div>
         <div id="budgetStatus" style="font-size:1rem;font-weight:900;">—</div>
+      </div>
+      <div class="card-hover" style="background:#fff;border-radius:16px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,.04);text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:8px;">🧬</div>
+        <div style="font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Шежіре & 7 ата</div>
+        <div id="shezhireCardStatus" style="font-size:1rem;font-weight:900;color:#16a34a;">—</div>
       </div>
     </div>
 
@@ -417,11 +608,222 @@ function nextToFinance() {
   scrollToSection('finance');
 }
 
+function nextToShezhire() {
+  const inc = parseFloat(document.getElementById('income').value);
+  const exp = parseFloat(document.getElementById('expenses').value);
+  if (isNaN(inc) || isNaN(exp)) {
+    document.getElementById('financeError').style.display = 'flex';
+    return;
+  }
+  document.getElementById('financeError').style.display = 'none';
+  scrollToSection('shezhire');
+}
+
+/* ═══════════════════════════════════════
+   ZHUZ & RU DATA & SHEZHIRE
+═══════════════════════════════════════ */
+const ZHUZ_DATA = {
+  u: {
+    name: "Ұлы жүз",
+    ru: ["Албан", "Дулат", "Жалайыр", "Қаңлы", "Ошақты", "Сарыүйсін", "Сіргелі", "Суан", "Шанышқылы", "Шапырашты", "Ысты", "Басқа"]
+  },
+  o: {
+    name: "Орта жүз",
+    ru: ["Арғын", "Найман", "Қыпшақ", "Қоңырат", "Керей", "Уақ", "Басқа"]
+  },
+  k: {
+    name: "Кіші жүз",
+    ru: [
+      "Әлімұлы - Шекті", "Әлімұлы - Төртқара", "Әлімұлы - Қаракесек", "Әлімұлы - Қарасақал", "Әлімұлы - Кете", "Әлімұлы - Шөмекей",
+      "Байұлы - Адай", "Байұлы - Беріш", "Байұлы - Алшын", "Байұлы - Жаппас", "Байұлы - Ысық", "Байұлы - Байбақты", "Байұлы - Масқар", "Байұлы - Серкеш", "Байұлы - Таз", "Байұлы - Тана", "Байұлы - Есентемір", "Байұлы - Қызылқұрт", "Байұлы - Шеркеш",
+      "Жетіру - Табын", "Жетіру - Тама", "Жетіру - Кердері", "Жетіру - Керейт", "Жетіру - Жағалбайлы", "Жетіру - Телеу", "Жетіру - Рамадан",
+      "Басқа"
+    ]
+  },
+  x: {
+    name: "Жүзден тыс",
+    ru: ["Төре", "Қожа", "Сейіт", "Сұнақ", "Төлеңгіт", "Басқа"]
+  }
+};
+
+function onZhuzChange(pNum) {
+  const zhuz = document.getElementById('p'+pNum+'-zhuz').value;
+  const ruSelect = document.getElementById('p'+pNum+'-ru');
+  ruSelect.innerHTML = '<option value="">Руды таңдаңыз...</option>';
+  if (zhuz && ZHUZ_DATA[zhuz]) {
+    ZHUZ_DATA[zhuz].ru.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r;
+      opt.textContent = r;
+      ruSelect.appendChild(opt);
+    });
+  }
+  onRuSelectChange();
+}
+
+function getPartnerRu(pNum) {
+  const sel = (document.getElementById('p'+pNum+'-ru')?.value || '').trim();
+  const custom = (document.getElementById('p'+pNum+'-ru-custom')?.value || '').trim();
+  return custom || sel;
+}
+
+function normalizeRuName(name) {
+  if (!name) return '';
+  return name.toLowerCase()
+    .replace(/^әлімұлы\s*-\s*/i, '')
+    .replace(/^байұлы\s*-\s*/i, '')
+    .replace(/^жетіру\s*-\s*/i, '')
+    .trim();
+}
+
+let shezhireMatchResult = { status: 'none', message: 'Деректер толтырылмаған', commonAncestor: null };
+
+function onRuSelectChange() {
+  const ru1 = getPartnerRu(1);
+  const ru2 = getPartnerRu(2);
+  const box = document.getElementById('ruVerdictBox');
+  if (!box) return;
+
+  if (!ru1 || !ru2) {
+    box.style.display = 'none';
+    shezhireMatchResult = { status: 'none', message: 'Деректер толық емес' };
+    return;
+  }
+
+  box.style.display = 'block';
+  const n1 = normalizeRuName(ru1);
+  const n2 = normalizeRuName(ru2);
+
+  if (n1 === n2 && n1 !== 'басқа' && n1 !== '') {
+    box.style.background = '#fffbeb';
+    box.style.borderColor = '#fcd34d';
+    box.style.color = '#92400e';
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:1.6rem;">⚠️</span>
+        <div>
+          <div style="font-weight:800;font-size:.95rem;">Рулары бірдей («${ru1}»)!</div>
+          <div style="font-size:.85rem;margin-top:2px;">Қазақ дәстүрі бойынша <strong>Жеті атаны тексеру қажет</strong>. Төменде ата-баба есімдерін енгізіп, ортақ атаны салыстырыңыз.</div>
+        </div>
+      </div>
+    `;
+    toggleSevenAtaInputs(true);
+    runSevenAtaMatch();
+  } else {
+    box.style.background = '#f0fdf4';
+    box.style.borderColor = '#86efac';
+    box.style.color = '#166534';
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:1.6rem;">✅</span>
+        <div>
+          <div style="font-weight:800;font-size:.95rem;">Рулары әртүрлі («${ru1}» & «${ru2}»)</div>
+          <div style="font-size:.85rem;margin-top:2px;">Қандас туыстық қаупі жоқ. Жеті ата қағидасы бойынша некеге толық рұқсат (үйлесімді).</div>
+        </div>
+      </div>
+    `;
+    shezhireMatchResult = {
+      status: 'ok',
+      message: `Рулары бөлек («${ru1}» & «${ru2}»)`
+    };
+  }
+}
+
+function toggleSevenAtaInputs(forceOpen) {
+  const wrap = document.getElementById('sevenAtaInputsWrap');
+  const btn = document.getElementById('toggleAtaBtn');
+  if (!wrap || !btn) return;
+  const isOpen = wrap.style.display === 'block';
+  const shouldOpen = forceOpen !== undefined ? forceOpen : !isOpen;
+  wrap.style.display = shouldOpen ? 'block' : 'none';
+  btn.textContent = shouldOpen ? '– 7 ата өрістерін жасыру' : '+ 7 ата өрістерін ашу';
+  if (shouldOpen) runSevenAtaMatch();
+}
+
+function runSevenAtaMatch() {
+  const p1Atas = [];
+  const p2Atas = [];
+  for (let i = 1; i <= 7; i++) {
+    const val1 = (document.getElementById(`p1-ata-${i}`)?.value || '').trim();
+    const val2 = (document.getElementById(`p2-ata-${i}`)?.value || '').trim();
+    if (val1) p1Atas.push({ name: val1, gen: i });
+    if (val2) p2Atas.push({ name: val2, gen: i });
+  }
+
+  const resDiv = document.getElementById('sevenAtaMatchResult');
+  if (!resDiv) return;
+
+  if (p1Atas.length === 0 && p2Atas.length === 0) {
+    resDiv.style.display = 'none';
+    return;
+  }
+
+  resDiv.style.display = 'block';
+
+  let match = null;
+  for (const a1 of p1Atas) {
+    for (const a2 of p2Atas) {
+      if (a1.name.toLowerCase() === a2.name.toLowerCase() && a1.name.length >= 3) {
+        match = { name: a1.name, gen1: a1.gen, gen2: a2.gen };
+        break;
+      }
+    }
+    if (match) break;
+  }
+
+  const ru1 = getPartnerRu(1);
+  const ru2 = getPartnerRu(2);
+  const isSameRu = normalizeRuName(ru1) === normalizeRuName(ru2) && ru1 !== '';
+
+  if (match) {
+    resDiv.style.background = '#fee2e2';
+    resDiv.style.color = '#991b1b';
+    resDiv.style.border = '1px solid #fca5a5';
+    resDiv.innerHTML = `
+      🛑 <strong>ҚАУІП ЖОҒАРЫ:</strong> 7 ата ішінде ортақ баба табылды: <strong>«${match.name}»</strong> (Жігіттен ${match.gen1}-ата, Қыздан ${match.gen2}-ата).<br>
+      Қазақ дәстүрі мен генетика бойынша қандас туыстардың некелесуіне қатаң тыйым салынады!
+    `;
+    shezhireMatchResult = {
+      status: 'danger',
+      message: `Ортақ ата: «${match.name}» (${match.gen1}/${match.gen2}-ата) — некеге тыйым`,
+      commonAncestor: match.name
+    };
+  } else if (p1Atas.length >= 3 && p2Atas.length >= 3) {
+    resDiv.style.background = '#ecfdf5';
+    resDiv.style.color = '#065f46';
+    resDiv.style.border = '1px solid #a7f3d0';
+    resDiv.innerHTML = `
+      ✅ <strong>ЖЕТІ АТАДАН АСҚАН:</strong> 7 буын ішінде ортақ ата анықталмады.<br>
+      Қазақ салтында «Жеті ата толысты, жеке ел болдық» делініп, некелесуге рұқсат етіледі.
+    `;
+    shezhireMatchResult = {
+      status: 'clean',
+      message: '7 атадан асқан (ортақ ата жоқ, рұқсат)'
+    };
+  } else {
+    resDiv.style.background = '#eff6ff';
+    resDiv.style.color = '#1e40af';
+    resDiv.style.border = '1px solid #bfdbfe';
+    resDiv.innerHTML = `
+      ℹ️ Ата-бабалар есімдері салыстырылуда. Толық сенімділік үшін аталарды мүмкіндігінше түгел толтырыңыз.
+    `;
+    if (!isSameRu && ru1 && ru2) {
+      shezhireMatchResult = { status: 'ok', message: `Рулары әртүрлі («${ru1}» & «${ru2}»)` };
+    } else {
+      shezhireMatchResult = { status: 'warning', message: 'Рулас — 7 атаны тексеріңіз' };
+    }
+  }
+}
+
 function calculateAndShowResults() {
   const inc=parseFloat(document.getElementById('income').value);
   const exp=parseFloat(document.getElementById('expenses').value);
   const thr=parseFloat(document.getElementById('threshold').value)||150000;
-  if(isNaN(inc)||isNaN(exp)){document.getElementById('financeError').style.display='flex';return;}
+  if(isNaN(inc)||isNaN(exp)){
+    document.getElementById('financeError').style.display='flex';
+    scrollToSection('finance');
+    return;
+  }
   document.getElementById('financeError').style.display='none';
   let ps=0; [1,2,3,4,5].forEach(i=>{const v=document.querySelector('input[name="q'+i+'"]:checked');ps+=v?parseInt(v.value):3;});
   const psychScore=Math.round((ps/25)*100);
@@ -447,16 +849,46 @@ function renderResults(ps,fs,total,net,thr) {
   const pst=document.getElementById('psychScoreText'); pst.textContent=ps+'%'; pst.style.color=scoreColor(ps);
   const fst=document.getElementById('finScoreText'); fst.textContent=fs+'%'; fst.style.color=scoreColor(fs);
 
+  // Shezhire Card Status
+  const shezCard = document.getElementById('shezhireCardStatus');
+  if (shezhireMatchResult.status === 'danger') {
+    shezCard.textContent = '🛑 Қауіпті (7 ата)';
+    shezCard.style.color = '#dc2626';
+  } else if (shezhireMatchResult.status === 'clean' || shezhireMatchResult.status === 'ok') {
+    shezCard.textContent = '✅ Үйлесімді';
+    shezCard.style.color = '#16a34a';
+  } else if (shezhireMatchResult.status === 'warning') {
+    shezCard.textContent = '⚠️ Тексеру қажет';
+    shezCard.style.color = '#ca8a04';
+  } else {
+    shezCard.textContent = 'ℹ️ Енгізілмеген';
+    shezCard.style.color = '#64748b';
+  }
+
+  // Recommendations
   const rec=document.getElementById('recommendation'); rec.style.display='block';
+  let shezhireAlert = '';
+  if (shezhireMatchResult.status === 'danger') {
+    shezhireAlert = `
+      <div style="margin-top:16px;background:#fef2f2;border:1px solid #fecaca;border-radius:14px;padding:14px 18px;color:#991b1b;font-weight:600;font-size:.9rem;">
+        🛑 <strong>ДӘСТҮР МЕН МЕДИЦИНАЛЫҚ ЕСКЕРТУ:</strong> Шежіре бойынша жеті атаға толмаған қандас туыстық анықталды (${shezhireMatchResult.message}). Қазақ ғұрпында бұндай некеге үзілді-кесілді тыйым салынады.
+      </div>`;
+  } else if (shezhireMatchResult.status === 'clean' || shezhireMatchResult.status === 'ok') {
+    shezhireAlert = `
+      <div style="margin-top:16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:14px 18px;color:#166534;font-size:.85rem;">
+        🧬 <strong>Шежіре қорытындысы:</strong> ${shezhireMatchResult.message}. Қан тазалығы сақталған.
+      </div>`;
+  }
+
   if(total>=80){
     rec.style.background='#f0fdf4'; rec.style.borderColor='#86efac';
-    rec.innerHTML='<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#dcfce7;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(22,163,74,.2);">&#x1F49A;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#bbf7d0;color:#166534;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Жоғары балл (&gt;80%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Дайындық деңгейі жоғары. Некеге дайынсыз!</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сіздің психологиялық және қаржылық дайындығыңыз некеге дайын екеніңізді көрсетеді. Бір-бірімен ашық диалог жалғастырыңыз, бірлескен мақсаттарды анықтаңыз және некені саналы шешім ретінде қабылдаңыз.</p></div></div>';
+    rec.innerHTML=`<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#dcfce7;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(22,163,74,.2);">&#x1F49A;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#bbf7d0;color:#166534;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Жоғары балл (&gt;80%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Дайындық деңгейі жоғары. Некеге дайынсыз!</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сіздің психологиялық және қаржылық дайындығыңыз некеге дайын екеніңізді көрсетеді. Бір-бірімен ашық диалог жалғастырыңыз, бірлескен мақсаттарды анықтаңыз және некені саналы шешім ретінде қабылдаңыз.</p>${shezhireAlert}</div></div>`;
   } else if(total>=50){
     rec.style.background='#fffbeb'; rec.style.borderColor='#fcd34d';
-    rec.innerHTML='<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#fef3c7;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(202,138,4,.2);">&#x1F91D;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#fde68a;color:#92400e;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Орташа балл (50–79%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Орташа деңгей. Отбасылық медиация курсы ұсынылады.</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сізде жақсарту аймақтары бар. Медиация немесе некеге дайындық курсына қатысу ұсынылады. Коммуникация дағдыларыңызды дамытыңыз және қаржылық жоспарлауды бірге жасаңыз.</p></div></div>';
+    rec.innerHTML=`<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#fef3c7;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(202,138,4,.2);">&#x1F91D;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#fde68a;color:#92400e;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Орташа балл (50–79%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Орташа деңгей. Отбасылық медиация курсы ұсынылады.</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сізде жақсарту аймақтары бар. Медиация немесе некеге дайындық курсына қатысу ұсынылады. Коммуникация дағдыларыңызды дамытыңыз және қаржылық жоспарлауды бірге жасаңыз.</p>${shezhireAlert}</div></div>`;
   } else {
     rec.style.background='#fff1f2'; rec.style.borderColor='#fca5a5';
-    rec.innerHTML='<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#fee2e2;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(220,38,38,.2);">&#x26A0;&#xFE0F;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#fecaca;color:#991b1b;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Қауіп жоғары (&lt;50%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Қауіп жоғары. Психолог пен қаржылық кеңесшінің консультациясы қажет.</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сіздің нәтижеңіз маңызды назар аударуды талап етеді. Психолог пен қаржылық кеңесшінің консультациясы қажет. Асықпаңыз — некеге дайындалу уақыты болашақ отбасылық бақыттың кепілі.</p></div></div>';
+    rec.innerHTML=`<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;"><div style="flex-shrink:0;width:72px;height:72px;background:#fee2e2;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 16px rgba(220,38,38,.2);">&#x26A0;&#xFE0F;</div><div style="flex:1;min-width:200px;"><div style="display:inline-block;background:#fecaca;color:#991b1b;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:9999px;margin-bottom:10px;">Қауіп жоғары (&lt;50%)</div><h3 style="font-size:1.2rem;font-weight:900;color:#1e293b;margin-bottom:10px;">Қауіп жоғары. Психолог пен қаржылық кеңесшінің консультациясы қажет.</h3><p style="color:#475569;line-height:1.7;font-size:.95rem;">Сіздің нәтижеңіз маңызды назар аударуды талап етеді. Психолог пен қаржылық кеңесшінің консультациясы қажет. Асықпаңыз — некеге дайындалу уақыты болашақ отбасылық бақыттың кепілі.</p>${shezhireAlert}</div></div>`;
   }
 
   const ne=document.getElementById('netIncomeCard'); ne.textContent=(net>=0?'+':'')+fmt(net)+' \u20B8'; ne.style.color=net>=0?'#0891b2':'#dc2626';
@@ -483,8 +915,22 @@ function resetAll() {
   document.getElementById('finScoreText').textContent='—';
   document.getElementById('netIncomeCard').textContent='—';
   document.getElementById('budgetStatus').textContent='—';
+  document.getElementById('shezhireCardStatus').textContent='—';
+
+  // Reset Shezhire
+  ['p1-zhuz','p2-zhuz'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['p1-ru','p2-ru'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML='<option value="">Алдымен жүзді таңдаңыз</option>'; });
+  ['p1-ru-custom','p2-ru-custom','p1-branch','p2-branch'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  for(let i=1; i<=7; i++){
+    const a1 = document.getElementById(`p1-ata-${i}`); if(a1) a1.value='';
+    const a2 = document.getElementById(`p2-ata-${i}`); if(a2) a2.value='';
+  }
+  const rBox = document.getElementById('ruVerdictBox'); if(rBox) rBox.style.display='none';
+  const mRes = document.getElementById('sevenAtaMatchResult'); if(mRes) mRes.style.display='none';
+  shezhireMatchResult = { status: 'none', message: 'Деректер толтырылмаған' };
+
   scrollToSection('hero');
 }
-<\/script>
+</script>
 </body>
 </html>
