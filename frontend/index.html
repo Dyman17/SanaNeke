@@ -1193,7 +1193,7 @@ async function renderAdmin() {
 async function adminDelete(table, id) {
   if (!confirm('Шынымен өшіресіз бе?')) return;
   try {
-    await api('DELETE', \`/api/admin/\${table}/\${id}\`);
+    await api('DELETE', `/api/admin/${table}/${id}`);
     showToast('✅', 'Өшірілді');
     renderAdmin();
   } catch (e) {
