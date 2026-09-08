@@ -523,6 +523,40 @@
         </div>
       </div>
 
+      <!-- Generational Depth / Буын саны тексеруі (Ру != 7 ата қағидасы) -->
+      <div style="margin-top:24px;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid #bae6fd;border-radius:18px;padding:22px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:280px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:1.3rem;">🌳</span>
+              <span style="font-weight:900;color:#0369a1;font-size:1.05rem;">Ортақ бабаға дейінгі буын саны (Ру &ne; 7 ата қағидасы):</span>
+            </div>
+            <p style="font-size:.85rem;color:#0c4a6e;line-height:1.6;margin:0 0 12px 0;">
+              💡 <strong>Шежірелік маңызды ереже:</strong> «Ру» мен «7 ата» бірдей ұғым емес! Ру тарихы <strong>15–25 буынға</strong> созылуы мүмкін. Сондықтан ру аты бір болғанымен, кейбір тармақтар <strong>10–15 буын</strong> бұрын бөлініп кеткен (мұнда «Жеті ата толысты» деп некеге рұқсат етіледі). Ал кейбір аталықтардың арасы небәрі <strong>4–5 буын</strong> (некеге қатаң тыйым). Ортақ баба қашықтығын таңдаңыз:
+            </p>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <label style="font-size:.85rem;font-weight:700;color:#0369a1;">Ортақ бабаға дейінгі буын:</label>
+              <select id="generationDepthSelect" class="finance-input" style="border:2px solid #0284c7;border-radius:10px;padding:8px 14px;font-size:.85rem;background:#fff;font-weight:700;color:#0f172a;" onchange="runShezhireDeepAnalysis()">
+                <option value="auto">🔍 Автоматты (тұқымдар мен 7 ата бойынша анықтау)</option>
+                <option value="4">4-ші ата (4 буын — 🛑 Немере/шөбере, қатаң тыйым)</option>
+                <option value="5">5-ші ата (5 буын — 🛑 5 ата қандас, қатаң тыйым)</option>
+                <option value="6">6-шы ата (6 буын — 🛑 6 ата, қатаң тыйым)</option>
+                <option value="7">7-ші ата (7 буын — 🛑 Шекті деңгей, тыйым)</option>
+                <option value="8">8-ші ата (8 буын — 🟢 Жеті атадан асқан, рұқсат!)</option>
+                <option value="10">10-шы ата (10 буын — 🟢 Толық рұқсат, жеке аталық)</option>
+                <option value="12">12+ буын (12–15 буын — 🟢 Ежелгі тармақ, толық рұқсат)</option>
+              </select>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #7dd3fc;border-radius:14px;padding:14px 20px;min-width:210px;text-align:center;box-shadow:0 4px 14px rgba(2,132,199,.08);">
+            <div style="font-size:.7rem;font-weight:800;color:#0284c7;text-transform:uppercase;letter-spacing:.05em;">Шежірелік өлшем:</div>
+            <div id="generationDepthBadge" style="font-size:.95rem;font-weight:900;color:#0369a1;margin-top:6px;line-height:1.4;">
+              1–7 ата = 🛑 Тыйым<br><span style="color:#16a34a;">8+ буын = 🟢 Рұқсат</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Deep Compatibility Analysis Verdict Box -->
       <div id="ruVerdictBox" style="display:none;margin-top:24px;border-radius:18px;padding:24px;border:2px solid;transition:all .3s;"></div>
 
@@ -940,6 +974,10 @@ function runShezhireDeepAnalysis() {
   const nTukym1 = normalizeRuName(p1.ozTukym);
   const nTukym2 = normalizeRuName(p2.ozTukym);
 
+  const genDepthVal = document.getElementById('generationDepthSelect')?.value || 'auto';
+  const genDepthNum = genDepthVal !== 'auto' ? parseInt(genDepthVal) : null;
+  const genBadge = document.getElementById('generationDepthBadge');
+
   let isPaternalMatch = (nOz1 === nOz2 && nOz1 !== 'басқа' && nOz1 !== '');
   let isTukymSame = (isPaternalMatch && nTukym1 && nTukym2 && nTukym1 === nTukym2 && nTukym1 !== 'басқа');
   let isTukymDiff = (isPaternalMatch && nTukym1 && nTukym2 && nTukym1 !== nTukym2);
@@ -952,41 +990,67 @@ function runShezhireDeepAnalysis() {
   let border = '#86efac';
   let textColor = '#166534';
 
-  // 1. Paternal check
-  if (isPaternalMatch) {
-    if (isTukymSame) {
+  // 1. Generation Depth Check (Ру != 7 ата принципі)
+  if (genDepthNum !== null) {
+    if (genDepthNum <= 7) {
       status = 'danger';
       bg = '#fef2f2';
       border = '#f87171';
       textColor = '#991b1b';
-      badgeHtml = `<span style="background:#fee2e2;color:#b91c1c;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #fca5a5;">🛑 КЕЛІСПЕЙДІ (ҚАТАҢ ТЫЙЫМ)</span>`;
-      title = `Бір ру, бір тұқым: «${p1.ozRu}» (${p1.ozTukym})`;
-      description = `Жігіт пен қыз бір рудың бір тармағынан (аталығынан) тарайды! Жеті атаға толмаған жақын қандастар. Қазақ ғұрпында және медициналық генетикада мұндай некеге ҮЗІЛДІ-КЕСІЛДІ ТЫЙЫМ салынады.`;
-      toggleSevenAtaInputs(true);
-    } else if (isTukymDiff) {
-      status = 'warning';
-      bg = '#fffbeb';
-      border = '#fcd34d';
-      textColor = '#92400e';
-      badgeHtml = `<span style="background:#fef3c7;color:#b45309;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #fde68a;">⚠️ ШАРТТЫ КЕЛІСІМ (7 АТАНЫ ТЕКСЕРУ ҚАЖЕТ)</span>`;
-      title = `Рулары бірдей («${p1.ozRu}»), бірақ тұқымдары бөлек: «${p1.ozTukym}» & «${p2.ozTukym}»`;
-      description = `Екі жақ та бір рудан болғандықтан, некеге тек ортақ атаның <strong>кемінде 7 атадан (8-буын) асқаны</strong> нақты дәлелденген жағдайда ғана рұқсат етіледі. Төменде 7 атаны салыстырыңыз немесе Tumalas.kz шежіресін ашыңыз.`;
+      badgeHtml = `<span style="background:#fee2e2;color:#b91c1c;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #fca5a5;">🛑 КЕЛІСПЕЙДІ (${genDepthNum}-БУЫН, 7 АТАҒА ТОЛМАҒАН)</span>`;
+      title = `Ортақ бабаға дейін ${genDepthNum} буын (${genDepthNum}-ата жақын қандас)`;
+      description = `Ру аты бір немесе бөлек болуына қарамастан, ортақ бабаға дейін небәрі <strong>${genDepthNum} буын</strong> екені анықталды! Қазақтың «Жеті атаға толмай қыз алыспау» салты мен генетика ғылымы бойынша 7 ата ішіндегі некеге ҮЗІЛДІ-КЕСІЛДІ ТЫЙЫМ салынады.`;
+      if (genBadge) genBadge.innerHTML = `<span style="color:#dc2626;">🛑 ${genDepthNum} буын &le; 7 ата<br>ҚАТАҢ ТЫЙЫМ</span>`;
       toggleSevenAtaInputs(true);
     } else {
-      status = 'warning';
-      bg = '#fffbeb';
-      border = '#fcd34d';
-      textColor = '#92400e';
-      badgeHtml = `<span style="background:#fef3c7;color:#b45309;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #fde68a;">⚠️ РУЛАС — 7 АТА МЕН ТҰҚЫМДЫ АНЫҚТАҢЫЗ</span>`;
-      title = `Екеуі де «${p1.ozRu}» руынан`;
-      description = `Қазақ дәстүрі бойынша <strong>«Жеті атаға толмай қыз алыспау»</strong> қағидасы қатаң сақталады. Аталықты/тұқымды таңдап, төменде 7 атаны салыстырыңыз.`;
-      toggleSevenAtaInputs(true);
+      status = 'ok';
+      bg = '#f0fdf4';
+      border = '#86efac';
+      textColor = '#166534';
+      badgeHtml = `<span style="background:#dcfce7;color:#15803d;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #86efac;">🟢 КЕЛІСЕДІ (${genDepthNum}+ БУЫН, 7 АТАДАН АСҚАН)</span>`;
+      title = `Ортақ бабаға дейін ${genDepthNum} буын өтті (Жеті ата толысқан)`;
+      description = `Қазақ шежіресіндегі ең негізгі талап &mdash; ортақ бабаға дейінгі қашықтықтың <strong>7 атадан (кемінде 8 буын) асуы</strong>! Ру аты бірдей болса да, арасы ${genDepthNum} буынға жеткендіктен («Жеті ата толысты, жеке ел болдық»), ақсақалдар батасымен некеге толық рұқсат беріледі.`;
+      if (genBadge) genBadge.innerHTML = `<span style="color:#16a34a;">🟢 ${genDepthNum} буын &ge; 8 ата<br>ТОЛЫҚ РҰҚСАТ</span>`;
     }
   } else {
-    status = 'ok';
-    badgeHtml = `<span style="background:#dcfce7;color:#15803d;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #86efac;">🟢 КЕЛІСЕДІ (СҮЙЕК ТАЗА)</span>`;
-    title = `Рулары әртүрлі («${p1.ozRu}» & «${p2.ozRu}»)`;
-    description = `Әке жағынан қандас туыстық жоқ. Қазақ салты мен сүйек тазалығы бойынша некеге толық рұқсат (үйлесімді).`;
+    // Automatic inference from Clan & Sub-clan
+    if (genBadge) genBadge.innerHTML = `1–7 ата = 🛑 Тыйым<br><span style="color:#16a34a;">8+ буын = 🟢 Рұқсат</span>`;
+
+    if (isPaternalMatch) {
+      if (isTukymSame) {
+        status = 'danger';
+        bg = '#fef2f2';
+        border = '#f87171';
+        textColor = '#991b1b';
+        badgeHtml = `<span style="background:#fee2e2;color:#b91c1c;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #fca5a5;">🛑 КЕЛІСПЕЙДІ (БІР ТҰҚЫМ, &le;7 АТА)</span>`;
+        title = `Бір ру, бір тұқым: «${p1.ozRu}» (${p1.ozTukym})`;
+        description = `Жігіт пен қыз бір рудың бір тармағынан (аталығынан) тарайды! Бір тұқымның ішінде ортақ баба көбіне небәрі <strong>4–6 буын</strong> болады (7 атаға толмаған жақын қандастар). Қазақ ғұрпында бұған үзілді-кесілді тыйым салынады.`;
+        toggleSevenAtaInputs(true);
+      } else if (isTukymDiff) {
+        status = 'warning';
+        bg = '#fffbeb';
+        border = '#fcd34d';
+        textColor = '#92400e';
+        badgeHtml = `<span style="background:#fef3c7;color:#b45309;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #fde68a;">⚠️ ШАРТТЫ КЕЛІСІМ (БУЫН САНЫН ТЕКСЕРІҢІЗ)</span>`;
+        title = `Рулары бірдей («${p1.ozRu}»), бірақ тұқымдары бөлек: «${p1.ozTukym}» & «${p2.ozTukym}»`;
+        description = `<strong>Ру &ne; 7 ата!</strong> Рудың тарихы 15–20 буынға созылады. Бұл екі аталық ертеде (мысалы 10–14 буын бұрын) бөлінген болуы әбден мүмкін. <strong>Егер ортақ бабаға дейін 7 атадан (8+ буын) асса &mdash; некеге толық рұқсат!</strong> Жоғарыдағы тізімнен нақты буын санын таңдаңыз немесе Tumalas.kz шежіресін қараңыз.`;
+        toggleSevenAtaInputs(true);
+      } else {
+        status = 'warning';
+        bg = '#fffbeb';
+        border = '#fcd34d';
+        textColor = '#92400e';
+        badgeHtml = `<span style="background:#fef3c7;color:#b45309;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #fde68a;">⚠️ РУЛАС — 7 АТА МЕН БУЫНДЫ АНЫҚТАҢЫЗ</span>`;
+        title = `Екеуі де «${p1.ozRu}» руынан`;
+        description = `Қазақ дәстүрі бойынша ең басты талап &mdash; ортақ бабаға дейінгі қашықтықтың <strong>7 атадан (8-буыннан) асуы</strong>. Аталықты таңдап немесе буын санын көрсетіңіз.`;
+        toggleSevenAtaInputs(true);
+      }
+    } else {
+      status = 'ok';
+      badgeHtml = `<span style="background:#dcfce7;color:#15803d;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:9999px;border:1px solid #86efac;">🟢 КЕЛІСЕДІ (СҮЙЕК ТАЗА)</span>`;
+      title = `Рулары әртүрлі («${p1.ozRu}» & «${p2.ozRu}»)`;
+      description = `Әке жағынан қандас туыстық жоқ, сүйек таза. Қазақ салты бойынша некеге толық рұқсат (үйлесімді).`;
+    }
   }
 
   // 2. Maternal & Bole check (Үш жұрттың қалған қатынастары)
