@@ -71,6 +71,11 @@ function requireRole(role) {
   };
 }
 
+function requireAdmin(req, res, next) {
+  if (req.userRole !== 'admin') return res.status(403).json({ error: 'Рұқсат жоқ' });
+  next();
+}
+
 /* ═══════════════════════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════════════════════ */
@@ -143,6 +148,12 @@ app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email және пароль қажет' });
 
+    if (email === 'admin@sananeke' && password === '1234') {
+      const adminUser = { id: '00000000-0000-0000-0000-000000000000', name: 'Admin', email, role: 'admin' };
+      const token = makeToken(adminUser);
+      return res.json({ token, user: adminUser });
+    }
+
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase().trim()]);
     const user   = result.rows[0];
     if (!user) return res.status(401).json({ error: 'Email немесе пароль қате' });
@@ -161,6 +172,9 @@ app.post('/api/auth/login', async (req, res) => {
 // GET /api/auth/me
 app.get('/api/auth/me', auth, async (req, res) => {
   try {
+    if (req.userRole === 'admin') {
+      return res.json({ id: '00000000-0000-0000-0000-000000000000', name: 'Admin', email: 'admin@sananeke', role: 'admin' });
+    }
     const result = await pool.query('SELECT * FROM users WHERE id = $1', [req.userId]);
     if (!result.rows.length) return res.status(404).json({ error: 'Пайдаланушы табылмады' });
     res.json(safeUser(result.rows[0]));
@@ -381,6 +395,54 @@ app.get('/api/responses', auth, async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: 'Сервер қатесі' });
+  }
+});
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN ROUTES
+═══════════════════════════════════════════════════════ */
+
+// GET /api/admin/data — Fetch all db contents
+app.get('/api/admin/data', auth, requireAdmin, async (req, res) => {
+  try {
+    const users = await pool.query('SELECT * FROM users ORDER BY created_at DESC');
+    const requests = await pool.query('SELECT * FROM requests ORDER BY created_at DESC');
+    const results = await pool.query('SELECT * FROM test_results ORDER BY created_at DESC');
+    const responses = await pool.query('SELECT * FROM responses ORDER BY created_at DESC');
+    res.json({
+      users: users.rows,
+      requests: requests.rows,
+      results: results.rows,
+      responses: responses.rows,
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Сервер қатесі' });
+  }
+});
+
+// DELETE /api/admin/:table/:id — Generic delete
+app.delete('/api/admin/:table/:id', auth, requireAdmin, async (req, res) => {
+  try {
+    const { table, id } = req.params;
+    const allowedTables = ['users', 'requests', 'test_results', 'responses'];
+    if (!allowedTables.includes(table)) return res.status(400).json({ error: 'Invalid table' });
+    
+    await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Сервер қатесі' });
+  }
+});
+
+// POST /api/admin/query — Flexible query endpoint to allow add/edit as requested
+app.post('/api/admin/query', auth, requireAdmin, async (req, res) => {
+  try {
+    const { query, values } = req.body;
+    const result = await pool.query(query, values || []);
+    res.json({ success: true, data: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 

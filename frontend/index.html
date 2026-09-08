@@ -364,10 +364,10 @@ function enterApp(user) {
   document.getElementById('main-app').style.display     = 'flex';
   document.getElementById('header-greeting').textContent = `Сәлем, ${user.name.split(' ')[0]}! 👋`;
   const badge = document.getElementById('header-role-badge');
-  badge.className   = user.role === 'psychologist' ? 'role-psych' : 'role-user';
-  badge.textContent = user.role === 'psychologist' ? '🩺 Психолог' : '👤 Пайдаланушы';
+  badge.className   = user.role === 'admin' ? 'role-user' : (user.role === 'psychologist' ? 'role-psych' : 'role-user');
+  badge.textContent = user.role === 'admin' ? '👑 Әкімші' : (user.role === 'psychologist' ? '🩺 Психолог' : '👤 Пайдаланушы');
   buildTabs(user);
-  switchTab('home');
+  switchTab(user.role === 'admin' ? 'admin' : 'home');
 }
 
 /* ══════════════════════════════════════
@@ -380,14 +380,12 @@ const USER_TABS  = [
   { id:'psychs',  icon:'👨‍⚕️', label:'Психологи' },
   { id:'profile', icon:'👤', label:'Профиль'    },
 ];
-const PSYCH_TABS = [
-  { id:'home',     icon:'🏠', label:'Главная' },
-  { id:'requests', icon:'📥', label:'Запросы' },
-  { id:'profile',  icon:'👤', label:'Профиль' },
+const ADMIN_TABS = [
+  { id:'admin', icon:'⚙️', label:'Панель' }
 ];
 
 function buildTabs(user) {
-  const tabs   = user.role === 'psychologist' ? PSYCH_TABS : USER_TABS;
+  const tabs   = user.role === 'admin' ? ADMIN_TABS : (user.role === 'psychologist' ? PSYCH_TABS : USER_TABS);
   const barEl  = document.getElementById('tab-bar-inner');
   const contEl = document.getElementById('tab-contents');
   barEl.innerHTML = contEl.innerHTML = '';
@@ -419,6 +417,7 @@ function switchTab(id) {
 }
 
 function onTabActivate(id) {
+  if (id === 'admin')    renderAdmin();
   if (id === 'home')     renderHome();
   if (id === 'results')  renderResults();
   if (id === 'psychs')   renderPsychs();
@@ -1099,6 +1098,120 @@ function launchConfetti() {
     c.appendChild(p);
   }
 })();
+
+/* ══════════════════════════════════════
+   ADMIN
+══════════════════════════════════════ */
+async function renderAdmin() {
+  const el = document.getElementById('admin-inner');
+  if (!el) return;
+  el.innerHTML = '<div class="text-center py-10"><span class="spinner"></span></div>';
+  try {
+    const data = await api('GET', '/api/admin/data');
+    el.innerHTML = `
+      <div class="animate-fadeInUp space-y-5">
+        <h2 class="text-xl font-black mb-3 text-slate-800">👑 Әкімші панелі</h2>
+        
+        <div class="card p-5">
+          <h3 class="font-bold text-slate-700 mb-2">Пайдаланушылар (${data.users.length})</h3>
+          <div class="overflow-x-auto text-sm">
+            <table class="w-full text-left border-collapse">
+              <thead><tr class="bg-slate-50"><th class="p-2 border">ID</th><th class="p-2 border">Аты</th><th class="p-2 border">Email</th><th class="p-2 border">Рөл</th><th class="p-2 border">Әрекет</th></tr></thead>
+              <tbody>
+                ${data.users.map(u => `
+                  <tr class="border-t">
+                    <td class="p-2 border text-xs">${u.id.slice(0,8)}</td>
+                    <td class="p-2 border">${u.name}</td>
+                    <td class="p-2 border">${u.email}</td>
+                    <td class="p-2 border">${u.role}</td>
+                    <td class="p-2 border">
+                      <button class="text-red-500 hover:underline text-xs" onclick="adminDelete('users','${u.id}')">Өшіру</button>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <h3 class="font-bold text-slate-700 mb-2">Сұраулар (${data.requests.length})</h3>
+          <div class="overflow-x-auto text-sm">
+            <table class="w-full text-left border-collapse">
+              <thead><tr class="bg-slate-50"><th class="p-2 border">ID</th><th class="p-2 border">User ID</th><th class="p-2 border">Psych ID</th><th class="p-2 border">Әрекет</th></tr></thead>
+              <tbody>
+                ${data.requests.map(r => `
+                  <tr class="border-t">
+                    <td class="p-2 border text-xs">${r.id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs">${r.user_id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs">${r.psych_id.slice(0,8)}</td>
+                    <td class="p-2 border">
+                      <button class="text-red-500 hover:underline text-xs" onclick="adminDelete('requests','${r.id}')">Өшіру</button>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="card p-5">
+          <h3 class="font-bold text-slate-700 mb-2">Нәтижелер (${data.results.length})</h3>
+          <div class="overflow-x-auto text-sm">
+            <table class="w-full text-left border-collapse">
+              <thead><tr class="bg-slate-50"><th class="p-2 border">ID</th><th class="p-2 border">User ID</th><th class="p-2 border">Балл</th><th class="p-2 border">Әрекет</th></tr></thead>
+              <tbody>
+                ${data.results.map(r => `
+                  <tr class="border-t">
+                    <td class="p-2 border text-xs">${r.id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs">${r.user_id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs">${r.total}</td>
+                    <td class="p-2 border">
+                      <button class="text-red-500 hover:underline text-xs" onclick="adminDelete('test_results','${r.id}')">Өшіру</button>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex justify-between items-center mb-2">
+             <h3 class="font-bold text-slate-700">Қолмен SQL сұрау (Қосу/Өзгерту/Жою)</h3>
+          </div>
+          <p class="text-xs text-slate-500 mb-3">Барлық деректерді қосуға немесе өзгертуге, тексттерді ауыстыруға болады. Мысалы:<br>
+          <code class="bg-slate-100 px-1">UPDATE users SET name='Жаңа ат' WHERE id='...'</code></p>
+          <textarea id="admin-sql" class="inp mb-2 font-mono text-xs" rows="3" placeholder="UPDATE users SET name='...' WHERE id='...';"></textarea>
+          <button class="btn-primary btn-sm" onclick="adminExecSQL()">Орындау</button>
+        </div>
+
+      </div>
+    `;
+  } catch (e) {
+    el.innerHTML = `<div class="text-red-500 p-5">${e.message}</div>`;
+  }
+}
+
+async function adminDelete(table, id) {
+  if (!confirm('Шынымен өшіресіз бе?')) return;
+  try {
+    await api('DELETE', \`/api/admin/\${table}/\${id}\`);
+    showToast('✅', 'Өшірілді');
+    renderAdmin();
+  } catch (e) {
+    showToast('❌', e.message);
+  }
+}
+
+async function adminExecSQL() {
+  const query = document.getElementById('admin-sql').value.trim();
+  if (!query) return;
+  try {
+    const res = await api('POST', '/api/admin/query', { query });
+    showToast('✅', 'Орындалды');
+    renderAdmin();
+  } catch (e) {
+    showToast('❌', e.message);
+  }
+}
 
 /* ── Auto-login if token exists ── */
 (async function(){
