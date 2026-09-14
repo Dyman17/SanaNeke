@@ -120,8 +120,9 @@
     ::-webkit-scrollbar-thumb:hover{background:#94a3b8;}
 
     /* ── Range slider ── */
-    input[type=range]{-webkit-appearance:none;height:6px;border-radius:999px;background:linear-gradient(90deg,#06B6D4 var(--val,50%),#e2e8f0 var(--val,50%));outline:none;cursor:pointer;}
-    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#1E3A8A;box-shadow:0 2px 6px rgba(30,58,138,.4);transition:transform .2s;}
+    input[type=range]{appearance:none;-webkit-appearance:none;height:6px;border-radius:999px;background:linear-gradient(90deg,#06B6D4 var(--val,50%),#e2e8f0 var(--val,50%));outline:none;cursor:pointer;}
+    input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#1E3A8A;box-shadow:0 2px 6px rgba(30,58,138,.4);transition:transform .2s;}
+    input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:#1E3A8A;box-shadow:0 2px 6px rgba(30,58,138,.4);}
     input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
 
     /* ── Toast ── */
@@ -409,9 +410,10 @@ const USER_TABS = [
   { id:'profile',  icon:'👤', label:'Профиль'    },
 ];
 const PSYCH_TABS = [
-  { id:'home',     icon:'🏠', label:'Главная' },
-  { id:'requests', icon:'📥', label:'Запросы' },
-  { id:'profile',  icon:'👤', label:'Профиль' },
+  { id:'home',     icon:'🏠', label:'Главная'  },
+  { id:'requests', icon:'📥', label:'Сұраулар' },
+  { id:'shezhire', icon:'🧬', label:'Шежіре'   },
+  { id:'profile',  icon:'👤', label:'Профиль'  },
 ];
 
 function buildTabs(user) {
@@ -1201,6 +1203,24 @@ function renderShezhireTab() {
             <div id="idx-7ata-verdict" class="hidden rounded-xl p-3.5 text-xs font-bold"></div>
           </div>
         </div>
+      </div>
+
+      <!-- Tumalas.kz Portal Integration Banner (Last element of Shezhire page) -->
+      <div class="card p-6 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-5 relative overflow-hidden shadow-xl border border-slate-700">
+        <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="relative z-10 max-w-xl">
+          <div class="inline-flex items-center gap-2 bg-white/10 text-cyan-300 text-xs px-3 py-1 rounded-full mb-2 font-bold">
+            🌐 Серіктес ресурс: Tumalas.kz
+          </div>
+          <h3 class="font-black text-lg text-white mb-1">Шежіреңізді Tumalas.kz онлайн қорынан табыңыз</h3>
+          <p class="text-xs text-blue-200 leading-relaxed">
+            Tumalas.kz — қазақ рулары мен шежіресінің ең ірі электронды деректер базасы. Егер 7 атаңызды толық білмесеңіз, сайттан өз руыңыз бен аталық шежіреңізді іздеп, нақтылай аласыз.
+          </p>
+        </div>
+        <a href="https://tumalas.kz/" target="_blank" rel="noopener noreferrer" class="btn-cyan py-3 px-6 text-xs font-bold whitespace-nowrap shadow-lg hover:scale-105 transition-transform relative z-10 flex items-center gap-2">
+          <span>Tumalas.kz-тен іздеу</span>
+          <span>↗</span>
+        </a>
       </div>
     </div>
   `;
