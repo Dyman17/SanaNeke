@@ -200,50 +200,46 @@
         <p class="text-center text-sm text-slate-500 mt-4">Аккаунт жоқ па? <button onclick="showAuthForm('register')" class="text-blue-600 font-semibold hover:underline">Тіркелу</button></p>
       </div>
 
-      <!-- Register Form -->
+      <!-- Register (WhatsApp based) -->
       <div id="auth-register" style="display:none">
-        <div class="flex items-center gap-3 mb-6">
+        <div class="flex items-center gap-3 mb-4">
           <button onclick="showAuthForm('landing')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">←</button>
-          <h2 class="text-xl font-black text-slate-800">Тіркелу</h2>
+          <h2 class="text-xl font-black text-slate-800">Тіркелу және аккаунт алу</h2>
         </div>
-        <div class="space-y-4">
-          <div>
-            <label class="inp-label">Аты (Имя)</label>
-            <input type="text" id="reg-name" class="inp" placeholder="Аты-жөніңіз"/>
+        <div class="space-y-4 text-center">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl shadow-sm">
+            💬
           </div>
           <div>
-            <label class="inp-label">Email</label>
-            <input type="email" id="reg-email" class="inp" placeholder="email@example.com"/>
-          </div>
-          <div>
-            <label class="inp-label">Пароль</label>
-            <input type="password" id="reg-password" class="inp" placeholder="Кем дегенде 6 символ"/>
-          </div>
-          <div>
-            <label class="inp-label">Рөлі (Роль)</label>
-            <select id="reg-role" class="inp" onchange="togglePsychFields()">
-              <option value="user">👤 Қолданушы (Обычный пользователь)</option>
-              <option value="psychologist">🩺 Психолог</option>
-            </select>
-          </div>
-          <div id="psych-extra-fields" style="display:none" class="space-y-3 animate-fadeIn">
-            <div>
-              <label class="inp-label">Мамандық (Специализация)</label>
-              <input type="text" id="reg-specialization" class="inp" placeholder="мыс. Отбасылық психолог"/>
-            </div>
-            <div>
-              <label class="inp-label">Қысқаша сипаттама</label>
-              <textarea id="reg-bio" class="inp" rows="2" placeholder="Өзіңіз туралы қысқаша жазыңыз..."></textarea>
-            </div>
-            <div>
-              <label class="inp-label">Сессия бағасы (₸)</label>
-              <input type="number" id="reg-price" class="inp" placeholder="15000" min="0"/>
+            <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-2">
+              🔒 Платформаға кіру ақылы
+            </span>
+            <h3 class="text-base font-bold text-slate-800">Аккаунт ашу үшін WhatsApp-қа жазыңыз</h3>
+            <div class="text-xs text-slate-600 mt-2 leading-relaxed text-left bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+              <div><b>1. WhatsApp арқылы хабарласып</b>, тіркелу ақысын төлеңіз.</div>
+              <div><b>2. Әкімші сізге жеке логин (email) мен құпиясөзді</b> жасап береді.</div>
+              <div><b>3. «Кіру» бөліміне өтіп</b>, берілген парольмен платформаны толық пайдалана бересіз.</div>
             </div>
           </div>
-          <p class="text-red-500 text-xs font-medium" id="reg-error" style="display:none"></p>
-          <button class="btn-cyan w-full py-3 mt-2" onclick="doRegister()">Тіркелу ✓</button>
+
+          <div class="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-2 border-emerald-500/30 rounded-2xl p-3.5">
+            <div class="text-xs text-slate-500 font-semibold mb-1">Әкімшінің WhatsApp нөмірі:</div>
+            <div class="text-xl font-black text-emerald-700 tracking-wide font-mono">+7 775 184 14 34</div>
+          </div>
+
+          <a href="https://wa.me/77751841434?text=%D0%A1%D3%99%D0%BB%D0%B5%D0%BC%D0%B5%D1%82%D1%81%D1%96%D0%B7%20%D0%B1%D0%B5!%20SanaNeke%20%D0%BF%D0%BB%D0%B0%D1%82%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%81%D1%8B%D0%BD%D0%B0%20%D1%82%D1%96%D1%80%D0%BA%D0%B5%D0%BB%D1%96%D0%BF,%20%D0%B0%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82%20%D1%81%D0%B0%D1%82%D1%8B%D0%BF%20%D0%B0%D0%BB%D1%83%20%D2%AF%D1%88%D1%96%D0%BD%20%D0%B6%D0%B0%D0%B7%D1%8B%D0%BF%20%D1%82%D3%99%D1%80%D0%BC%D1%8B%D0%BD." 
+             target="_blank" 
+             rel="noopener noreferrer"
+             class="btn-green w-full py-3.5 flex items-center justify-center gap-2 text-sm font-bold shadow-lg shadow-emerald-600/20 block text-center">
+            <span>📲 WhatsApp-қа жазу (+77751841434)</span>
+          </a>
+
+          <div class="pt-1">
+            <button onclick="showAuthForm('login')" class="btn-ghost w-full py-2.5 text-xs font-bold">
+              🔑 Пароль алдым — Кіру
+            </button>
+          </div>
         </div>
-        <p class="text-center text-sm text-slate-500 mt-4">Аккаунт бар ма? <button onclick="showAuthForm('login')" class="text-blue-600 font-semibold hover:underline">Кіру</button></p>
       </div>
 
     </div>

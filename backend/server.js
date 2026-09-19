@@ -40,6 +40,42 @@ async function initDB() {
     const schemaPath = path.join(__dirname, 'db', 'schema.sql');
     const schema     = fs.readFileSync(schemaPath, 'utf8');
     await pool.query(schema);
+
+    // Ensure reviews table exists even if db was already initialized earlier
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS reviews (
+        id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        psych_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        user_id     UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        rating      INTEGER     NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        comment     TEXT        NOT NULL,
+        created_at  TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE (psych_id, user_id)
+      );
+      CREATE INDEX IF NOT EXISTS idx_reviews_psych ON reviews(psych_id);
+      CREATE INDEX IF NOT EXISTS idx_reviews_user  ON reviews(user_id);
+    `);
+
+    // ── Migration: psychologist verification + certificates ──
+    await pool.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified     BOOLEAN DEFAULT FALSE;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates    TEXT;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS achievements    TEXT;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS education       TEXT;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS experience_years INTEGER DEFAULT 0;
+    `);
+
+    // ── Migration: transparent finance calculator fields ──
+    await pool.query(`
+      ALTER TABLE test_results ADD COLUMN IF NOT EXISTS region           TEXT;
+      ALTER TABLE test_results ADD COLUMN IF NOT EXISTS pm_value         INTEGER;
+      ALTER TABLE test_results ADD COLUMN IF NOT EXISTS children_planned INTEGER DEFAULT 0;
+      ALTER TABLE test_results ADD COLUMN IF NOT EXISTS housing          TEXT;
+      ALTER TABLE test_results ADD COLUMN IF NOT EXISTS rent_amount      BIGINT DEFAULT 0;
+      ALTER TABLE test_results ADD COLUMN IF NOT EXISTS debt_monthly     BIGINT DEFAULT 0;
+      ALTER TABLE test_results ADD COLUMN IF NOT EXISTS fin_detail       JSONB;
+    `);
+
     console.log('✅ Database schema applied');
   } catch (err) {
     console.error('❌ DB init error:', err.message);
@@ -98,48 +134,12 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
    AUTH
 ═══════════════════════════════════════════════════════ */
 
-// POST /api/auth/register
+// POST /api/auth/register — Public self-registration directs to WhatsApp
 app.post('/api/auth/register', async (req, res) => {
-  try {
-    const { name, email, password, role, specialization, bio, price } = req.body;
-
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ error: 'Барлық өрістерді толтырыңыз' });
-    }
-    if (!['user', 'psychologist'].includes(role)) {
-      return res.status(400).json({ error: 'Жарамсыз рөл' });
-    }
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Пароль кем дегенде 6 символ' });
-    }
-
-    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
-    if (existing.rows.length) {
-      return res.status(409).json({ error: 'Бұл email тіркелген' });
-    }
-
-    const hash = await bcrypt.hash(password, 12);
-    const result = await pool.query(
-      `INSERT INTO users (name, email, password_hash, role, specialization, bio, price)
-       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-      [
-        name.trim(),
-        email.toLowerCase().trim(),
-        hash,
-        role,
-        specialization?.trim() || null,
-        bio?.trim() || null,
-        parseInt(price) || 0,
-      ]
-    );
-
-    const user  = result.rows[0];
-    const token = makeToken(user);
-    res.status(201).json({ token, user: safeUser(user) });
-  } catch (err) {
-    console.error('register error:', err);
-    res.status(500).json({ error: 'Сервер қатесі' });
-  }
+  return res.status(403).json({
+    error: 'Платформаға тіркелу ақылы. Аккаунт ашу үшін WhatsApp-қа жазыңыз: +77751841434',
+    whatsapp: '+77751841434'
+  });
 });
 
 // POST /api/auth/login
@@ -187,17 +187,22 @@ app.get('/api/auth/me', auth, async (req, res) => {
    USERS — Profile update
 ═══════════════════════════════════════════════════════ */
 
-// PUT /api/users/profile
+// PUT /api/users/profile — psychologist can edit certs/achievements (verification stays with admin)
 app.put('/api/users/profile', auth, async (req, res) => {
   try {
-    const { specialization, bio, price } = req.body;
+    const { specialization, bio, price, certificates, achievements, education, experience_years } = req.body;
     const result = await pool.query(
-      `UPDATE users SET specialization=$1, bio=$2, price=$3
-       WHERE id=$4 RETURNING *`,
+      `UPDATE users SET specialization=$1, bio=$2, price=$3,
+        certificates=$4, achievements=$5, education=$6, experience_years=$7
+       WHERE id=$8 RETURNING *`,
       [
         specialization?.trim() || null,
         bio?.trim() || null,
         parseInt(price) || 0,
+        certificates?.trim() || null,
+        achievements?.trim() || null,
+        education?.trim() || null,
+        Math.max(0, parseInt(experience_years) || 0),
         req.userId,
       ]
     );
@@ -212,15 +217,84 @@ app.put('/api/users/profile', auth, async (req, res) => {
    PSYCHOLOGISTS
 ═══════════════════════════════════════════════════════ */
 
-// GET /api/psychologists
+// GET /api/psychologists — Includes verification, certs + OLX-style rating.
+// Regular users see ONLY verified psychologists; psych/admin see all (for moderation).
 app.get('/api/psychologists', auth, async (req, res) => {
   try {
+    const onlyVerified = req.userRole === 'user';
     const result = await pool.query(
-      `SELECT id, name, email, role, specialization, bio, price, created_at
-       FROM users WHERE role = 'psychologist' ORDER BY created_at DESC`
+      `SELECT u.id, u.name, u.email, u.role, u.specialization, u.bio, u.price, u.created_at,
+              u.is_verified, u.certificates, u.achievements, u.education, u.experience_years,
+              COALESCE(ROUND(AVG(r.rating)::numeric, 1), 0)::float AS avg_rating,
+              COUNT(r.id)::int AS review_count
+       FROM users u
+       LEFT JOIN reviews r ON r.psych_id = u.id
+       WHERE u.role = 'psychologist' ${onlyVerified ? "AND u.is_verified = TRUE" : ""}
+       GROUP BY u.id
+       ORDER BY u.is_verified DESC, avg_rating DESC, u.created_at DESC`
     );
     res.json(result.rows);
   } catch (err) {
+    console.error('get psychologists error:', err);
+    res.status(500).json({ error: 'Сервер қатесі' });
+  }
+});
+
+// GET /api/psychologists/:id/reviews — Fetch reviews for a psychologist
+app.get('/api/psychologists/:id/reviews', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `SELECT r.id, r.psych_id, r.user_id, r.rating, r.comment, r.created_at,
+              u.name AS user_name
+       FROM reviews r
+       JOIN users u ON u.id = r.user_id
+       WHERE r.psych_id = $1
+       ORDER BY r.created_at DESC`,
+      [id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('get reviews error:', err);
+    res.status(500).json({ error: 'Сервер қатесі' });
+  }
+});
+
+// POST /api/psychologists/:id/reviews — User submits review (1-5 stars & comment)
+app.post('/api/psychologists/:id/reviews', auth, requireRole('user'), async (req, res) => {
+  try {
+    const { id: psych_id } = req.params;
+    const { rating, comment } = req.body;
+    const numRating = parseInt(rating);
+
+    if (!numRating || numRating < 1 || numRating > 5) {
+      return res.status(400).json({ error: 'Баға 1 мен 5 жұлдыз аралығында болуы керек' });
+    }
+    if (!comment || !comment.trim()) {
+      return res.status(400).json({ error: 'Пікір мәтінін жазыңыз' });
+    }
+
+    // Verify interaction (user has sent a request to this psychologist)
+    const reqRow = await pool.query(
+      'SELECT id FROM requests WHERE user_id = $1 AND psych_id = $2',
+      [req.userId, psych_id]
+    );
+    if (!reqRow.rows.length) {
+      return res.status(403).json({ error: 'Пікір қалдыру үшін алдымен осы психологқа сұрау жіберу қажет' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO reviews (psych_id, user_id, rating, comment)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (psych_id, user_id)
+       DO UPDATE SET rating = EXCLUDED.rating, comment = EXCLUDED.comment, created_at = NOW()
+       RETURNING *`,
+      [psych_id, req.userId, numRating, comment.trim()]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('post review error:', err);
     res.status(500).json({ error: 'Сервер қатесі' });
   }
 });
@@ -229,18 +303,28 @@ app.get('/api/psychologists', auth, async (req, res) => {
    TEST RESULTS
 ═══════════════════════════════════════════════════════ */
 
-// POST /api/results
+// POST /api/results — saves transparent finance breakdown (region/PM/children/housing/rent/debts)
 app.post('/api/results', auth, async (req, res) => {
   try {
-    const { scores, total, calc_bonus, income, expense } = req.body;
+    const { scores, total, calc_bonus, income, expense,
+            region, pm_value, children_planned, housing,
+            rent_amount, debt_monthly, fin_detail } = req.body;
     if (!scores || total === undefined) {
       return res.status(400).json({ error: 'scores және total қажет' });
     }
 
     const result = await pool.query(
-      `INSERT INTO test_results (user_id, scores, total, calc_bonus, income, expense)
-       VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-      [req.userId, JSON.stringify(scores), total, calc_bonus || null, income || null, expense || null]
+      `INSERT INTO test_results (user_id, scores, total, calc_bonus, income, expense,
+                                 region, pm_value, children_planned, housing,
+                                 rent_amount, debt_monthly, fin_detail)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+      [req.userId, JSON.stringify(scores), total, calc_bonus || null, income || null, expense || null,
+       region || null, pm_value ? parseInt(pm_value) : null,
+       Math.max(0, parseInt(children_planned) || 0),
+       (housing === 'rent' || housing === 'own') ? housing : null,
+       Math.max(0, parseInt(rent_amount) || 0),
+       Math.max(0, parseInt(debt_monthly) || 0),
+       fin_detail ? JSON.stringify(fin_detail) : null]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -300,9 +384,11 @@ app.get('/api/requests', auth, async (req, res) => {
     let result;
     if (req.userRole === 'psychologist') {
       result = await pool.query(
-        `SELECT r.*, 
+        `SELECT r.*,
                 u.name AS user_name,
-                tr.scores, tr.total, tr.calc_bonus, tr.income, tr.expense
+                tr.scores, tr.total, tr.calc_bonus, tr.income, tr.expense,
+                tr.region, tr.pm_value, tr.children_planned, tr.housing,
+                tr.rent_amount, tr.debt_monthly, tr.fin_detail
          FROM requests r
          JOIN users u ON u.id = r.user_id
          LEFT JOIN test_results tr ON tr.id = r.result_id
@@ -402,18 +488,110 @@ app.get('/api/responses', auth, async (req, res) => {
    ADMIN ROUTES
 ═══════════════════════════════════════════════════════ */
 
-// GET /api/admin/data — Fetch all db contents
+// POST /api/admin/users — Admin creates account AFTER manual check (psychologists start as UNVERIFIED)
+app.post('/api/admin/users', auth, requireAdmin, async (req, res) => {
+  try {
+    const { name, email, password, role, specialization, bio, price,
+            certificates, achievements, education, experience_years, is_verified } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Аты, email және пароль міндетті' });
+    }
+    const userRole = role === 'psychologist' ? 'psychologist' : 'user';
+
+    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase().trim()]);
+    if (existing.rows.length) {
+      return res.status(409).json({ error: 'Бұл email тіркелген' });
+    }
+
+    const hash = await bcrypt.hash(password, 12);
+    const result = await pool.query(
+      `INSERT INTO users (name, email, password_hash, role, specialization, bio, price,
+                          certificates, achievements, education, experience_years, is_verified)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       RETURNING *`,
+      [
+        name.trim(),
+        email.toLowerCase().trim(),
+        hash,
+        userRole,
+        specialization?.trim() || null,
+        bio?.trim() || null,
+        parseInt(price) || 0,
+        certificates?.trim() || null,
+        achievements?.trim() || null,
+        education?.trim() || null,
+        Math.max(0, parseInt(experience_years) || 0),
+        // Psychologists are UNVERIFIED by default until admin checks certs; users → verified
+        userRole === 'psychologist' ? !!is_verified : true,
+      ]
+    );
+
+    res.status(201).json(safeUser(result.rows[0]));
+  } catch (err) {
+    console.error('admin create user error:', err);
+    res.status(500).json({ error: 'Сервер қатесі: ' + err.message });
+  }
+});
+
+// PUT /api/admin/users/:id — Admin edits psychologist card + verifies/unverifies
+app.put('/api/admin/users/:id', auth, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, specialization, bio, price, certificates, achievements,
+            education, experience_years, is_verified } = req.body;
+    const result = await pool.query(
+      `UPDATE users SET
+         name             = COALESCE($1, name),
+         specialization   = COALESCE($2, specialization),
+         bio              = COALESCE($3, bio),
+         price            = COALESCE($4, price),
+         certificates     = COALESCE($5, certificates),
+         achievements     = COALESCE($6, achievements),
+         education        = COALESCE($7, education),
+         experience_years = COALESCE($8, experience_years),
+         is_verified      = COALESCE($9, is_verified)
+       WHERE id = $10 RETURNING *`,
+      [
+        name?.trim() || null,
+        specialization?.trim() || null,
+        bio?.trim() || null,
+        price !== undefined ? parseInt(price) || 0 : null,
+        certificates?.trim() || null,
+        achievements?.trim() || null,
+        education?.trim() || null,
+        experience_years !== undefined ? Math.max(0, parseInt(experience_years) || 0) : null,
+        typeof is_verified === 'boolean' ? is_verified : null,
+        id,
+      ]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Пайдаланушы табылмады' });
+    res.json(safeUser(result.rows[0]));
+  } catch (err) {
+    console.error('admin update user error:', err);
+    res.status(500).json({ error: 'Сервер қатесі' });
+  }
+});
+
+// GET /api/admin/data — Fetch all db contents including reviews
 app.get('/api/admin/data', auth, requireAdmin, async (req, res) => {
   try {
     const users = await pool.query('SELECT * FROM users ORDER BY created_at DESC');
     const requests = await pool.query('SELECT * FROM requests ORDER BY created_at DESC');
     const results = await pool.query('SELECT * FROM test_results ORDER BY created_at DESC');
     const responses = await pool.query('SELECT * FROM responses ORDER BY created_at DESC');
+    const reviews = await pool.query(`
+      SELECT r.*, u.name AS user_name, p.name AS psych_name
+      FROM reviews r
+      JOIN users u ON u.id = r.user_id
+      JOIN users p ON p.id = r.psych_id
+      ORDER BY r.created_at DESC
+    `);
     res.json({
       users: users.rows,
       requests: requests.rows,
       results: results.rows,
       responses: responses.rows,
+      reviews: reviews.rows,
     });
   } catch (err) {
     res.status(500).json({ error: 'Сервер қатесі' });
@@ -424,7 +602,7 @@ app.get('/api/admin/data', auth, requireAdmin, async (req, res) => {
 app.delete('/api/admin/:table/:id', auth, requireAdmin, async (req, res) => {
   try {
     const { table, id } = req.params;
-    const allowedTables = ['users', 'requests', 'test_results', 'responses'];
+    const allowedTables = ['users', 'requests', 'test_results', 'responses', 'reviews'];
     if (!allowedTables.includes(table)) return res.status(400).json({ error: 'Invalid table' });
     
     await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);

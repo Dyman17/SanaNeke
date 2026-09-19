@@ -127,7 +127,7 @@
         <p class="text-slate-500 text-center text-sm mb-8">Платформаны пайдалану үшін кіріңіз немесе тіркеліңіз</p>
         <div class="flex flex-col gap-3">
           <button class="btn-primary w-full py-3 text-base" onclick="showAuthForm('login')">🔑 Кіру</button>
-          <button class="btn-cyan w-full py-3 text-base" onclick="showAuthForm('register')">✨ Тіркелу</button>
+          <button class="btn-cyan w-full py-3 text-base" onclick="showAuthForm('register')">✨ Тіркелу (WhatsApp)</button>
         </div>
       </div>
 
@@ -150,54 +150,49 @@
           <button id="login-btn" class="btn-primary w-full py-3 mt-2" onclick="doLogin()">Кіру →</button>
         </div>
         <p class="text-center text-sm text-slate-500 mt-4">Аккаунт жоқ па?
-          <button onclick="showAuthForm('register')" class="text-blue-600 font-semibold hover:underline">Тіркелу</button></p>
+          <button onclick="showAuthForm('register')" class="text-emerald-600 font-bold hover:underline">Тіркелу (WhatsApp)</button></p>
       </div>
 
-      <!-- Register -->
+      <!-- Register (WhatsApp based) -->
       <div id="auth-register" style="display:none">
-        <div class="flex items-center gap-3 mb-6">
+        <div class="flex items-center gap-3 mb-4">
           <button onclick="showAuthForm('landing')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">←</button>
-          <h2 class="text-xl font-black text-slate-800">Тіркелу</h2>
+          <h2 class="text-xl font-black text-slate-800">Тіркелу және аккаунт алу</h2>
         </div>
-        <div class="space-y-4">
-          <div>
-            <label class="inp-label">Аты</label>
-            <input type="text" id="reg-name" class="inp" placeholder="Аты-жөніңіз"/>
+        <div class="space-y-4 text-center">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl shadow-sm">
+            💬
           </div>
           <div>
-            <label class="inp-label">Email</label>
-            <input type="email" id="reg-email" class="inp" placeholder="email@example.com"/>
-          </div>
-          <div>
-            <label class="inp-label">Пароль</label>
-            <input type="password" id="reg-password" class="inp" placeholder="Кем дегенде 6 символ"/>
-          </div>
-          <div>
-            <label class="inp-label">Рөлі</label>
-            <select id="reg-role" class="inp" onchange="togglePsychFields()">
-              <option value="user">👤 Қолданушы</option>
-              <option value="psychologist">🩺 Психолог</option>
-            </select>
-          </div>
-          <div id="psych-extra" style="display:none" class="space-y-3 animate-fadeIn">
-            <div>
-              <label class="inp-label">Мамандық</label>
-              <input type="text" id="reg-spec" class="inp" placeholder="мыс. Отбасылық психолог"/>
-            </div>
-            <div>
-              <label class="inp-label">Қысқаша сипаттама</label>
-              <textarea id="reg-bio" class="inp" rows="2" placeholder="Өзіңіз туралы..."></textarea>
-            </div>
-            <div>
-              <label class="inp-label">Сессия бағасы (₸)</label>
-              <input type="number" id="reg-price" class="inp" placeholder="15000" min="0"/>
+            <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-2">
+              🔒 Платформаға кіру ақылы
+            </span>
+            <h3 class="text-base font-bold text-slate-800">Аккаунт ашу үшін WhatsApp-қа жазыңыз</h3>
+            <div class="text-xs text-slate-600 mt-2 leading-relaxed text-left bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+              <div><b>1. WhatsApp арқылы хабарласып</b>, тіркелу ақысын төлеңіз.</div>
+              <div><b>2. Әкімші сізге жеке логин (email) мен құпиясөзді</b> жасап береді.</div>
+              <div><b>3. «Кіру» бөліміне өтіп</b>, берілген парольмен платформаны толық пайдалана бересіз.</div>
             </div>
           </div>
-          <p class="text-red-500 text-xs font-medium hidden" id="reg-error"></p>
-          <button id="reg-btn" class="btn-cyan w-full py-3 mt-2" onclick="doRegister()">Тіркелу ✓</button>
+
+          <div class="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-2 border-emerald-500/30 rounded-2xl p-3.5">
+            <div class="text-xs text-slate-500 font-semibold mb-1">Әкімшінің WhatsApp нөмірі:</div>
+            <div class="text-xl font-black text-emerald-700 tracking-wide font-mono">+7 775 184 14 34</div>
+          </div>
+
+          <a href="https://wa.me/77751841434?text=%D0%A1%D3%99%D0%BB%D0%B5%D0%BC%D0%B5%D1%82%D1%81%D1%96%D0%B7%20%D0%B1%D0%B5!%20SanaNeke%20%D0%BF%D0%BB%D0%B0%D1%82%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%81%D1%8B%D0%BD%D0%B0%20%D1%82%D1%96%D1%80%D0%BA%D0%B5%D0%BB%D1%96%D0%BF,%20%D0%B0%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82%20%D1%81%D0%B0%D1%82%D1%8B%D0%BF%20%D0%B0%D0%BB%D1%83%20%D2%AF%D1%88%D1%96%D0%BD%20%D0%B6%D0%B0%D0%B7%D1%8B%D0%BF%20%D1%82%D3%99%D1%80%D0%BC%D1%8B%D0%BD." 
+             target="_blank" 
+             rel="noopener noreferrer"
+             class="btn-green w-full py-3.5 flex items-center justify-center gap-2 text-sm font-bold shadow-lg shadow-emerald-600/20 block text-center">
+            <span>📲 WhatsApp-қа жазу (+77751841434)</span>
+          </a>
+
+          <div class="pt-1">
+            <button onclick="showAuthForm('login')" class="btn-ghost w-full py-2.5 text-xs font-bold">
+              🔑 Пароль алдым — Кіру
+            </button>
+          </div>
         </div>
-        <p class="text-center text-sm text-slate-500 mt-4">Аккаунт бар ма?
-          <button onclick="showAuthForm('login')" class="text-blue-600 font-semibold hover:underline">Кіру</button></p>
       </div>
 
     </div>
@@ -566,29 +561,72 @@ function buildDiagScaffold() {
 
     <div id="diag-finance-tool" style="display:none" class="animate-fadeInUp">
       <div class="card p-6 mb-4">
-        <h3 class="font-black text-slate-800 mb-1">🧮 Қосымша: Қаржылық калькулятор</h3>
-        <p class="text-sm text-slate-500 mb-5">Міндетті емес, бірақ нақтырақ нәтиже береді</p>
+        <h3 class="font-black text-slate-800 mb-1">🧮 Қаржылық калькулятор (толық әрі ашық есеп)</h3>
+        <p class="text-sm text-slate-500 mb-1">Міндетті емес, бірақ нәтижені нақтылайды. Формула төменде ашық көрсетілген.</p>
+        <button class="text-xs text-blue-700 font-bold hover:underline mb-4" onclick="document.getElementById('fc-how').classList.toggle('hidden')">❓ Қалай есептеледі? (басыңыз)</button>
+        <div id="fc-how" class="hidden text-xs text-slate-600 bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-4 leading-relaxed space-y-1.5">
+          <div><b>1-қадам.</b> Өңір бойынша ең төменгі күнкөріс деңгейі (ПМ) алынады. Норма: <b>әр адамға = ПМ × 1,5</b>.</div>
+          <div><b>2-қадам.</b> Отбасы құрамы: <b>2 ересек + 5 жылда жоспарлаған бала саны</b>. Отбасылық норма: <b>ПМ × 1,5 × отбасы саны</b>.</div>
+          <div><b>3-қадам.</b> Міндетті шығын: <b>тұрмыстық шығын + жалдау ақысы (егер жалдамалы болса) + несие/ипотека төлемі</b>. Таза қалдық: <b>табыс − міндетті шығын</b>.</div>
+          <div><b>4-қадам.</b> Ұпайлар: <b>қамту (50%)</b> = табыс ÷ норма; <b>тұрақтылық (30%)</b> = таза қалдық ÷ норма; <b>борыш жүктемесі (20%)</b> = несие ÷ табыс (30%-дан асса — айыппұл). Қорытынды бонус 0–100.</div>
+          <div><b>5-қадам.</b> Қаржы блогы: <b>сауалнама 60% + калькулятор 40%</b>. Яғни қарыз бен жалдау ақысы нәтижені төмендетеді — бұл әділ.</div>
+          <div class="text-slate-400">ПМ мәндері — ҚР Ұлттық статистика бюросының 2025 ж. өңірлік деректеріне негізделген бағдар (нақты санды әкімші жаңарта алады).</div>
+        </div>
         <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label class="inp-label">Ай табысы (₸)</label>
+            <label class="inp-label">Отбасылық ай табысы (₸)</label>
             <input type="number" id="fc-income" class="inp" placeholder="500000" min="0" oninput="updateFCPreview()"/>
           </div>
           <div>
-            <label class="inp-label">Тұрақты шығын (₸)</label>
+            <label class="inp-label">Тұрмыстық шығын/ай (₸)</label>
             <input type="number" id="fc-expense" class="inp" placeholder="250000" min="0" oninput="updateFCPreview()"/>
           </div>
         </div>
-        <div class="mb-4">
-          <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
-            <span>MKD деңгейі</span><span id="fc-thr-display">150,000 ₸</span>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="inp-label">Өңір (ПМ соған байланысты)</label>
+            <select id="fc-region" class="inp text-sm" onchange="updateFCPreview()"></select>
+            <div class="text-[11px] text-slate-500 mt-1">ПМ: <b id="fc-pm-display">—</b> · Норма/адам (×1,5): <b id="fc-norm-display">—</b></div>
           </div>
-          <input type="range" id="fc-threshold" min="50000" max="500000" step="10000" value="150000" class="w-full" oninput="updateFCThreshold(this.value)"/>
+          <div>
+            <label class="inp-label">5 жылда жоспарлаған бала саны</label>
+            <select id="fc-children" class="inp" onchange="updateFCPreview()">
+              <option value="0">0 бала</option>
+              <option value="1" selected>1 бала</option>
+              <option value="2">2 бала</option>
+              <option value="3">3 бала</option>
+              <option value="4">4+ бала</option>
+            </select>
+            <div class="text-[11px] text-slate-500 mt-1">Отбасы құрамы: <b id="fc-family-display">3 адам</b></div>
+          </div>
         </div>
-        <div id="fc-preview" class="grid grid-cols-3 gap-3 text-center hidden">
-          <div class="bg-slate-50 rounded-xl p-3"><div class="text-lg font-black text-slate-700" id="fc-d-i">—</div><div class="text-xs text-slate-400">Табыс</div></div>
-          <div class="bg-slate-50 rounded-xl p-3"><div class="text-lg font-black text-slate-700" id="fc-d-e">—</div><div class="text-xs text-slate-400">Шығын</div></div>
-          <div class="bg-slate-50 rounded-xl p-3"><div class="text-lg font-black" id="fc-d-n">—</div><div class="text-xs text-slate-400">Таза кіріс</div></div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="inp-label">Тұрғын үй</label>
+            <select id="fc-housing" class="inp" onchange="updateFCPreview()">
+              <option value="own">🏠 Өз үйім</option>
+              <option value="rent">🔑 Жалдамалы пәтер</option>
+            </select>
+          </div>
+          <div id="fc-rent-wrap" style="display:none">
+            <label class="inp-label">Жалдау ақысы/ай (₸)</label>
+            <input type="number" id="fc-rent" class="inp" placeholder="150000" min="0" oninput="updateFCPreview()"/>
+          </div>
         </div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="inp-label">Несие / ипотека бар ма?</label>
+            <select id="fc-has-debt" class="inp" onchange="updateFCPreview()">
+              <option value="no">Жоқ</option>
+              <option value="yes">Иә, бар</option>
+            </select>
+          </div>
+          <div id="fc-debt-wrap" style="display:none">
+            <label class="inp-label">Ай сайынғы төлем (₸)</label>
+            <input type="number" id="fc-debt" class="inp" placeholder="80000" min="0" oninput="updateFCPreview()"/>
+          </div>
+        </div>
+        <div id="fc-preview" class="hidden rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs space-y-2"></div>
       </div>
       <div class="flex gap-3">
         <button class="btn-ghost flex-1 py-3" onclick="showTestView()">← Артқа</button>
@@ -656,7 +694,8 @@ function diagNav(dir) {
   if (next > 3) {
     document.getElementById('diag-test-view').style.display    = 'none';
     document.getElementById('diag-finance-tool').style.display = 'block';
-    updateFCThreshold(150000);
+    fcInitRegionSelect();
+    updateFCPreview();
     return;
   }
   renderCatQuestions(next);
@@ -668,26 +707,104 @@ function showTestView() {
   renderCatQuestions(3);
 }
 
-function updateFCThreshold(val) {
-  const slider = document.getElementById('fc-threshold');
-  if (slider) { slider.value = val; const pct = ((val-slider.min)/(slider.max-slider.min))*100; slider.style.setProperty('--val',pct+'%'); }
-  const d = document.getElementById('fc-thr-display');
-  if (d) d.textContent = fmtKZT(val)+' ₸';
-  updateFCPreview();
+/* ── Finance calculator v2: transparent formula ──
+   REGION_PM — бағдарлы ПМ (2025, ҚР өңірлері). Нақтысын әкімші SQL арқылы жаңарта алады. */
+const REGION_PM = {
+  'Астана қ.': 55300, 'Алматы қ.': 55800, 'Шымкент қ.': 49600,
+  'Абай обл.': 47200, 'Ақмола обл.': 47800, 'Ақтөбе обл.': 48500,
+  'Алматы обл.': 48300, 'Атырау обл.': 52400, 'ШҚО': 47600,
+  'Жамбыл обл.': 46200, 'Жетісу обл.': 47100, 'Қарағанды обл.': 48900,
+  'Қостанай обл.': 47500, 'Қызылорда обл.': 46800, 'Маңғыстау обл.': 53500,
+  'Павлодар обл.': 48100, 'СҚО': 46900, 'Түркістан обл.': 45800,
+  'Ұлытау обл.': 49000, 'БҚО': 47900,
+};
+
+function fcReadInputs() {
+  const income   = Math.max(0, parseFloat(document.getElementById('fc-income')?.value)  || 0);
+  const expense  = Math.max(0, parseFloat(document.getElementById('fc-expense')?.value) || 0);
+  const region   = document.getElementById('fc-region')?.value || 'Алматы қ.';
+  const pm       = REGION_PM[region] || 48000;
+  const children = Math.max(0, parseInt(document.getElementById('fc-children')?.value) || 0);
+  const housing  = document.getElementById('fc-housing')?.value === 'rent' ? 'rent' : 'own';
+  const hasDebt  = document.getElementById('fc-has-debt')?.value === 'yes';
+  const rent     = housing === 'rent' ? Math.max(0, parseFloat(document.getElementById('fc-rent')?.value) || 0) : 0;
+  const debt     = hasDebt ? Math.max(0, parseFloat(document.getElementById('fc-debt')?.value) || 0) : 0;
+  return { income, expense, region, pm, children, housing, rent, debt };
+}
+
+/* Core transparent calculation — single source of truth for preview + save */
+function fcCalculate(inp) {
+  const family   = 2 + inp.children;                 // 2 ересек + жоспарлаған бала
+  const perCapitaNorm = inp.pm * 1.5;                // әр адамға минимум
+  const need     = Math.round(perCapitaNorm * family); // отбасылық норма
+  const obligatory = inp.expense + inp.rent + inp.debt;
+  const net      = inp.income - obligatory;
+  const perCapita = inp.income > 0 ? inp.income / family : 0;
+  const coverage = need > 0 ? inp.income / need : 0;
+  const debtLoad = inp.income > 0 ? inp.debt / inp.income : 0;
+
+  const covScore = Math.max(0, Math.min(100, Math.round(coverage * 100)));
+  const netScore = net <= 0 ? 0 : Math.max(0, Math.min(100, Math.round((net / need) * 200)));
+  let debtScore = 100;
+  if (inp.debt > 0) {
+    if (debtLoad <= 0.2) debtScore = 85;
+    else if (debtLoad <= 0.3) debtScore = 65;
+    else if (debtLoad <= 0.5) debtScore = 35;
+    else debtScore = 10;
+  }
+  const calcBonus = Math.max(0, Math.min(100, Math.round(covScore * 0.5 + netScore * 0.3 + debtScore * 0.2)));
+  let verdict, verdictCls;
+  if (coverage >= 1 && net >= 0 && debtLoad <= 0.3)      { verdict = '🟢 Нормадан асты — қаржылық дайындық жоғары'; verdictCls = 'text-emerald-700'; }
+  else if (coverage >= 0.8 && net >= 0)                  { verdict = '🟡 Шекті деңгей — жастықша мен жоспар қажет'; verdictCls = 'text-amber-700'; }
+  else                                                  { verdict = '🔴 Нормаға жетпейді — тәуекел жоғары'; verdictCls = 'text-red-600'; }
+  return { family, perCapitaNorm: Math.round(perCapitaNorm), need, obligatory, net,
+           perCapita: Math.round(perCapita), coverage, debtLoad,
+           covScore, netScore, debtScore, calcBonus, verdict, verdictCls };
+}
+
+function fcInitRegionSelect() {
+  const sel = document.getElementById('fc-region');
+  if (!sel || sel.options.length) return;
+  Object.keys(REGION_PM).forEach(r => {
+    const o = document.createElement('option');
+    o.value = r; o.textContent = `${r} (ПМ ${REGION_PM[r].toLocaleString('ru-RU')} ₸)`;
+    if (r === 'Алматы қ.') o.selected = true;
+    sel.appendChild(o);
+  });
 }
 
 function updateFCPreview() {
-  const income  = parseFloat(document.getElementById('fc-income').value)   || 0;
-  const expense = parseFloat(document.getElementById('fc-expense').value)  || 0;
-  const net     = income - expense;
-  if (income > 0) {
-    document.getElementById('fc-preview').classList.remove('hidden');
-    document.getElementById('fc-d-i').textContent = fmtKZT(income);
-    document.getElementById('fc-d-e').textContent = fmtKZT(expense);
-    const netEl = document.getElementById('fc-d-n');
-    netEl.textContent = fmtKZT(net);
-    netEl.className   = `text-lg font-black ${net>=0?'text-emerald-600':'text-red-500'}`;
-  }
+  fcInitRegionSelect();
+  const rentWrap = document.getElementById('fc-rent-wrap');
+  const debtWrap = document.getElementById('fc-debt-wrap');
+  if (rentWrap) rentWrap.style.display = document.getElementById('fc-housing')?.value === 'rent' ? 'block' : 'none';
+  if (debtWrap) debtWrap.style.display = document.getElementById('fc-has-debt')?.value === 'yes' ? 'block' : 'none';
+
+  const pmD = document.getElementById('fc-pm-display');
+  const normD = document.getElementById('fc-norm-display');
+  const famD = document.getElementById('fc-family-display');
+  const box = document.getElementById('fc-preview');
+  if (!box) return;
+  const inp = fcReadInputs();
+  if (pmD) pmD.textContent = fmtKZT(inp.pm) + ' ₸';
+  if (normD) normD.textContent = fmtKZT(inp.pm * 1.5) + ' ₸';
+  if (famD) famD.textContent = `${2 + inp.children} адам (2 + ${inp.children} бала)`;
+
+  if (!inp.income) { box.classList.add('hidden'); return; }
+  const c = fcCalculate(inp);
+  box.classList.remove('hidden');
+  box.innerHTML = `
+    <div class="font-bold text-slate-800 text-[13px] mb-1">📊 Ашық есеп — қалай шықты:</div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="bg-white rounded-xl p-2.5 border">Отбасы нормасы<br><b>${fmtKZT(c.need)} ₸</b><br><span class="text-slate-400">ПМ ${fmtKZT(inp.pm)} × 1,5 × ${c.family} адам</span></div>
+      <div class="bg-white rounded-xl p-2.5 border">Сіздің табыс<br><b>${fmtKZT(inp.income)} ₸</b><br><span class="text-slate-400">жан басына ${fmtKZT(c.perCapita)} ₸ (${Math.round(c.coverage*100)}% нормадан)</span></div>
+      <div class="bg-white rounded-xl p-2.5 border">Міндетті шығын<br><b>${fmtKZT(c.obligatory)} ₸</b><br><span class="text-slate-400">тұрмыс ${fmtKZT(inp.expense)} + жалдау ${fmtKZT(inp.rent)} + несие ${fmtKZT(inp.debt)}</span></div>
+      <div class="bg-white rounded-xl p-2.5 border">Таза қалдық<br><b class="${c.net>=0?'text-emerald-600':'text-red-500'}">${fmtKZT(c.net)} ₸</b><br><span class="text-slate-400">табыс − міндетті шығын</span></div>
+    </div>
+    <div>Ұпай: қамту <b>${c.covScore}</b> (50%) + тұрақтылық <b>${c.netScore}</b> (30%) + борыш <b>${c.debtScore}</b> (20%) = <b>бонус ${c.calcBonus}/100</b></div>
+    ${inp.debt > 0 && c.debtLoad > 0.3 ? `<div class="text-red-600 font-bold">⚠️ Несие жүктемесі ${(c.debtLoad*100).toFixed(0)}% — 30%-дан жоғары, бұл ұпайды төмендетті. 50%-дан асса — өте қауіпті.</div>` : ''}
+    ${inp.housing === 'rent' && !inp.rent ? `<div class="text-amber-600 font-bold">⚠️ Жалдау ақысын енгізіңіз — әйтпесе есеп толық емес.</div>` : ''}
+    <div class="font-bold ${c.verdictCls}">${c.verdict}</div>`;
 }
 
 async function finishDiag() {
@@ -696,21 +813,30 @@ async function finishDiag() {
     const vals = Object.values(testState.answers[k]);
     scores[k]  = vals.length ? Math.round((vals.reduce((a,b)=>a+b,0)/(vals.length*5))*100) : 0;
   });
+  const quizFin = scores.fin;
 
-  const income    = parseFloat(document.getElementById('fc-income').value)    || null;
-  const expense   = parseFloat(document.getElementById('fc-expense').value)   || null;
-  const threshold = parseInt(document.getElementById('fc-threshold').value)   || 150000;
-  let calcBonus   = null;
-  if (income) {
-    const net = income - (expense||0);
-    calcBonus = Math.min(100, Math.round(Math.max(0,net)/Math.max(threshold,1)*100));
-    scores.fin = Math.round(scores.fin*0.6 + calcBonus*0.4);
+  const inp = fcReadInputs();
+  let calcBonus = null, finDetail = null;
+  let payload = { scores: { ...scores }, total: 0, calc_bonus: null, income: null, expense: null };
+  if (inp.income > 0) {
+    const c = fcCalculate(inp);
+    calcBonus = c.calcBonus;
+    scores.fin = Math.round(quizFin * 0.6 + calcBonus * 0.4);
+    finDetail = { need: c.need, obligatory: c.obligatory, net: c.net, perCapita: c.perCapita,
+                  coverage: +c.coverage.toFixed(3), debtLoad: +c.debtLoad.toFixed(3),
+                  covScore: c.covScore, netScore: c.netScore, debtScore: c.debtScore,
+                  quizFin, formula: 'fin = quiz*0.6 + bonus*0.4; bonus = cov*0.5+net*0.3+debt*0.2; need = PM*1.5*family' };
+    payload = { scores, total: 0, calc_bonus: calcBonus, income: inp.income, expense: inp.expense,
+                region: inp.region, pm_value: inp.pm, children_planned: inp.children,
+                housing: inp.housing, rent_amount: inp.rent, debt_monthly: inp.debt, fin_detail: finDetail };
+  } else {
+    payload = { scores, total: 0, calc_bonus: null, income: null, expense: null };
   }
-  const total = Math.round((scores.comm+scores.emot+scores.vals+scores.fin)/4);
+  payload.total = Math.round((scores.comm + scores.emot + scores.vals + scores.fin) / 4);
 
   setBtnLoading('finish-diag-btn', true);
   try {
-    await api('POST', '/api/results', { scores, total, calc_bonus:calcBonus, income, expense });
+    await api('POST', '/api/results', payload);
     showToast('✅','Нәтиже сақталды!');
     resetTestState();
     _diagInited = false;
@@ -1429,6 +1555,7 @@ async function renderResults() {
             </div>
           </div>
           <canvas id="res-radar" height="220"></canvas>
+          ${latest.fin_detail ? finDetailCard(latest) : (latest.income ? `<div class="text-xs text-slate-500 bg-slate-50 rounded-xl p-3 mt-3">💰 Табыс: <b>${fmtKZT(latest.income)} ₸</b> · Шығын: <b>${fmtKZT(latest.expense||0)} ₸</b> · Бонус: <b>${latest.calc_bonus||'—'}/100</b> (ескі формат — жаңа тестте толық есеп шығады)</div>` : '')}
           ${recCard(latest.total)}
         </div>
         ${results.length > 1 ? `
@@ -1486,8 +1613,131 @@ async function renderResults() {
 }
 
 /* ══════════════════════════════════════
-   PSYCHOLOGISTS
+   PSYCHOLOGISTS & REVIEWS (OLX-style)
 ══════════════════════════════════════ */
+let _selectedStars = {};
+
+function certListHtml(certs) {
+  if (!certs) return '';
+  return certs.split('\n').map(s => s.trim()).filter(Boolean).map(s => {
+    const urlMatch = s.match(/https?:\/\/\S+/);
+    if (urlMatch) {
+      const url = urlMatch[0];
+      const label = s.replace(url, '').trim() || url;
+      return `<div class="flex items-center gap-1.5">✅ <span>${label} — <a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-semibold">құжатты ашу ↗</a></span></div>`;
+    }
+    return `<div>✅ ${s}</div>`;
+  }).join('');
+}
+
+function getRatingLabel(rating) {
+  if (rating >= 4.8) return 'Өте жақсы';
+  if (rating >= 4.2) return 'Жақсы';
+  if (rating >= 3.0) return 'Орташа';
+  if (rating > 0) return 'Төмен';
+  return 'Жаңа маман';
+}
+
+function renderStarsHtml(rating, interactive = false, psychId = null) {
+  let html = '<div class="flex items-center gap-0.5">';
+  for (let i = 1; i <= 5; i++) {
+    const active = i <= Math.round(rating);
+    if (interactive) {
+      html += `<button type="button" class="text-xl transition-transform hover:scale-125 focus:outline-none star-btn-${psychId} ${active ? 'text-amber-400' : 'text-slate-300'}" onclick="setStarRating('${psychId}', ${i})">★</button>`;
+    } else {
+      html += `<span class="${active ? 'text-amber-400' : 'text-slate-200'} text-sm leading-none">★</span>`;
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function setStarRating(psychId, star) {
+  _selectedStars[psychId] = star;
+  const valEl = document.getElementById(`review-rating-val-${psychId}`);
+  if (valEl) valEl.value = star;
+  const hintEl = document.getElementById(`star-hint-${psychId}`);
+  if (hintEl) hintEl.textContent = `${star} жұлдыз (${getRatingLabel(star)})`;
+  const stars = document.querySelectorAll(`.star-btn-${psychId}`);
+  stars.forEach((btn, idx) => {
+    if (idx < star) {
+      btn.classList.remove('text-slate-300');
+      btn.classList.add('text-amber-400');
+    } else {
+      btn.classList.remove('text-amber-400');
+      btn.classList.add('text-slate-300');
+    }
+  });
+}
+
+async function togglePsychReviews(psychId) {
+  const box = document.getElementById(`reviews-box-${psychId}`);
+  if (!box) return;
+  if (box.style.display === 'block') {
+    box.style.display = 'none';
+    return;
+  }
+  box.style.display = 'block';
+  box.innerHTML = '<div class="py-4 text-center"><span class="spinner"></span></div>';
+  try {
+    const list = await api('GET', `/api/psychologists/${psychId}/reviews`);
+    if (!list.length) {
+      box.innerHTML = '<div class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-xl">Әзірге пікірлер жоқ. Сіз бірінші болып бағалай аласыз!</div>';
+      return;
+    }
+    box.innerHTML = `
+      <div class="space-y-2 pt-2 border-t border-slate-100">
+        <div class="text-xs font-bold text-slate-700">Тұтынушылар пікірлері (${list.length}):</div>
+        ${list.map(r => `
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+            <div class="flex items-center justify-between mb-1">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-[10px]">${(r.user_name||'П')[0]}</div>
+                <span class="font-bold text-slate-800">${r.user_name || 'Қолданушы'}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                ${renderStarsHtml(r.rating)}
+                <span class="text-slate-400 text-[10px]">${new Date(r.created_at).toLocaleDateString('ru-RU')}</span>
+              </div>
+            </div>
+            <p class="text-slate-600 mt-1 leading-relaxed pl-8">${r.comment}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch (e) {
+    box.innerHTML = `<div class="text-red-500 text-xs py-2">${e.message}</div>`;
+  }
+}
+
+function toggleReviewForm(psychId) {
+  const form = document.getElementById(`review-form-${psychId}`);
+  if (!form) return;
+  form.style.display = form.style.display === 'block' ? 'none' : 'block';
+  if (form.style.display === 'block') {
+    setStarRating(psychId, _selectedStars[psychId] || 5);
+  }
+}
+
+async function submitPsychReview(psychId) {
+  const rating = _selectedStars[psychId] || 5;
+  const commentEl = document.getElementById(`review-comment-${psychId}`);
+  const comment = commentEl ? commentEl.value.trim() : '';
+
+  if (!comment) {
+    showToast('⚠️', 'Пікір мәтінін жазыңыз');
+    return;
+  }
+
+  try {
+    await api('POST', `/api/psychologists/${psychId}/reviews`, { rating, comment });
+    showToast('⭐', 'Пікіріңіз бен бағаңыз сәтті сақталды!');
+    renderPsychs();
+  } catch (e) {
+    showToast('❌', e.message);
+  }
+}
+
 async function renderPsychs() {
   const el = document.getElementById('psychs-inner');
   if (!el) return;
@@ -1503,7 +1753,10 @@ async function renderPsychs() {
 
     el.innerHTML = `
       <div class="animate-fadeInUp space-y-5">
-        <h2 class="font-black text-slate-800 text-xl">👨‍⚕️ Психологтар</h2>
+        <div class="flex items-center justify-between">
+          <h2 class="font-black text-slate-800 text-xl">👨‍⚕️ Психологтар</h2>
+          <span class="text-xs bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full">OLX рейтинг 5★</span>
+        </div>
         ${!hasResult ? `<div class="card p-5 bg-yellow-50 border-yellow-200 text-center">
           <div class="text-3xl mb-2">⚠️</div>
           <p class="text-yellow-800 font-semibold text-sm">Сұрау жіберу үшін алдымен диагностика өтіңіз</p>
@@ -1513,32 +1766,98 @@ async function renderPsychs() {
           psychs.map(p => {
             const myReq  = myRequests.find(r=>r.psych_id===p.id);
             const resp   = myReq ? myResponses.find(r=>r.request_id===myReq.id) : null;
+            const avg    = parseFloat(p.avg_rating) || 0;
+            const cnt    = parseInt(p.review_count) || 0;
+            const label  = getRatingLabel(avg);
+
             return `
-              <div class="card p-5">
+              <div class="card p-5 transition-shadow hover:shadow-md">
                 <div class="flex items-start gap-4">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center text-white text-xl font-black shrink-0">${p.name[0]}</div>
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center text-white text-xl font-black shrink-0 shadow-md shadow-blue-500/10">${p.name[0]}</div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
-                      <div class="font-bold text-slate-800">${p.name}</div>
+                      <div class="font-bold text-slate-800 text-base">${p.name}</div>
                       <span class="role-psych">🩺 Психолог</span>
+                      ${p.is_verified
+                        ? '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">✅ Тексерілген маман</span>'
+                        : '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-500">⏳ Тексерісте</span>'}
                     </div>
-                    <div class="text-sm text-blue-600 font-medium mt-0.5">${p.specialization||'Жалпы психолог'}</div>
+
+                    <!-- OLX-style Rating Badge -->
+                    <div class="mt-1.5 flex items-center gap-2 flex-wrap">
+                      <div class="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 rounded-xl text-xs font-bold text-amber-900 shadow-sm">
+                        <span class="text-amber-500 text-sm leading-none">★</span>
+                        <span>${avg > 0 ? avg.toFixed(1) : '—'}</span>
+                        <span class="text-slate-400 font-normal">/ 5.0</span>
+                        <span class="text-slate-500 font-medium ml-1">(${cnt} пікір)</span>
+                      </div>
+                      ${cnt > 0 ? `<span class="text-[11px] font-bold px-2 py-0.5 rounded-md ${avg>=4.5?'bg-emerald-100 text-emerald-800':(avg>=4.0?'bg-blue-100 text-blue-800':'bg-slate-100 text-slate-700')}">${label}</span>` : ''}
+                    </div>
+
+                    <div class="text-sm text-blue-600 font-medium mt-1">${p.specialization||'Жалпы психолог'}${p.experience_years ? ` · 💼 ${p.experience_years} жыл тәжірибе` : ''}</div>
+                    ${p.education ? `<div class="text-xs text-slate-600 mt-1">🎓 ${p.education}</div>` : ''}
                     ${p.bio ? `<p class="text-xs text-slate-500 mt-1.5 leading-relaxed">${p.bio}</p>` : ''}
+                    ${p.achievements ? `<div class="text-xs text-slate-600 mt-1.5 bg-violet-50 border border-violet-200 rounded-xl p-2.5">🏆 <b>Жетістіктері:</b> ${p.achievements}</div>` : ''}
+                    ${(p.certificates || p.education) ? `
+                      <button class="text-xs text-blue-700 font-bold hover:underline mt-2" onclick="document.getElementById('certs-${p.id}').classList.toggle('hidden')">📜 Сертификаттар мен білімін көру</button>
+                      <div id="certs-${p.id}" class="hidden mt-2 text-xs bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5">
+                        ${p.education ? `<div>🎓 <b>Білімі:</b> ${p.education}</div>` : ''}
+                        ${p.certificates ? `<div>📜 <b>Сертификаттар:</b><br>${certListHtml(p.certificates)}</div>` : '<div class="text-slate-400">Сертификаттар әкімші тексеруінен кейін жарияланады</div>'}
+                        <div class="text-[11px] ${p.is_verified ? 'text-emerald-600' : 'text-slate-400'} font-semibold">${p.is_verified ? '✅ Бұл маманның құжаттарын әкімшілік тексеріп, растаған.' : '⏳ Құжаттар әкімші тексерісінде.'}</div>
+                      </div>` : ''}
                     ${p.price ? `<div class="text-sm font-bold text-emerald-700 mt-2">💰 ${fmtKZT(p.price)} ₸ / сессия</div>` : ''}
                   </div>
                 </div>
-                <div class="mt-4 pt-4 border-t border-slate-100">
-                  ${resp ? `<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-2">
+
+                <!-- Responses / Actions -->
+                <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+                  ${resp ? `<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
                     <div class="text-xs font-bold text-emerald-700 mb-1">✅ Психолог жауабы:</div>
                     <p class="text-sm text-emerald-800 leading-relaxed">${resp.feedback}</p>
                     ${resp.price ? `<div class="text-xs font-bold text-emerald-700 mt-1">💰 ${fmtKZT(resp.price)} ₸/сессия</div>` : ''}
                   </div>` : ''}
-                  ${myReq
-                    ? `<div class="text-sm font-semibold ${resp?'text-emerald-600':'text-orange-500'}">${resp?'✅ Жауап берілді':'⏳ Жауапты күтуде...'}</div>`
-                    : hasResult
-                      ? `<button class="btn-primary btn-sm w-full" onclick="sendRequest('${p.id}','${latestId}')">📤 Сұрау жіберу</button>`
-                      : `<button class="btn-ghost btn-sm w-full" disabled>Алдымен диагностика өтіңіз</button>`
-                  }
+
+                  <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <div>
+                      ${myReq
+                        ? `<div class="text-xs font-semibold ${resp?'text-emerald-600':'text-orange-500'}">${resp?'✅ Жауап берілді':'⏳ Жауапты күтуде...'}</div>`
+                        : hasResult
+                          ? `<button class="btn-primary btn-sm" onclick="sendRequest('${p.id}','${latestId}')">📤 Сұрау жіберу</button>`
+                          : `<button class="btn-ghost btn-sm" disabled>Алдымен диагностика өтіңіз</button>`
+                      }
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                      <button class="btn-ghost btn-sm text-xs py-1.5 px-3" onclick="togglePsychReviews('${p.id}')">
+                        💬 Пікірлер (${cnt})
+                      </button>
+                      ${myReq ? `
+                        <button class="btn-cyan btn-sm text-xs py-1.5 px-3" onclick="toggleReviewForm('${p.id}')">
+                          ✍️ Баға қою
+                        </button>
+                      ` : ''}
+                    </div>
+                  </div>
+
+                  <!-- Review input form -->
+                  <div id="review-form-${p.id}" style="display:none" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 animate-fadeIn space-y-3">
+                    <div class="font-bold text-xs text-slate-800 flex items-center justify-between">
+                      <span>Психологты 5 балдық шкаламен бағалаңыз:</span>
+                      <input type="hidden" id="review-rating-val-${p.id}" value="5"/>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-slate-200 inline-block">
+                      ${renderStarsHtml(5, true, p.id)}
+                      <span class="text-xs font-bold text-slate-600 ml-2" id="star-hint-${p.id}">5 жұлдыз (Өте жақсы)</span>
+                    </div>
+                    <textarea id="review-comment-${p.id}" class="inp text-xs" rows="2" placeholder="Психологтың жұмысы, кеңесі туралы пікіріңізді жазыңыз..."></textarea>
+                    <div class="flex justify-end gap-2">
+                      <button class="btn-ghost btn-sm text-xs py-1 px-3" onclick="toggleReviewForm('${p.id}')">Бас тарту</button>
+                      <button class="btn-primary btn-sm text-xs py-1.5 px-4" onclick="submitPsychReview('${p.id}')">Жіберу ✓</button>
+                    </div>
+                  </div>
+
+                  <!-- Loaded Reviews Box -->
+                  <div id="reviews-box-${p.id}" style="display:none" class="animate-fadeIn"></div>
                 </div>
               </div>`;}).join('')}
       </div>`;
@@ -1596,10 +1915,16 @@ async function renderRequests() {
                         <div class="font-black text-blue-700">${s[c.k]||0}%</div>
                       </div>`).join('')}
                   </div>
-                  <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center justify-between mb-2">
                     <span class="font-semibold text-slate-700 text-sm">Жалпы балл:</span>
                     <span class="font-black text-xl text-blue-700">${req.total}%</span>
-                  </div>` : ''}
+                  </div>
+                  ${(req.income || req.region) ? `
+                    <div class="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-3 mb-4 leading-relaxed">
+                      <div class="font-bold text-slate-700 mb-1">🧮 Қаржылық контекст (ашық есеп):</div>
+                      <div>🗺️ ${req.region || '—'} (ПМ ${req.pm_value ? fmtKZT(req.pm_value) + ' ₸' : '—'}) · 👨‍👩‍👧 2 + ${req.children_planned ?? 0} бала · ${req.housing === 'rent' ? '🔑 жалдамалы' + (req.rent_amount ? ' (' + fmtKZT(req.rent_amount) + ' ₸)' : '') : '🏠 өз үйі'}</div>
+                      <div>💵 Табыс ${fmtKZT(req.income || 0)} ₸ · шығын ${fmtKZT(req.expense || 0)} ₸ · несие ${req.debt_monthly ? fmtKZT(req.debt_monthly) + ' ₸/ай' : 'жоқ'} · бонус ${req.calc_bonus ?? '—'}/100</div>
+                    </div>` : ''}` : ''}
                 ${resp
                   ? `<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
                       <div class="text-xs font-bold text-emerald-700 mb-2">✅ Сіздің жауабыңыз</div>
@@ -1654,11 +1979,20 @@ async function renderProfile() {
           <span class="${u.role==='psychologist'?'role-psych':'role-user'}">${u.role==='psychologist'?'🩺 Психолог':'👤 Пайдаланушы'}</span>
         </div>
         ${u.role==='psychologist'?`
+          ${u.is_verified
+            ? '<div class="rounded-2xl p-4 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-semibold">✅ Профиліңіз <b>верификациядан өткен</b> — клиенттерге көрінеді. Сертификат өзгертсеңіз, әкімші қайта тексереді.</div>'
+            : '<div class="rounded-2xl p-4 bg-amber-50 border border-amber-200 text-xs text-amber-800 leading-relaxed"><b>⏳ Профиліңіз тексерісте.</b> Әкімші диплом/сертификаттарыңызды WhatsApp арқылы алып, тексерген соң ғана клиенттерге жарияланады. Төмендегі өрістерді толтырып, құжаттарыңызды әкімшіге жіберіңіз: <b>+77751841434</b>.</div>'}
           <div class="card p-5">
-            <h3 class="font-bold text-slate-700 mb-4">🩺 Психолог профилі</h3>
+            <h3 class="font-bold text-slate-700 mb-4">🩺 Психолог профилі (верификация үшін)</h3>
             <div class="space-y-3">
               <div><label class="inp-label">Мамандық</label><input type="text" id="prof-spec" class="inp" value="${u.specialization||''}" placeholder="Отбасылық психолог"/></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="inp-label">Білімі (ЖОО, жыл)</label><input type="text" id="prof-edu" class="inp" value="${u.education||''}" placeholder="Әл-Фараби ауд. ҚазҰУ, психология, 2015"/></div>
+                <div><label class="inp-label">Тәжірибе (жыл)</label><input type="number" id="prof-exp" class="inp" value="${u.experience_years||0}" min="0"/></div>
+              </div>
               <div><label class="inp-label">Сипаттама</label><textarea id="prof-bio" class="inp" rows="3" placeholder="Өзіңіз туралы...">${u.bio||''}</textarea></div>
+              <div><label class="inp-label">Жетістіктер (марапат, ғылыми жұмыс...)</label><textarea id="prof-ach" class="inp" rows="2" placeholder="Әр жетістікті жаңа жолға жазыңыз...">${u.achievements||''}</textarea></div>
+              <div><label class="inp-label">Сертификаттар / дипломдар (әрқайсысы жаңа жолға; сілтеме болса қосыңыз)</label><textarea id="prof-certs" class="inp" rows="3" placeholder="КПТ дипломы, 2018&#10;Отбасылық терапия сертификаты, 2021 — https://...">${u.certificates||''}</textarea></div>
               <div><label class="inp-label">Сессия бағасы (₸)</label><input type="number" id="prof-price" class="inp" value="${u.price||0}" min="0"/></div>
               <button class="btn-primary btn-sm" id="save-prof-btn" onclick="saveProfile()">💾 Сақтау</button>
             </div>
@@ -1687,9 +2021,14 @@ async function saveProfile() {
       specialization: document.getElementById('prof-spec').value.trim(),
       bio:            document.getElementById('prof-bio').value.trim(),
       price:          parseInt(document.getElementById('prof-price').value) || 0,
+      education:      document.getElementById('prof-edu')?.value.trim() || null,
+      experience_years: parseInt(document.getElementById('prof-exp')?.value) || 0,
+      achievements:   document.getElementById('prof-ach')?.value.trim() || null,
+      certificates:   document.getElementById('prof-certs')?.value.trim() || null,
     });
     currentUser = updated;
-    showToast('✅','Профиль сақталды!');
+    showToast('✅','Профиль сақталды! Өзгеріс әкімші тексерісінен кейін жарияланады.');
+    renderProfile();
   } catch(e) {
     showToast('❌', e.message);
   } finally {
@@ -1717,6 +2056,25 @@ function riskBadge(score) {
   if (score>80) return `<span class="risk-low">🟢 Жоғары</span>`;
   if (score>=50) return `<span class="risk-med">🟡 Орташа</span>`;
   return `<span class="risk-high">🔴 Тәуекел</span>`;
+}
+
+function finDetailCard(r) {
+  const d = typeof r.fin_detail === 'string' ? JSON.parse(r.fin_detail) : (r.fin_detail || {});
+  const region = r.region || '—';
+  const pm = r.pm_value ? fmtKZT(r.pm_value) + ' ₸' : '—';
+  const kids = r.children_planned ?? '—';
+  const housing = r.housing === 'rent' ? `🔑 Жалдамалы${r.rent_amount ? ' (' + fmtKZT(r.rent_amount) + ' ₸/ай)' : ''}` : '🏠 Өз үйі';
+  const debt = r.debt_monthly ? fmtKZT(r.debt_monthly) + ' ₸/ай' : 'жоқ';
+  return `<div class="rounded-2xl border border-blue-200 bg-blue-50/50 p-4 mt-4 text-xs text-slate-700 leading-relaxed">
+    <div class="font-black text-slate-800 text-sm mb-2">🧮 Қаржылық есеп ашық түрде (қалай саналды)</div>
+    <div class="grid grid-cols-2 gap-2 mb-2">
+      <div class="bg-white rounded-xl p-2.5 border">🗺️ Өңір<br><b>${region}</b><br><span class="text-slate-400">ПМ: ${pm} · норма/адам ×1,5</span></div>
+      <div class="bg-white rounded-xl p-2.5 border">👨‍👩‍👧 Отбасы<br><b>2 + ${kids} бала</b><br><span class="text-slate-400">${housing}</span></div>
+      <div class="bg-white rounded-xl p-2.5 border">💵 Табыс / шығын<br><b>${fmtKZT(r.income||0)} / ${fmtKZT(r.expense||0)} ₸</b><br><span class="text-slate-400">несие: ${debt}</span></div>
+      <div class="bg-white rounded-xl p-2.5 border">📐 Норма / таза қалдық<br><b>${d.need ? fmtKZT(d.need) + ' / ' + fmtKZT(d.net) : '—'} ₸</b><br><span class="text-slate-400">норма = ПМ×1,5×отбасы</span></div>
+    </div>
+    ${d.coverage !== undefined ? `<div>Қамту <b>${Math.round(d.coverage*100)}%</b> (табыс ÷ норма) · Борыш жүктемесі <b>${Math.round((d.debtLoad||0)*100)}%</b> · Бонус <b>${r.calc_bonus}/100</b> = қамту ${d.covScore}×50% + тұрақтылық ${d.netScore}×30% + борыш ${d.debtScore}×20%. Қаржы блогы = сауалнама ${d.quizFin}%×60% + бонус×40%.</div>` : `<div>Бонус: <b>${r.calc_bonus||'—'}/100</b></div>`}
+  </div>`;
 }
 
 function recCard(score) {
@@ -1771,28 +2129,186 @@ function launchConfetti() {
 /* ══════════════════════════════════════
    ADMIN
 ══════════════════════════════════════ */
+function toggleAdminPsychFields() {
+  const role = document.getElementById('adm-user-role')?.value;
+  const extra = document.getElementById('adm-psych-extra');
+  if (extra) extra.style.display = role === 'psychologist' ? 'block' : 'none';
+}
+
+async function adminCreateUser() {
+  const name     = document.getElementById('adm-user-name').value.trim();
+  const email    = document.getElementById('adm-user-email').value.trim();
+  const password = document.getElementById('adm-user-pwd').value.trim();
+  const role     = document.getElementById('adm-user-role').value;
+  const specEl   = document.getElementById('adm-user-spec');
+  const priceEl  = document.getElementById('adm-user-price');
+  const bioEl    = document.getElementById('adm-user-bio');
+
+  if (!name || !email || !password) {
+    showToast('⚠️', 'Аты, email және құпиясөзді толтырыңыз');
+    return;
+  }
+  if (password.length < 6) {
+    showToast('⚠️', 'Құпиясөз кем дегенде 6 символ болуы керек');
+    return;
+  }
+
+  try {
+    const payload = {
+      name, email, password, role,
+      specialization: specEl ? specEl.value.trim() : null,
+      price: priceEl ? parseInt(priceEl.value) || 0 : 0,
+      bio: bioEl ? bioEl.value.trim() : null,
+      education: document.getElementById('adm-user-edu')?.value.trim() || null,
+      experience_years: parseInt(document.getElementById('adm-user-exp')?.value) || 0,
+      achievements: document.getElementById('adm-user-ach')?.value.trim() || null,
+      certificates: document.getElementById('adm-user-certs')?.value.trim() || null,
+      is_verified: document.getElementById('adm-user-verified')?.checked || false,
+    };
+    const created = await api('POST', '/api/admin/users', payload);
+    showToast('✅', 'Аккаунт сәтті құрылды!');
+    const infoEl = document.getElementById('adm-created-info');
+    if (infoEl) {
+      infoEl.classList.remove('hidden');
+      infoEl.innerHTML = `
+        <div class="font-bold text-emerald-900 mb-1">🎉 Жаңа аккаунт ашылды! Төлеген клиентке жіберіңіз:</div>
+        <div class="font-mono bg-white p-2.5 rounded-xl border border-emerald-300 select-all mb-2 text-slate-800 text-xs">
+          Логин: <b>${created.email}</b><br>
+          Құпиясөз: <b>${password}</b><br>
+          Рөлі: <b>${created.role === 'psychologist' ? 'Психолог' : 'Қолданушы'}</b>
+        </div>
+        <button type="button" class="btn-primary btn-sm text-xs py-1.5 px-3" onclick="navigator.clipboard.writeText('SanaNeke платформасындағы аккаунтыңыз дайын!\\nЛогин: ${created.email}\\nҚұпиясөз: ${password}\\nСайтқа кіру: ' + window.location.origin); showToast('📋','Мәтін көшірілді!');">📋 Клиентке арналған хабарламаны көшіру</button>
+      `;
+    }
+    document.getElementById('adm-user-name').value = '';
+    document.getElementById('adm-user-email').value = '';
+    document.getElementById('adm-user-pwd').value = '';
+    renderAdmin();
+  } catch (e) {
+    showToast('❌', e.message);
+  }
+}
+
 async function renderAdmin() {
   const el = document.getElementById('admin-inner');
   if (!el) return;
   el.innerHTML = '<div class="text-center py-10"><span class="spinner"></span></div>';
   try {
     const data = await api('GET', '/api/admin/data');
+    const reviews = data.reviews || [];
+
     el.innerHTML = `
       <div class="animate-fadeInUp space-y-5">
-        <h2 class="text-xl font-black mb-3 text-slate-800">👑 Әкімші панелі</h2>
+        <h2 class="text-xl font-black mb-1 text-slate-800">👑 Әкімші панелі</h2>
+        <p class="text-xs text-slate-500">WhatsApp арқылы төлеген пайдаланушыларға аккаунт құру және деректерді басқару</p>
         
+        <!-- Create Account Form for WhatsApp clients -->
+        <div class="card p-5 bg-gradient-to-br from-white to-emerald-50/40 border border-emerald-200">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+              <span>➕ Жаңа аккаунт ашу (Пайдаланушы қосу)</span>
+            </h3>
+            <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">WhatsApp төлемі</span>
+          </div>
+          <p class="text-xs text-slate-600 mb-4">WhatsApp-қа (+77751841434) төлем жасаған адамға осы жерден аккаунт құрып беріңіз:</p>
+          
+          <div class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="inp-label text-xs">Аты-жөні</label>
+                <input type="text" id="adm-user-name" class="inp text-sm" placeholder="Мысалы: Айгүл Маратқызы"/>
+              </div>
+              <div>
+                <label class="inp-label text-xs">Email (Логин)</label>
+                <input type="email" id="adm-user-email" class="inp text-sm" placeholder="aigul@example.com"/>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="inp-label text-xs">Құпиясөз (Пароль)</label>
+                <input type="text" id="adm-user-pwd" class="inp text-sm font-mono" placeholder="Кем дегенде 6 символ"/>
+              </div>
+              <div>
+                <label class="inp-label text-xs">Рөлі</label>
+                <select id="adm-user-role" class="inp text-sm" onchange="toggleAdminPsychFields()">
+                  <option value="user">👤 Қолданушы</option>
+                  <option value="psychologist">🩺 Психолог</option>
+                </select>
+              </div>
+            </div>
+            
+            <div id="adm-psych-extra" style="display:none" class="p-3 bg-white rounded-xl border border-slate-200 space-y-2">
+              <div class="text-xs font-bold text-slate-700">Психолог деректері (верификация үшін):</div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input type="text" id="adm-user-spec" class="inp text-xs" placeholder="Мамандық (мыс. Отбасылық психолог)"/>
+                <input type="number" id="adm-user-price" class="inp text-xs" placeholder="Сессия бағасы (₸)" min="0"/>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input type="text" id="adm-user-edu" class="inp text-xs" placeholder="Білімі (ЖОО, жыл)"/>
+                <input type="number" id="adm-user-exp" class="inp text-xs" placeholder="Тәжірибе (жыл)" min="0"/>
+              </div>
+              <textarea id="adm-user-bio" class="inp text-xs" rows="2" placeholder="Қысқаша сипаттама (bio)..."></textarea>
+              <textarea id="adm-user-ach" class="inp text-xs" rows="2" placeholder="Жетістіктері (әрқайсысы жаңа жолға)..."></textarea>
+              <textarea id="adm-user-certs" class="inp text-xs" rows="2" placeholder="Сертификаттар/дипломдар + сілтеме..."></textarea>
+              <label class="flex items-center gap-2 text-xs font-bold text-slate-700 bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 cursor-pointer">
+                <input type="checkbox" id="adm-user-verified" class="w-4 h-4"/>
+                <span>✅ Құжаттарын тексердім — бірден верификациялап жариялау</span>
+              </label>
+              <div class="text-[11px] text-slate-500">Егер құжат әлі тексерілмесе — құсбелгіні қоймаңыз: психолог «Тексерісте» күйінде сақталып, клиенттерге көрінбейді.</div>
+            </div>
+
+            <button class="btn-green text-sm py-2.5 px-6 font-bold flex items-center gap-2" onclick="adminCreateUser()">
+              <span>➕ Аккаунтты құру</span>
+            </button>
+            <div id="adm-created-info" class="hidden mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800"></div>
+          </div>
+        </div>
+
+        <!-- Psychologist verification queue -->
+        <div class="card p-5 border-2 ${data.users.some(u=>u.role==='psychologist' && !u.is_verified) ? 'border-amber-300 bg-amber-50/40' : 'border-emerald-200'}">
+          <div class="flex items-center justify-between mb-1 flex-wrap gap-2">
+            <h3 class="font-bold text-slate-700">🩺 Психолог верификациясы (${data.users.filter(u=>u.role==='psychologist').length})</h3>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">${data.users.filter(u=>u.role==='psychologist' && !u.is_verified).length} тексеруді күтуде</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mb-3">Жаңа психолог бірден жарияланбайды: алдымен диплом/сертификаттарын WhatsApp арқылы алып тексеріңіз, сосын «Верификациялау» басыңыз. Тек верификацияланғандар клиентке көрінеді.</p>
+          <div class="space-y-3">
+            ${data.users.filter(u=>u.role==='psychologist').map(p => `
+              <div class="bg-white rounded-2xl border ${p.is_verified ? 'border-emerald-200' : 'border-amber-300'} p-3.5 text-xs">
+                <div class="flex items-center justify-between gap-2 flex-wrap mb-1.5">
+                  <div class="font-bold text-slate-800 text-sm">${p.name} <span class="font-normal text-slate-400">${p.email}</span></div>
+                  ${p.is_verified
+                    ? '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">✅ Верификацияланған</span>'
+                    : '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">⏳ Тексерісте (клиентке көрінбейді)</span>'}
+                </div>
+                <div class="text-slate-600 space-y-1">
+                  <div>🎓 Білімі: <b>${p.education || '—'}</b> · 💼 Тәжірибе: <b>${p.experience_years || 0} жыл</b> · ${p.specialization || '—'} · ${p.price ? fmtKZT(p.price) + ' ₸' : 'бағасыз'}</div>
+                  ${p.achievements ? `<div>🏆 Жетістіктері: ${p.achievements}</div>` : ''}
+                  ${p.certificates ? `<div>📜 Сертификаттар:<br>${certListHtml(p.certificates)}</div>` : '<div class="text-slate-400">📜 Сертификат енгізілмеген</div>'}
+                </div>
+                <div class="flex gap-2 mt-2.5">
+                  ${p.is_verified
+                    ? `<button class="btn-ghost btn-sm text-xs py-1 px-3" onclick="adminVerifyPsych('${p.id}', false)">⏸️ Верификацияны алып тастау</button>`
+                    : `<button class="btn-green btn-sm text-xs py-1.5 px-4" onclick="adminVerifyPsych('${p.id}', true)">✅ Тексердім — верификациялау</button>`}
+                  <button class="text-red-500 hover:underline text-xs font-semibold ml-auto" onclick="adminDelete('users','${p.id}')">Өшіру</button>
+                </div>
+              </div>`).join('') || '<div class="text-xs text-slate-400">Психолог тіркелмеген</div>'}
+          </div>
+        </div>
+
+        <!-- Users Table -->
         <div class="card p-5">
           <h3 class="font-bold text-slate-700 mb-2">Пайдаланушылар (${data.users.length})</h3>
           <div class="overflow-x-auto text-sm">
             <table class="w-full text-left border-collapse">
-              <thead><tr class="bg-slate-50"><th class="p-2 border">ID</th><th class="p-2 border">Аты</th><th class="p-2 border">Email</th><th class="p-2 border">Рөл</th><th class="p-2 border">Әрекет</th></tr></thead>
+              <thead><tr class="bg-slate-50"><th class="p-2 border">ID</th><th class="p-2 border">Аты</th><th class="p-2 border">Email</th><th class="p-2 border">Рөл</th><th class="p-2 border">Статус</th><th class="p-2 border">Әрекет</th></tr></thead>
               <tbody>
                 ${data.users.map(u => `
                   <tr class="border-t">
-                    <td class="p-2 border text-xs">${u.id.slice(0,8)}</td>
-                    <td class="p-2 border">${u.name}</td>
+                    <td class="p-2 border text-xs font-mono">${u.id.slice(0,8)}</td>
+                    <td class="p-2 border font-medium">${u.name}</td>
                     <td class="p-2 border">${u.email}</td>
-                    <td class="p-2 border">${u.role}</td>
+                    <td class="p-2 border"><span class="${u.role==='psychologist'?'role-psych':'role-user'} text-xs">${u.role}</span></td>
+                    <td class="p-2 border text-xs">${u.role==='psychologist' ? (u.is_verified ? '✅ верифицирован' : '⏳ тексерісте') : '—'}</td>
                     <td class="p-2 border">
                       <button class="text-red-500 hover:underline text-xs" onclick="adminDelete('users','${u.id}')">Өшіру</button>
                     </td>
@@ -1802,6 +2318,34 @@ async function renderAdmin() {
           </div>
         </div>
 
+        <!-- OLX Reviews Table -->
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-bold text-slate-700">⭐ Психологтарға жазылған пікірлер (${reviews.length})</h3>
+            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">OLX рейтингтер</span>
+          </div>
+          <div class="overflow-x-auto text-sm">
+            <table class="w-full text-left border-collapse">
+              <thead><tr class="bg-slate-50"><th class="p-2 border">Психолог</th><th class="p-2 border">Қолданушы</th><th class="p-2 border">Баға</th><th class="p-2 border">Пікір</th><th class="p-2 border">Уақыты</th><th class="p-2 border">Әрекет</th></tr></thead>
+              <tbody>
+                ${!reviews.length ? '<tr><td colspan="6" class="p-4 text-center text-slate-400 text-xs">Әзірге пікірлер жоқ</td></tr>' :
+                  reviews.map(r => `
+                    <tr class="border-t text-xs">
+                      <td class="p-2 border font-bold text-slate-800">${r.psych_name || r.psych_id.slice(0,8)}</td>
+                      <td class="p-2 border">${r.user_name || r.user_id.slice(0,8)}</td>
+                      <td class="p-2 border whitespace-nowrap text-amber-500 font-bold">★ ${r.rating} / 5</td>
+                      <td class="p-2 border text-slate-600 max-w-xs break-words">${r.comment}</td>
+                      <td class="p-2 border text-slate-400">${new Date(r.created_at).toLocaleDateString('ru-RU')}</td>
+                      <td class="p-2 border">
+                        <button class="text-red-500 hover:underline text-xs font-semibold" onclick="adminDelete('reviews','${r.id}')">Өшіру</button>
+                      </td>
+                    </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Requests Table -->
         <div class="card p-5">
           <h3 class="font-bold text-slate-700 mb-2">Сұраулар (${data.requests.length})</h3>
           <div class="overflow-x-auto text-sm">
@@ -1810,9 +2354,9 @@ async function renderAdmin() {
               <tbody>
                 ${data.requests.map(r => `
                   <tr class="border-t">
-                    <td class="p-2 border text-xs">${r.id.slice(0,8)}</td>
-                    <td class="p-2 border text-xs">${r.user_id.slice(0,8)}</td>
-                    <td class="p-2 border text-xs">${r.psych_id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs font-mono">${r.id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs font-mono">${r.user_id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs font-mono">${r.psych_id.slice(0,8)}</td>
                     <td class="p-2 border">
                       <button class="text-red-500 hover:underline text-xs" onclick="adminDelete('requests','${r.id}')">Өшіру</button>
                     </td>
@@ -1822,6 +2366,7 @@ async function renderAdmin() {
           </div>
         </div>
         
+        <!-- Results Table -->
         <div class="card p-5">
           <h3 class="font-bold text-slate-700 mb-2">Нәтижелер (${data.results.length})</h3>
           <div class="overflow-x-auto text-sm">
@@ -1830,9 +2375,9 @@ async function renderAdmin() {
               <tbody>
                 ${data.results.map(r => `
                   <tr class="border-t">
-                    <td class="p-2 border text-xs">${r.id.slice(0,8)}</td>
-                    <td class="p-2 border text-xs">${r.user_id.slice(0,8)}</td>
-                    <td class="p-2 border text-xs">${r.total}</td>
+                    <td class="p-2 border text-xs font-mono">${r.id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs font-mono">${r.user_id.slice(0,8)}</td>
+                    <td class="p-2 border text-xs font-bold">${r.total}%</td>
                     <td class="p-2 border">
                       <button class="text-red-500 hover:underline text-xs" onclick="adminDelete('test_results','${r.id}')">Өшіру</button>
                     </td>
@@ -1842,6 +2387,7 @@ async function renderAdmin() {
           </div>
         </div>
 
+        <!-- Manual SQL -->
         <div class="card p-5">
           <div class="flex justify-between items-center mb-2">
              <h3 class="font-bold text-slate-700">Қолмен SQL сұрау (Қосу/Өзгерту/Жою)</h3>
@@ -1856,6 +2402,17 @@ async function renderAdmin() {
     `;
   } catch (e) {
     el.innerHTML = `<div class="text-red-500 p-5">${e.message}</div>`;
+  }
+}
+
+async function adminVerifyPsych(id, verified) {
+  if (verified && !confirm('Құжаттарын (диплом/сертификат) тексердіңіз бе? Верификациядан кейін психолог клиенттерге көрінеді.')) return;
+  try {
+    await api('PUT', `/api/admin/users/${id}`, { is_verified: verified });
+    showToast(verified ? '✅' : '⏸️', verified ? 'Психолог верификацияланды!' : 'Верификация алынып тасталды');
+    renderAdmin();
+  } catch (e) {
+    showToast('❌', e.message);
   }
 }
 

@@ -6,7 +6,7 @@
 -- Extensions
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- ── Users ────────────────────────────────────────────────
+-- ── Users (with psychologist verification) ─────────────────
 CREATE TABLE IF NOT EXISTS users (
   id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   name            VARCHAR(120) NOT NULL,
@@ -16,10 +16,15 @@ CREATE TABLE IF NOT EXISTS users (
   specialization  VARCHAR(200),
   bio             TEXT,
   price           INTEGER      DEFAULT 0,
+  is_verified     BOOLEAN      DEFAULT FALSE,  -- admin verifies certs before publishing
+  certificates    TEXT,                        -- one per line, URL allowed
+  achievements    TEXT,
+  education       TEXT,
+  experience_years INTEGER     DEFAULT 0,
   created_at      TIMESTAMPTZ  DEFAULT NOW()
 );
 
--- ── Test Results ─────────────────────────────────────────
+-- ── Test Results (transparent finance calculator) ────────
 CREATE TABLE IF NOT EXISTS test_results (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -28,6 +33,13 @@ CREATE TABLE IF NOT EXISTS test_results (
   calc_bonus  INTEGER,
   income      BIGINT,
   expense     BIGINT,
+  region           TEXT,                     -- e.g. 'Алматы қ.'
+  pm_value         INTEGER,                  -- regional living wage used
+  children_planned INTEGER DEFAULT 0,        -- kids planned in 5 years
+  housing          TEXT,                     -- 'own' | 'rent'
+  rent_amount      BIGINT  DEFAULT 0,
+  debt_monthly     BIGINT  DEFAULT 0,        -- credit/mortgage per month
+  fin_detail       JSONB,                    -- full breakdown {need,net,coverage,...}
   created_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -53,8 +65,22 @@ CREATE TABLE IF NOT EXISTS responses (
   created_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ── Reviews (user → psychologist rating & feedback) ──────
+CREATE TABLE IF NOT EXISTS reviews (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  psych_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id     UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  rating      INTEGER     NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment     TEXT        NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (psych_id, user_id)
+);
+
 -- ── Indexes ───────────────────────────────────────────────
-CREATE INDEX IF NOT EXISTS idx_results_user  ON test_results(user_id);
-CREATE INDEX IF NOT EXISTS idx_requests_user ON requests(user_id);
+CREATE INDEX IF NOT EXISTS idx_results_user   ON test_results(user_id);
+CREATE INDEX IF NOT EXISTS idx_requests_user  ON requests(user_id);
 CREATE INDEX IF NOT EXISTS idx_requests_psych ON requests(psych_id);
 CREATE INDEX IF NOT EXISTS idx_responses_user ON responses(user_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_psych  ON reviews(psych_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_user   ON reviews(user_id);
+
