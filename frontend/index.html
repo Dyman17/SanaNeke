@@ -1965,7 +1965,9 @@ async function renderPsychs() {
                   ${myReq ? `
                   <!-- In-platform chat with psychologist -->
                   <div id="chat-box-${myReq.id}" style="display:none" class="animate-fadeIn"></div>
-                  ` : ''}
+                  ` : `
+                  <div class="text-[11px] text-slate-400 bg-slate-50 rounded-xl px-3 py-2">⭐ Өз бағаңыз бен пікіріңізді қалдыру үшін алдымен «📤 Сұрау жіберу» басыңыз. Басқалардың пікірлерін «💬 Пікірлер» батырмасынан көре аласыз.</div>
+                  `}
 
                   <!-- Review input form -->
                   <div id="review-form-${p.id}" style="display:none" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 animate-fadeIn space-y-3">
@@ -2558,6 +2560,35 @@ async function renderAdmin() {
             <h3 class="font-bold text-slate-700">⭐ Психологтарға жазылған пікірлер (${reviews.length})</h3>
             <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">OLX рейтингтер</span>
           </div>
+          <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-3.5 mb-3 space-y-2">
+            <div class="text-xs font-bold text-slate-700">➕ Пікірді қолмен қосу (мыс. WhatsApp-та келген отзывты сайтқа шығару):</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div>
+                <label class="inp-label text-[11px]">Психолог</label>
+                <select id="adm-rev-psych" class="inp text-xs">
+                  ${data.users.filter(u=>u.role==='psychologist').map(u=>`<option value="${u.id}">${u.name}</option>`).join('') || '<option value="">Психолог жоқ</option>'}
+                </select>
+              </div>
+              <div>
+                <label class="inp-label text-[11px]">Кімнің атынан</label>
+                <select id="adm-rev-user" class="inp text-xs">
+                  ${data.users.filter(u=>u.role==='user').map(u=>`<option value="${u.id}">${u.name}</option>`).join('') || '<option value="">Қолданушы жоқ</option>'}
+                </select>
+              </div>
+              <div>
+                <label class="inp-label text-[11px]">Баға (1–5)</label>
+                <select id="adm-rev-rating" class="inp text-xs">
+                  <option value="5">★★★★★ — 5</option>
+                  <option value="4">★★★★ — 4</option>
+                  <option value="3">★★★ — 3</option>
+                  <option value="2">★★ — 2</option>
+                  <option value="1">★ — 1</option>
+                </select>
+              </div>
+            </div>
+            <textarea id="adm-rev-comment" class="inp text-xs" rows="2" placeholder="Пікір мәтіні..."></textarea>
+            <button class="btn-green btn-sm text-xs py-1.5 px-4" onclick="adminAddReview()">⭐ Пікірді жариялау</button>
+          </div>
           <div class="overflow-x-auto text-sm">
             <table class="w-full text-left border-collapse">
               <thead><tr class="bg-slate-50"><th class="p-2 border">Психолог</th><th class="p-2 border">Қолданушы</th><th class="p-2 border">Баға</th><th class="p-2 border">Пікір</th><th class="p-2 border">Уақыты</th><th class="p-2 border">Әрекет</th></tr></thead>
@@ -2645,6 +2676,23 @@ async function adminVerifyPsych(id, verified) {
     await api('PUT', `/api/admin/users/${id}`, { is_verified: verified });
     showToast(verified ? '✅' : '⏸️', verified ? 'Психолог верификацияланды!' : 'Верификация алынып тасталды');
     renderAdmin();
+  } catch (e) {
+    showToast('❌', e.message);
+  }
+}
+
+async function adminAddReview() {
+  const psych_id = document.getElementById('adm-rev-psych')?.value;
+  const user_id  = document.getElementById('adm-rev-user')?.value;
+  const rating   = parseInt(document.getElementById('adm-rev-rating')?.value) || 5;
+  const comment  = document.getElementById('adm-rev-comment')?.value.trim();
+  if (!psych_id || !user_id) { showToast('⚠️', 'Психолог пен қолданушыны таңдаңыз'); return; }
+  if (!comment) { showToast('⚠️', 'Пікір мәтінін жазыңыз'); return; }
+  try {
+    await api('POST', '/api/admin/reviews', { psych_id, user_id, rating, comment });
+    showToast('⭐', 'Пікір жарияланды! Карточкада рейтинг жаңарды.');
+    renderAdmin();
+    renderPsychs();
   } catch (e) {
     showToast('❌', e.message);
   }

@@ -65,6 +65,17 @@ async function initDB() {
       ALTER TABLE users ADD COLUMN IF NOT EXISTS experience_years INTEGER DEFAULT 0;
     `);
 
+    // ── Backfill (one-time, idempotent): psychologists created BEFORE the
+    // verification feature went live were already hand-checked via WhatsApp,
+    // so they stay visible. Cutoff date makes this safe to re-run:
+    // newer psychologists keep their manual verified/unverified status.
+    await pool.query(`
+      UPDATE users SET is_verified = TRUE
+      WHERE role = 'psychologist'
+        AND (is_verified IS DISTINCT FROM TRUE)
+        AND created_at < TIMESTAMPTZ '2026-09-21 00:00:00+00';
+    `);
+
     // ── Migration: transparent finance calculator fields ──
     await pool.query(`
       ALTER TABLE test_results ADD COLUMN IF NOT EXISTS region           TEXT;
@@ -607,6 +618,37 @@ app.post('/api/admin/users', auth, requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin create user error:', err);
     res.status(500).json({ error: 'Сервер қатесі: ' + err.message });
+  }
+});
+
+// POST /api/admin/reviews — Admin manually adds a review (e.g. testimonial from WhatsApp)
+app.post('/api/admin/reviews', auth, requireAdmin, async (req, res) => {
+  try {
+    const { psych_id, user_id, rating, comment } = req.body;
+    const numRating = parseInt(rating);
+    if (!psych_id || !user_id) return res.status(400).json({ error: 'Психолог пен қолданушыны таңдаңыз' });
+    if (!numRating || numRating < 1 || numRating > 5) {
+      return res.status(400).json({ error: 'Баға 1–5 аралығында' });
+    }
+    if (!comment || !comment.trim()) return res.status(400).json({ error: 'Пікір мәтінін жазыңыз' });
+
+    const psy = await pool.query("SELECT id FROM users WHERE id=$1 AND role='psychologist'", [psych_id]);
+    if (!psy.rows.length) return res.status(404).json({ error: 'Психолог табылмады' });
+    const usr = await pool.query('SELECT id FROM users WHERE id=$1', [user_id]);
+    if (!usr.rows.length) return res.status(404).json({ error: 'Қолданушы табылмады' });
+
+    const result = await pool.query(
+      `INSERT INTO reviews (psych_id, user_id, rating, comment)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (psych_id, user_id)
+       DO UPDATE SET rating = EXCLUDED.rating, comment = EXCLUDED.comment, created_at = NOW()
+       RETURNING *`,
+      [psych_id, user_id, numRating, comment.trim()]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('admin add review error:', err);
+    res.status(500).json({ error: 'Сервер қатесі' });
   }
 });
 
