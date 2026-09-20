@@ -74,6 +74,19 @@ async function initDB() {
       ALTER TABLE test_results ADD COLUMN IF NOT EXISTS rent_amount      BIGINT DEFAULT 0;
       ALTER TABLE test_results ADD COLUMN IF NOT EXISTS debt_monthly     BIGINT DEFAULT 0;
       ALTER TABLE test_results ADD COLUMN IF NOT EXISTS fin_detail       JSONB;
+      ALTER TABLE test_results ADD COLUMN IF NOT EXISTS case_answers     JSONB;
+    `);
+
+    // ── Migration: in-platform chat (user ↔ psychologist per request) ──
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        request_id  UUID        NOT NULL REFERENCES requests(id) ON DELETE CASCADE,
+        sender_id   UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        text        TEXT        NOT NULL,
+        created_at  TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS idx_messages_request ON messages(request_id);
     `);
 
     console.log('✅ Database schema applied');
@@ -308,7 +321,7 @@ app.post('/api/results', auth, async (req, res) => {
   try {
     const { scores, total, calc_bonus, income, expense,
             region, pm_value, children_planned, housing,
-            rent_amount, debt_monthly, fin_detail } = req.body;
+            rent_amount, debt_monthly, fin_detail, case_answers } = req.body;
     if (!scores || total === undefined) {
       return res.status(400).json({ error: 'scores және total қажет' });
     }
@@ -316,15 +329,16 @@ app.post('/api/results', auth, async (req, res) => {
     const result = await pool.query(
       `INSERT INTO test_results (user_id, scores, total, calc_bonus, income, expense,
                                  region, pm_value, children_planned, housing,
-                                 rent_amount, debt_monthly, fin_detail)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+                                 rent_amount, debt_monthly, fin_detail, case_answers)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`,
       [req.userId, JSON.stringify(scores), total, calc_bonus || null, income || null, expense || null,
        region || null, pm_value ? parseInt(pm_value) : null,
        Math.max(0, parseInt(children_planned) || 0),
        (housing === 'rent' || housing === 'own') ? housing : null,
        Math.max(0, parseInt(rent_amount) || 0),
        Math.max(0, parseInt(debt_monthly) || 0),
-       fin_detail ? JSON.stringify(fin_detail) : null]
+       fin_detail ? JSON.stringify(fin_detail) : null,
+       case_answers ? JSON.stringify(case_answers) : null]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -388,7 +402,9 @@ app.get('/api/requests', auth, async (req, res) => {
                 u.name AS user_name,
                 tr.scores, tr.total, tr.calc_bonus, tr.income, tr.expense,
                 tr.region, tr.pm_value, tr.children_planned, tr.housing,
-                tr.rent_amount, tr.debt_monthly, tr.fin_detail
+                tr.rent_amount, tr.debt_monthly, tr.fin_detail, tr.case_answers,
+                (SELECT COUNT(*)::int FROM messages m WHERE m.request_id = r.id) AS msg_count,
+                (SELECT m.text FROM messages m WHERE m.request_id = r.id ORDER BY m.created_at DESC LIMIT 1) AS last_msg
          FROM requests r
          JOIN users u ON u.id = r.user_id
          LEFT JOIN test_results tr ON tr.id = r.result_id
@@ -399,7 +415,9 @@ app.get('/api/requests', auth, async (req, res) => {
     } else {
       result = await pool.query(
         `SELECT r.*,
-                u.name AS psych_name
+                u.name AS psych_name,
+                (SELECT COUNT(*)::int FROM messages m WHERE m.request_id = r.id) AS msg_count,
+                (SELECT m.text FROM messages m WHERE m.request_id = r.id ORDER BY m.created_at DESC LIMIT 1) AS last_msg
          FROM requests r
          JOIN users u ON u.id = r.psych_id
          WHERE r.user_id = $1
@@ -480,6 +498,65 @@ app.get('/api/responses', auth, async (req, res) => {
     }
     res.json(result.rows);
   } catch (err) {
+    res.status(500).json({ error: 'Сервер қатесі' });
+  }
+});
+
+/* ═══════════════════════════════════════════════════════
+   MESSAGES — in-platform chat (only request participants)
+═══════════════════════════════════════════════════════ */
+
+async function checkParticipant(req, res) {
+  const { id: request_id } = req.params;
+  const row = await pool.query(
+    'SELECT * FROM requests WHERE id = $1 AND (user_id = $2 OR psych_id = $2)',
+    [request_id, req.userId]
+  );
+  if (!row.rows.length) {
+    res.status(403).json({ error: 'Бұл чатқа рұқсатыңыз жоқ' });
+    return null;
+  }
+  return row.rows[0];
+}
+
+// GET /api/requests/:id/messages
+app.get('/api/requests/:id/messages', auth, async (req, res) => {
+  try {
+    const allowed = await checkParticipant(req, res);
+    if (!allowed) return;
+    const result = await pool.query(
+      `SELECT m.id, m.request_id, m.sender_id, m.text, m.created_at,
+              u.name AS sender_name, u.role AS sender_role
+       FROM messages m
+       JOIN users u ON u.id = m.sender_id
+       WHERE m.request_id = $1
+       ORDER BY m.created_at ASC
+       LIMIT 500`,
+      [req.params.id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('get messages error:', err);
+    res.status(500).json({ error: 'Сервер қатесі' });
+  }
+});
+
+// POST /api/requests/:id/messages
+app.post('/api/requests/:id/messages', auth, async (req, res) => {
+  try {
+    const allowed = await checkParticipant(req, res);
+    if (!allowed) return;
+    const { text } = req.body;
+    if (!text || !text.trim()) return res.status(400).json({ error: 'Хабарлама мәтінін жазыңыз' });
+    if (text.length > 2000) return res.status(400).json({ error: 'Хабарлама тым ұзын (2000 таңбаға дейін)' });
+    const result = await pool.query(
+      `INSERT INTO messages (request_id, sender_id, text)
+       VALUES ($1, $2, $3) RETURNING *`,
+      [req.params.id, req.userId, text.trim()]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('post message error:', err);
     res.status(500).json({ error: 'Сервер қатесі' });
   }
 });
@@ -579,6 +656,14 @@ app.get('/api/admin/data', auth, requireAdmin, async (req, res) => {
     const requests = await pool.query('SELECT * FROM requests ORDER BY created_at DESC');
     const results = await pool.query('SELECT * FROM test_results ORDER BY created_at DESC');
     const responses = await pool.query('SELECT * FROM responses ORDER BY created_at DESC');
+    let messages = { rows: [] };
+    try {
+      messages = await pool.query(`
+        SELECT m.*, u.name AS sender_name
+        FROM messages m
+        JOIN users u ON u.id = m.sender_id
+        ORDER BY m.created_at DESC LIMIT 200`);
+    } catch { /* table may not exist on old DB until migration runs */ }
     const reviews = await pool.query(`
       SELECT r.*, u.name AS user_name, p.name AS psych_name
       FROM reviews r
@@ -592,6 +677,7 @@ app.get('/api/admin/data', auth, requireAdmin, async (req, res) => {
       results: results.rows,
       responses: responses.rows,
       reviews: reviews.rows,
+      messages: messages.rows,
     });
   } catch (err) {
     res.status(500).json({ error: 'Сервер қатесі' });
@@ -602,7 +688,7 @@ app.get('/api/admin/data', auth, requireAdmin, async (req, res) => {
 app.delete('/api/admin/:table/:id', auth, requireAdmin, async (req, res) => {
   try {
     const { table, id } = req.params;
-    const allowedTables = ['users', 'requests', 'test_results', 'responses', 'reviews'];
+    const allowedTables = ['users', 'requests', 'test_results', 'responses', 'reviews', 'messages'];
     if (!allowedTables.includes(table)) return res.status(400).json({ error: 'Invalid table' });
     
     await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);

@@ -260,7 +260,7 @@ async function api(method, path, body = null, requireAuth = true) {
    STATE
 ══════════════════════════════════════ */
 let currentUser = null;
-let testState   = { answers: { comm:{}, emot:{}, vals:{}, fin:{} }, currentCat: 0 };
+let testState   = { answers: { emot:{}, comm:{}, resp:{}, motiv:{}, fin:{}, inter:{} }, caseAnswers: {}, currentCat: 0 };
 
 /* ══════════════════════════════════════
    AUTH FORMS
@@ -413,6 +413,7 @@ function scaffoldTab(id) {
 }
 
 function switchTab(id) {
+  Object.keys(_chatTimers).forEach(k => { clearInterval(_chatTimers[k]); delete _chatTimers[k]; });
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById('tab-btn-'+id)?.classList.add('active');
@@ -494,46 +495,101 @@ async function renderHome() {
 }
 
 /* ══════════════════════════════════════
-   DIAGNOSTIC TEST — 20 Questions
+   DIAGNOSTIC TEST — 40 Questions (A–F) + 6 open cases
+   Шкала 1–5: 1 — мүлдем келіспеймін, 5 — толықтай келісемін.
+   Барлық тұжырым оң бағытта (C блогының кері тармақтары алдын ала түзетілген),
+   сондықтан қосымша инверсия қажет емес.
 ══════════════════════════════════════ */
 const QUESTIONS = {
-  comm: { label:'💬 Коммуникация', questions:[
-    'Біз қиын тақырыптарды дауыс көтермей тыныш талқылай аламыз',
-    'Серіктесім менің пікірімді аяғына дейін тыңдайды',
-    'Жанжал болғанда компромисс табуға тырысамыз',
-    'Мен серіктесіме өз сезімдерімді ашық айта аламын',
-    'Шешімдер бірлесіп, тең дәрежеде қабылданады',
+  emot: { label:'🅰️ Эмоционалды реттеу', questions:[
+    'Мен жанжалды навсоветсіз, балағаттаусыз сабырлы түрде талқылай аламын',
+    'Мен қатты күйзелістен кейін тез сабырға келемін',
+    'Жақындарымның алдында өз қателіктерімді мойындау маған оңай',
+    'Ашуланған кезде әрекеттерімді бақылай аламын',
+    'Серіктесімнің алдында осал тұстарымды немесе қорқынышымды көрсетуге өзімді еркін сезінемін',
+    'Эмоцияларымды ашық талқылай аламын',
   ]},
-  emot: { label:'❤️ Эмоционалдық жақындық', questions:[
-    'Серіктесім менің эмоцияларымды түсінеді деп сенемін',
-    'Қиын жағдайда серіктесіме сүйене аламын',
-    'Арамызда терең сенім мен ашықтық бар',
-    'Серіктесім мені мадақтап, қолдайды',
-    'Бірге болғанда өзімді қауіпсіз сеземін',
+  comm: { label:'🅱️ Қарым-қатынас және жанжалдарды шешу', questions:[
+    'Ренжіскен кезде кез келген бағамен «жеңіске жетуді» емес, компромисс іздеуді жөн көремін',
+    'Серіктесіммен келіспесем де, оның пікірін соңына дейін тыңдай аламын',
+    'Міндеттерді бөлісу туралы келісу маған оңайға түседі',
+    'Өз дегеніме жету үшін манипуляцияға бармаймын',
+    'Болашақ жоспарларды бірге талқылауға дайынмын',
+    'Серіктесіме алғыс пен ризашылығымды білдіре аламын',
   ]},
-  vals: { label:'🌟 Құндылықтар & Болашақ', questions:[
-    'Балаларды тәрбиелеу туралы көзқарасымыз ұқсас',
-    'Болашақ отбасы рөлдерін бөлу туралы пікіріміз сәйкеседі',
-    'Дін, рухани құндылықтар бойынша үйлесімді',
-    'Орта мерзімді және ұзақ мерзімді мақсаттарымыз ортақ',
-    'Тұрмыс, кәсіп, ұзақ мерзімдегі өмір жоспарлары сәйкес',
+  resp: { label:'🅲️ Жұп арасындағы саналы тәртіп', questions:[
+    'Серіктесіме бірдеңені өзінше жасауға мүмкіндік беру маған оңай',
+    'Қалағаным болмай қалған жағдайда да қорқыту мен бопсалаудан бас тартамын',
+    'Серіктесімді сынай беруден және оның әр қатесін тері есептей беруден аулақпын',
+    'Серіктесімнің пікірін құрметтеймін, тіпті ол менікінен өзгеше болса да (ол маған бағынысты болуға міндетті деп санамаймын)',
+    'Ашуды физикалық түрде көрсетуге (заттарды лақтыру, түрту, итеру және т.б.) түбегейлі қарсымын',
+    'Жеке шекараны құрметтеймін және серіктесімнің телефоны мен әлеуметтік желілерін үнемі бақыламаймын',
   ]},
-  fin: { label:'💰 Қаржылық дайындық', questions:[
-    'Қаржылық мәселелерді ашық талқылай аламыз',
-    'Шығындар мен жинақ жоспарлау жайлы пікірімізде алшақтық жоқ',
-    'Серіктесімнің несие немесе қарыз жағдайы маған белгілі',
-    'Ортақ отбасылық бюджет жүргізуге дайынмыз',
-    'Күтпеген шығындар үшін қаржылық "жастықша" бар',
+  motiv: { label:'🅳️ Некеге тұру мотивациясы мен күтулер', questions:[
+    'Отбасының қысымымен емес, өз еркіммен саналы түрде некеге тұрамын',
+    'Балалар және оларды тәрбиелеу туралы көзқарастарымыз сәйкес келеді',
+    'Мен үшін неке — бұл тек статус емес, ең алдымен серіктестік пен даму',
+    'Отбасы үшін компромисске баруға дайынмын (сапары, көші-қон)',
+    'Гендерлік рөлдер мен міндеттерді бөлісуді ашық талқылауға дайынмын',
+    'Үй шаруасы мен қаржыны бөлісу мәселесін талқыладық',
+    'Бала туу және тәрбиелеу жоспарын келісіп қойдық',
+    'Отбасылық бюджет үшін жауапкершілікті өзіме алуға дайынмын',
+  ]},
+  fin: { label:'🅴️ Қаржылық кемелдік пен жоспарлау', questions:[
+    'Баланың алғашқы 3 жылдағы шығыны қанша болатынын түсінемін',
+    '3 айға жететін резервтік қорым/жинағым бар',
+    'Отбасылық бюджетті жоспарлай аламын',
+    'Үлкен төленбеген қарыздарым жоқ',
+  ]},
+  inter: { label:'🅵️ Тұлғааралық дағдылар мен дайындық', questions:[
+    'Отбасы шығындарындағы қажеттілік пен тілектің айырмашылығын білемін',
+    'Серіктесіммен қаржы мәселелерін ашық талқылай аламын',
+    'Қиын сәттерде серіктесіме қолдау көрсете білемін',
+    'Болашақ туралы күрделі әңгімелерден қашпаймын',
+    'Қажет болған жағдайда шешімдерді серіктесіммен бірге қабылдаймын',
+    'Серіктесімнің жеке кеңістігін құрметтеймін',
+    'Баланы күту бойынша міндеттердің бір бөлігін өз мойныма алуға дайынмын',
+    'Қарым-қатынас үшін өзіммен жұмыс істеуге және дамуға тырысамын',
+    'Қажет болса, отбасылық ережелерді талқылап, түзетуге дайынмын',
+    'Құрмет пен сенім — некенің негізі деп есептеймін',
   ]},
 };
-const CAT_KEYS = ['comm','emot','vals','fin'];
+const CAT_KEYS = ['emot','comm','resp','motiv','fin','inter'];
+const CAT_META = {
+  emot:  { short:'Эмоция',            color:'pink'   },
+  comm:  { short:'Коммуникация',      color:'blue'   },
+  resp:  { short:'Саналы тәртіп',     color:'purple' },
+  motiv: { short:'Мотивация',         color:'orange' },
+  fin:   { short:'Қаржы',             color:'green'  },
+  inter: { short:'Тұлғааралық',       color:'cyan'   },
+};
+/* Ситуациялық кейстер — ашық сұрақтар (міндетті емес, бірақ психологқа өте маңызды) */
+const CASES = [
+  'Серіктесіңіз келісімсіз үлкен сомада ақша жұмсады. Сіздің алғашқы және кейінгі әрекеттеріңіз қандай?',
+  'Сіз жұмыстан айырылдыңыз; серіктесіңіз негізгі ақ табушы болады. Бюджетті қалай бөлесіздер?',
+  'Серіктесіңіздің туыстары некеңізге ашық қарсы шығып, шешімдеріңізге араласады. Шекараны қалай қоясыз?',
+  'Серіктесіңіздің опасыздық жасағанына күмәнданасыз. Әңгімені қалай бастайсыз?',
+  'Серіктесіңіз қазір балалы болғысы келмейді, ал сіз жоспарлаған едіңіз. Қандай компромисс түрлері болуы мүмкін?',
+  'Тәрбиелеу мәселесіндегі келіспеушіліктер — ортақ келісімге қалай келуге болады?',
+];
+
+function blankAnswers() {
+  const o = {};
+  CAT_KEYS.forEach(k => { o[k] = {}; });
+  return o;
+}
 
 function resetTestState() {
-  testState = { answers:{ comm:{},emot:{},vals:{},fin:{} }, currentCat:0 };
+  testState = { answers: blankAnswers(), caseAnswers: {}, currentCat: 0 };
 }
 let _diagInited = false;
 function initDiagIfNeeded() {
-  if (!_diagInited) { _diagInited = true; renderCatQuestions(0); }
+  if (!_diagInited) {
+    _diagInited = true;
+    diagHideAll();
+    document.getElementById('diag-test-view').style.display = 'block';
+    renderCatQuestions(0);
+  }
 }
 
 function buildDiagScaffold() {
@@ -542,8 +598,8 @@ function buildDiagScaffold() {
     <div id="diag-test-view">
       <div class="mb-5">
         <div class="flex justify-between text-xs font-semibold text-slate-500 mb-2">
-          <span id="cat-label-display">Категория 1 / 4</span>
-          <span id="cat-q-count">0 / 5</span>
+          <span id="cat-label-display">Категория 1 / 6</span>
+          <span id="cat-q-count">0 / 6</span>
         </div>
         <div class="h-2.5 bg-slate-200 rounded-full overflow-hidden">
           <div class="pbar-fill" id="cat-pbar" style="width:0%"></div>
@@ -556,6 +612,19 @@ function buildDiagScaffold() {
       <div class="flex gap-3 mt-6">
         <button class="btn-ghost flex-1 py-3 hidden" id="diag-back-btn" onclick="diagNav(-1)">← Артқа</button>
         <button class="btn-primary flex-1 py-3" id="diag-next-btn" onclick="diagNav(1)" disabled>Келесі →</button>
+      </div>
+    </div>
+
+    <div id="diag-cases-view" style="display:none" class="animate-fadeInUp">
+      <div class="card p-6 mb-4">
+        <h3 class="font-black text-slate-800 mb-1">📝 Ситуациялық кейстер</h3>
+        <p class="text-sm text-slate-500 mb-1">6 ашық сұраққа өз сөзіңізбен жауап беріңіз. Міндетті емес, бірақ психолог сізді дәл осы жауаптар арқылы терең түсінеді.</p>
+        <div class="text-xs font-bold text-slate-500 mb-4">Толтырылды: <span id="cases-count">0 / 6</span></div>
+        <div class="space-y-4" id="cases-area"></div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn-ghost flex-1 py-3" onclick="casesNav(-1)">← Артқа</button>
+        <button class="btn-primary flex-1 py-3" onclick="casesNav(1)">Қаржылық калькулятор →</button>
       </div>
     </div>
 
@@ -629,7 +698,7 @@ function buildDiagScaffold() {
         <div id="fc-preview" class="hidden rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs space-y-2"></div>
       </div>
       <div class="flex gap-3">
-        <button class="btn-ghost flex-1 py-3" onclick="showTestView()">← Артқа</button>
+        <button class="btn-ghost flex-1 py-3" onclick="showCasesStep()">← Артқа</button>
         <button class="btn-primary flex-1 py-3" id="finish-diag-btn" onclick="finishDiag()">Нәтижені есептеу ✦</button>
       </div>
     </div>
@@ -640,16 +709,17 @@ function renderCatQuestions(catIdx) {
   testState.currentCat = catIdx;
   const key = CAT_KEYS[catIdx];
   const cat = QUESTIONS[key];
-  document.getElementById('cat-label-display').textContent = `${cat.label} — ${catIdx+1}/4 категория`;
+  const n = cat.questions.length;
+  document.getElementById('cat-label-display').textContent = `${cat.label} — ${catIdx+1}/${CAT_KEYS.length} категория`;
   document.getElementById('diag-back-btn').classList.toggle('hidden', catIdx === 0);
-  document.getElementById('diag-next-btn').textContent = catIdx < 3 ? 'Келесі →' : 'Нәтижені көру';
+  document.getElementById('diag-next-btn').textContent = catIdx < CAT_KEYS.length - 1 ? 'Келесі →' : 'Кейстерге өту →';
   updateCatProgress(catIdx);
   checkCatDone(catIdx);
   document.getElementById('question-area').innerHTML = `
     <div class="animate-fadeInUp space-y-4">
       <div class="card-flat p-4 flex items-center gap-3">
         <div class="text-2xl">${cat.label.split(' ')[0]}</div>
-        <div><div class="font-bold text-slate-700">${cat.label}</div><div class="text-xs text-slate-400">5 сұраққа жауап беріңіз (1–5 шкала)</div></div>
+        <div><div class="font-bold text-slate-700">${cat.label}</div><div class="text-xs text-slate-400">${n} сұраққа жауап беріңіз (1–5 шкала: 1 — мүлдем келіспеймін, 5 — толық келісемін)</div></div>
       </div>
       <div class="flex justify-between text-xs text-slate-400 font-medium px-1">
         <span>1 — Мүлдем келіспеймін</span><span>5 — Толық келісемін</span>
@@ -675,36 +745,85 @@ function selectQ(catKey, qi, val) {
 
 function updateCatProgress(catIdx) {
   const key      = CAT_KEYS[catIdx];
+  const n        = QUESTIONS[key].questions.length;
   const answered = Object.keys(testState.answers[key]).length;
-  const pct      = (answered/5)*100;
+  const pct      = (answered/n)*100;
   document.getElementById('cat-pbar').style.width = pct+'%';
-  document.getElementById('cat-q-count').textContent = `${answered} / 5`;
-  document.getElementById('step-fill-'+catIdx).style.width = pct+'%';
+  document.getElementById('cat-q-count').textContent = `${answered} / ${n}`;
+  const stepEl = document.getElementById('step-fill-'+catIdx);
+  if (stepEl) stepEl.style.width = pct+'%';
 }
 
 function checkCatDone(catIdx) {
   const key = CAT_KEYS[catIdx];
-  const ok  = Object.keys(testState.answers[key]).length === 5;
+  const ok  = Object.keys(testState.answers[key]).length === QUESTIONS[key].questions.length;
   document.getElementById('diag-next-btn').disabled = !ok;
+}
+
+function diagHideAll() {
+  ['diag-test-view','diag-cases-view','diag-finance-tool'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 }
 
 function diagNav(dir) {
   const next = testState.currentCat + dir;
   if (next < 0) return;
-  if (next > 3) {
-    document.getElementById('diag-test-view').style.display    = 'none';
-    document.getElementById('diag-finance-tool').style.display = 'block';
-    fcInitRegionSelect();
-    updateFCPreview();
+  if (next > CAT_KEYS.length - 1) {
+    diagHideAll();
+    document.getElementById('diag-cases-view').style.display = 'block';
+    renderCasesView();
     return;
   }
   renderCatQuestions(next);
 }
 
+/* ── Cases view ── */
+function renderCasesView() {
+  const area = document.getElementById('cases-area');
+  if (!area) return;
+  area.innerHTML = CASES.map((c, i) => `
+    <div class="card p-4">
+      <p class="text-sm font-medium text-slate-700 mb-2 leading-relaxed"><span class="text-blue-600 font-bold">Кейс ${i+1}.</span> ${c}</p>
+      <textarea id="case-a-${i}" class="inp text-sm" rows="3" placeholder="Жауабыңызды осында жазыңыз... (міндетті емес)" oninput="saveCaseAnswer(${i}, this.value)">${escHtml(testState.caseAnswers[i] || '')}</textarea>
+    </div>`).join('');
+  updateCasesCount();
+}
+
+function saveCaseAnswer(i, val) {
+  if (val.trim()) testState.caseAnswers[i] = val.trim();
+  else delete testState.caseAnswers[i];
+  updateCasesCount();
+}
+
+function updateCasesCount() {
+  const el = document.getElementById('cases-count');
+  if (el) el.textContent = `${Object.keys(testState.caseAnswers).length} / ${CASES.length}`;
+}
+
+function casesNav(dir) {
+  diagHideAll();
+  if (dir > 0) {
+    document.getElementById('diag-finance-tool').style.display = 'block';
+    fcInitRegionSelect();
+    updateFCPreview();
+  } else {
+    document.getElementById('diag-test-view').style.display = 'block';
+    renderCatQuestions(CAT_KEYS.length - 1);
+  }
+}
+
 function showTestView() {
-  document.getElementById('diag-test-view').style.display    = 'block';
-  document.getElementById('diag-finance-tool').style.display = 'none';
-  renderCatQuestions(3);
+  diagHideAll();
+  document.getElementById('diag-test-view').style.display = 'block';
+  renderCatQuestions(CAT_KEYS.length - 1);
+}
+
+function showCasesStep() {
+  diagHideAll();
+  document.getElementById('diag-cases-view').style.display = 'block';
+  renderCasesView();
 }
 
 /* ── Finance calculator v2: transparent formula ──
@@ -752,7 +871,8 @@ function fcCalculate(inp) {
     else if (debtLoad <= 0.5) debtScore = 35;
     else debtScore = 10;
   }
-  const calcBonus = Math.max(0, Math.min(100, Math.round(covScore * 0.5 + netScore * 0.3 + debtScore * 0.2)));
+  let calcBonus = Math.max(0, Math.min(100, Math.round(covScore * 0.5 + netScore * 0.3 + debtScore * 0.2)));
+  if (net < 0) calcBonus = Math.min(calcBonus, 35); // шығын табыстан асса — бонус жоғары болмауы керек
   let verdict, verdictCls;
   if (coverage >= 1 && net >= 0 && debtLoad <= 0.3)      { verdict = '🟢 Нормадан асты — қаржылық дайындық жоғары'; verdictCls = 'text-emerald-700'; }
   else if (coverage >= 0.8 && net >= 0)                  { verdict = '🟡 Шекті деңгей — жастықша мен жоспар қажет'; verdictCls = 'text-amber-700'; }
@@ -816,8 +936,9 @@ async function finishDiag() {
   const quizFin = scores.fin;
 
   const inp = fcReadInputs();
+  const caseAnswers = { ...testState.caseAnswers };
   let calcBonus = null, finDetail = null;
-  let payload = { scores: { ...scores }, total: 0, calc_bonus: null, income: null, expense: null };
+  let payload = { scores: { ...scores }, total: 0, calc_bonus: null, income: null, expense: null, case_answers: caseAnswers };
   if (inp.income > 0) {
     const c = fcCalculate(inp);
     calcBonus = c.calcBonus;
@@ -828,11 +949,12 @@ async function finishDiag() {
                   quizFin, formula: 'fin = quiz*0.6 + bonus*0.4; bonus = cov*0.5+net*0.3+debt*0.2; need = PM*1.5*family' };
     payload = { scores, total: 0, calc_bonus: calcBonus, income: inp.income, expense: inp.expense,
                 region: inp.region, pm_value: inp.pm, children_planned: inp.children,
-                housing: inp.housing, rent_amount: inp.rent, debt_monthly: inp.debt, fin_detail: finDetail };
+                housing: inp.housing, rent_amount: inp.rent, debt_monthly: inp.debt, fin_detail: finDetail,
+                case_answers: caseAnswers };
   } else {
-    payload = { scores, total: 0, calc_bonus: null, income: null, expense: null };
+    payload = { scores, total: 0, calc_bonus: null, income: null, expense: null, case_answers: caseAnswers };
   }
-  payload.total = Math.round((scores.comm + scores.emot + scores.vals + scores.fin) / 4);
+  payload.total = Math.round(CAT_KEYS.reduce((a, k) => a + (scores[k] || 0), 0) / CAT_KEYS.length);
 
   setBtnLoading('finish-diag-btn', true);
   try {
@@ -1523,7 +1645,7 @@ async function renderResults() {
       return;
     }
     const latest = results[0];
-    const s      = latest.scores;
+    const s      = normObj(latest.scores) || {};
     el.innerHTML = `
       <div class="animate-fadeInUp space-y-5">
         <h2 class="font-black text-slate-800 text-xl">📊 Менің нәтижелерім</h2>
@@ -1548,14 +1670,12 @@ async function renderResults() {
               </div>
             </div>
             <div class="flex-1 min-w-[180px] space-y-3">
-              ${catRow('💬 Коммуникация', s.comm,'blue')}
-              ${catRow('❤️ Эмоция', s.emot,'pink')}
-              ${catRow('🌟 Құндылықтар', s.vals,'purple')}
-              ${catRow('💰 Қаржы', s.fin,'green')}
+              ${CAT_KEYS.map(k=>catRow((QUESTIONS[k]?.label || k) + ` <span class="text-slate-400 font-normal">(${(QUESTIONS[k]?.questions.length||0)} с.)</span>`, s[k]||0, CAT_META[k]?.color||'blue')).join('')}
             </div>
           </div>
           <canvas id="res-radar" height="220"></canvas>
           ${latest.fin_detail ? finDetailCard(latest) : (latest.income ? `<div class="text-xs text-slate-500 bg-slate-50 rounded-xl p-3 mt-3">💰 Табыс: <b>${fmtKZT(latest.income)} ₸</b> · Шығын: <b>${fmtKZT(latest.expense||0)} ₸</b> · Бонус: <b>${latest.calc_bonus||'—'}/100</b> (ескі формат — жаңа тестте толық есеп шығады)</div>` : '')}
+          ${caseAnswersCard(latest)}
           ${recCard(latest.total)}
         </div>
         ${results.length > 1 ? `
@@ -1601,8 +1721,8 @@ async function renderResults() {
       if (window._rr) window._rr.destroy();
       window._rr = new Chart(ctx.getContext('2d'),{
         type:'radar',
-        data:{labels:['Коммуникация','Эмоция','Құндылықтар','Қаржы'],
-          datasets:[{data:[s.comm,s.emot,s.vals,s.fin],backgroundColor:'rgba(6,182,212,.15)',borderColor:'#1E3A8A',borderWidth:2,pointBackgroundColor:'#06B6D4',pointRadius:5}]},
+        data:{labels:CAT_KEYS.map(k=>CAT_META[k]?.short || k),
+          datasets:[{data:CAT_KEYS.map(k=>s[k]||0),backgroundColor:'rgba(6,182,212,.15)',borderColor:'#1E3A8A',borderWidth:2,pointBackgroundColor:'#06B6D4',pointRadius:5}]},
         options:{responsive:true,scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:9}},grid:{color:'rgba(0,0,0,.05)'},pointLabels:{font:{size:11,weight:'600'},color:'#475569'}}},plugins:{legend:{display:false}}}
       });
       if (latest.total > 80) launchConfetti();
@@ -1832,12 +1952,20 @@ async function renderPsychs() {
                         💬 Пікірлер (${cnt})
                       </button>
                       ${myReq ? `
+                        <button class="btn-green btn-sm text-xs py-1.5 px-3" onclick="toggleChat('${myReq.id}')">
+                          💬 Чат${myReq.msg_count ? ` (${myReq.msg_count})` : ''}
+                        </button>
                         <button class="btn-cyan btn-sm text-xs py-1.5 px-3" onclick="toggleReviewForm('${p.id}')">
                           ✍️ Баға қою
                         </button>
                       ` : ''}
                     </div>
                   </div>
+
+                  ${myReq ? `
+                  <!-- In-platform chat with psychologist -->
+                  <div id="chat-box-${myReq.id}" style="display:none" class="animate-fadeIn"></div>
+                  ` : ''}
 
                   <!-- Review input form -->
                   <div id="review-form-${p.id}" style="display:none" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 animate-fadeIn space-y-3">
@@ -1893,7 +2021,7 @@ async function renderRequests() {
         ${!reqs.length ? `<div class="card p-10 text-center text-slate-400"><div class="text-5xl mb-3">📭</div><p>Сұраулар жоқ</p></div>` :
           reqs.map(req=>{
             const resp = resps.find(r=>r.request_id===req.id);
-            const s    = req.scores || {};
+            const s    = normObj(req.scores) || {};
             return `
               <div class="card p-5">
                 <div class="flex items-start justify-between gap-3 mb-4">
@@ -1909,14 +2037,14 @@ async function renderRequests() {
                 </div>
                 ${req.scores ? `
                   <div class="grid grid-cols-2 gap-2 mb-4">
-                    ${[{k:'comm',l:'💬 Коммуникация'},{k:'emot',l:'❤️ Эмоция'},{k:'vals',l:'🌟 Құндылықтар'},{k:'fin',l:'💰 Қаржы'}].map(c=>`
+                    ${CAT_KEYS.map(k=>`
                       <div class="bg-slate-50 rounded-xl p-2.5 text-center">
-                        <div class="text-xs text-slate-500">${c.l}</div>
-                        <div class="font-black text-blue-700">${s[c.k]||0}%</div>
+                        <div class="text-xs text-slate-500">${CAT_META[k]?.short || k}</div>
+                        <div class="font-black text-blue-700">${s[k]||0}%</div>
                       </div>`).join('')}
                   </div>
                   <div class="flex items-center justify-between mb-2">
-                    <span class="font-semibold text-slate-700 text-sm">Жалпы балл:</span>
+                    <span class="font-semibold text-slate-700 text-sm">Жалпы балл (40 сұрақ):</span>
                     <span class="font-black text-xl text-blue-700">${req.total}%</span>
                   </div>
                   ${(req.income || req.region) ? `
@@ -1924,7 +2052,8 @@ async function renderRequests() {
                       <div class="font-bold text-slate-700 mb-1">🧮 Қаржылық контекст (ашық есеп):</div>
                       <div>🗺️ ${req.region || '—'} (ПМ ${req.pm_value ? fmtKZT(req.pm_value) + ' ₸' : '—'}) · 👨‍👩‍👧 2 + ${req.children_planned ?? 0} бала · ${req.housing === 'rent' ? '🔑 жалдамалы' + (req.rent_amount ? ' (' + fmtKZT(req.rent_amount) + ' ₸)' : '') : '🏠 өз үйі'}</div>
                       <div>💵 Табыс ${fmtKZT(req.income || 0)} ₸ · шығын ${fmtKZT(req.expense || 0)} ₸ · несие ${req.debt_monthly ? fmtKZT(req.debt_monthly) + ' ₸/ай' : 'жоқ'} · бонус ${req.calc_bonus ?? '—'}/100</div>
-                    </div>` : ''}` : ''}
+                    </div>` : ''}
+                  ${caseAnswersCard(req)}` : ''}
                 ${resp
                   ? `<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
                       <div class="text-xs font-bold text-emerald-700 mb-2">✅ Сіздің жауабыңыз</div>
@@ -1939,6 +2068,10 @@ async function renderRequests() {
                         <input type="number" id="pr-${req.id}" class="inp" placeholder="15000" min="0"/></div>
                       <button class="btn-green w-full py-2.5" id="resp-btn-${req.id}" onclick="submitResponse('${req.id}','${req.user_id}','resp-btn-${req.id}')">📤 Жауап жіберу</button>
                     </div>`}
+                <div class="mt-3">
+                  <button class="btn-green btn-sm w-full py-2" onclick="toggleChat('${req.id}')">💬 Клиентпен чат${req.msg_count ? ` (${req.msg_count})` : ''}${req.last_msg ? ` — соңғы: «${escHtml(req.last_msg.slice(0,40))}${req.last_msg.length > 40 ? '…' : ''}»` : ''}</button>
+                  <div id="chat-box-${req.id}" style="display:none" class="animate-fadeIn mt-2"></div>
+                </div>
               </div>`;}).join('')}
       </div>`;
   } catch(e) {
@@ -1958,6 +2091,86 @@ async function submitResponse(reqId, userId, btnId) {
   } catch(e) {
     showToast('❌', e.message);
     setBtnLoading(btnId, false);
+  }
+}
+
+/* ══════════════════════════════════════
+   CHAT — user ↔ psychologist per request
+══════════════════════════════════════ */
+const _chatTimers = {};
+
+function escHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function toggleChat(requestId) {
+  const box = document.getElementById(`chat-box-${requestId}`);
+  if (!box) return;
+  if (box.style.display === 'block') {
+    box.style.display = 'none';
+    if (_chatTimers[requestId]) { clearInterval(_chatTimers[requestId]); delete _chatTimers[requestId]; }
+    return;
+  }
+  box.style.display = 'block';
+  box.innerHTML = `
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2">
+      <div class="flex items-center justify-between">
+        <div class="text-xs font-bold text-slate-700">💬 Чат — платформа ішіндегі хат алмасу</div>
+        <button class="text-[11px] text-blue-600 font-bold hover:underline" onclick="loadChat('${requestId}')">🔄 Жаңарту</button>
+      </div>
+      <div id="chat-msgs-${requestId}" class="space-y-2 max-h-72 overflow-y-auto bg-white rounded-xl border border-slate-200 p-2.5">
+        <div class="text-center text-xs text-slate-400 py-3">Жүктелуде...</div>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" id="chat-inp-${requestId}" class="inp text-sm" placeholder="Хабарлама жазыңыз..." maxlength="2000" onkeydown="if(event.key==='Enter') sendChat('${requestId}')"/>
+        <button class="btn-primary btn-sm whitespace-nowrap" id="chat-send-${requestId}" onclick="sendChat('${requestId}')">Жіберу ➤</button>
+      </div>
+    </div>`;
+  await loadChat(requestId);
+  if (_chatTimers[requestId]) clearInterval(_chatTimers[requestId]);
+  _chatTimers[requestId] = setInterval(() => loadChat(requestId, true), 8000);
+}
+
+async function loadChat(requestId, silent) {
+  const listEl = document.getElementById(`chat-msgs-${requestId}`);
+  if (!listEl || document.getElementById(`chat-box-${requestId}`)?.style.display !== 'block') return;
+  try {
+    const msgs = await api('GET', `/api/requests/${requestId}/messages`);
+    if (!msgs.length) {
+      listEl.innerHTML = '<div class="text-center text-xs text-slate-400 py-3">Әзірге хабарлама жоқ. Бірінші болып жазыңыз! 👋</div>';
+      return;
+    }
+    listEl.innerHTML = msgs.map(m => {
+      const mine = m.sender_id === currentUser.id;
+      return `<div class="flex ${mine ? 'justify-end' : 'justify-start'}">
+        <div class="max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${mine ? 'bg-blue-700 text-white rounded-br-md' : 'bg-slate-100 text-slate-700 rounded-bl-md'}">
+          ${mine ? '' : `<div class="font-bold text-[10px] ${m.sender_role === 'psychologist' ? 'text-emerald-600' : 'text-blue-600'} mb-0.5">${escHtml(m.sender_name)} ${m.sender_role === 'psychologist' ? '🩺' : ''}</div>`}
+          <div>${escHtml(m.text)}</div>
+          <div class="text-[9px] mt-0.5 ${mine ? 'text-blue-200' : 'text-slate-400'}">${new Date(m.created_at).toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })}</div>
+        </div>
+      </div>`;
+    }).join('');
+    listEl.scrollTop = listEl.scrollHeight;
+  } catch (e) {
+    if (!silent) listEl.innerHTML = `<div class="text-center text-xs text-red-500 py-3">${escHtml(e.message)}</div>`;
+  }
+}
+
+async function sendChat(requestId) {
+  const inp = document.getElementById(`chat-inp-${requestId}`);
+  const text = inp?.value.trim();
+  if (!text) return;
+  setBtnLoading(`chat-send-${requestId}`, true);
+  try {
+    await api('POST', `/api/requests/${requestId}/messages`, { text });
+    inp.value = '';
+    await loadChat(requestId);
+  } catch (e) {
+    showToast('❌', e.message);
+  } finally {
+    setBtnLoading(`chat-send-${requestId}`, false);
+    const btn = document.getElementById(`chat-send-${requestId}`);
+    if (btn) btn.textContent = 'Жіберу ➤';
   }
 }
 
@@ -2040,8 +2253,8 @@ async function saveProfile() {
    HELPERS
 ══════════════════════════════════════ */
 function catRow(label, pct, color) {
-  const cls = {blue:'bg-blue-600',pink:'bg-pink-500',purple:'bg-purple-600',green:'bg-emerald-500'};
-  const txt = {blue:'text-blue-700',pink:'text-pink-600',purple:'text-purple-700',green:'text-emerald-700'};
+  const cls = {blue:'bg-blue-600',pink:'bg-pink-500',purple:'bg-purple-600',green:'bg-emerald-500',orange:'bg-orange-500',cyan:'bg-cyan-500'};
+  const txt = {blue:'text-blue-700',pink:'text-pink-600',purple:'text-purple-700',green:'text-emerald-700',orange:'text-orange-600',cyan:'text-cyan-600'};
   return `<div>
     <div class="flex justify-between text-xs font-semibold mb-1">
       <span class="text-slate-600">${label}</span><span class="${txt[color]||'text-blue-700'}">${pct}%</span>
@@ -2059,7 +2272,7 @@ function riskBadge(score) {
 }
 
 function finDetailCard(r) {
-  const d = typeof r.fin_detail === 'string' ? JSON.parse(r.fin_detail) : (r.fin_detail || {});
+  const d = normObj(r.fin_detail) || {};
   const region = r.region || '—';
   const pm = r.pm_value ? fmtKZT(r.pm_value) + ' ₸' : '—';
   const kids = r.children_planned ?? '—';
@@ -2074,6 +2287,27 @@ function finDetailCard(r) {
       <div class="bg-white rounded-xl p-2.5 border">📐 Норма / таза қалдық<br><b>${d.need ? fmtKZT(d.need) + ' / ' + fmtKZT(d.net) : '—'} ₸</b><br><span class="text-slate-400">норма = ПМ×1,5×отбасы</span></div>
     </div>
     ${d.coverage !== undefined ? `<div>Қамту <b>${Math.round(d.coverage*100)}%</b> (табыс ÷ норма) · Борыш жүктемесі <b>${Math.round((d.debtLoad||0)*100)}%</b> · Бонус <b>${r.calc_bonus}/100</b> = қамту ${d.covScore}×50% + тұрақтылық ${d.netScore}×30% + борыш ${d.debtScore}×20%. Қаржы блогы = сауалнама ${d.quizFin}%×60% + бонус×40%.</div>` : `<div>Бонус: <b>${r.calc_bonus||'—'}/100</b></div>`}
+  </div>`;
+}
+
+function normObj(v) {
+  if (!v) return null;
+  if (typeof v === 'string') { try { return JSON.parse(v); } catch { return null; } }
+  return v;
+}
+
+function caseAnswersCard(r) {
+  const ca = normObj(r.case_answers);
+  if (!ca || !Object.keys(ca).length) return '';
+  return `<div class="rounded-2xl border border-violet-200 bg-violet-50/50 p-4 mt-4 text-xs text-slate-700 leading-relaxed">
+    <div class="font-black text-slate-800 text-sm mb-2">📝 Ситуациялық кейстерге жауаптары (${Object.keys(ca).length}/${CASES.length})</div>
+    <div class="space-y-2">
+      ${Object.keys(ca).sort((a,b)=>a-b).map(i=>`
+        <div class="bg-white rounded-xl p-2.5 border">
+          <div class="font-bold text-slate-600 mb-0.5">Кейс ${parseInt(i)+1}: ${CASES[i] || ''}</div>
+          <div class="text-slate-700">💬 ${ca[i]}</div>
+        </div>`).join('')}
+    </div>
   </div>`;
 }
 

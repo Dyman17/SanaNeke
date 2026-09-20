@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS test_results (
   rent_amount      BIGINT  DEFAULT 0,
   debt_monthly     BIGINT  DEFAULT 0,        -- credit/mortgage per month
   fin_detail       JSONB,                    -- full breakdown {need,net,coverage,...}
+  case_answers     JSONB,                    -- open case answers {0:"...",...}
   created_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -76,6 +77,15 @@ CREATE TABLE IF NOT EXISTS reviews (
   UNIQUE (psych_id, user_id)
 );
 
+-- ── Messages (in-platform chat user ↔ psychologist) ────
+CREATE TABLE IF NOT EXISTS messages (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  request_id  UUID        NOT NULL REFERENCES requests(id) ON DELETE CASCADE,
+  sender_id   UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  text        TEXT        NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ── Indexes ───────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_results_user   ON test_results(user_id);
 CREATE INDEX IF NOT EXISTS idx_requests_user  ON requests(user_id);
@@ -83,4 +93,5 @@ CREATE INDEX IF NOT EXISTS idx_requests_psych ON requests(psych_id);
 CREATE INDEX IF NOT EXISTS idx_responses_user ON responses(user_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_psych  ON reviews(psych_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_user   ON reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_messages_request ON messages(request_id);
 
