@@ -46,6 +46,8 @@ git push -u origin main
 4. Set these **Environment Variables** in Render dashboard:
    - `FRONTEND_URL` → your Vercel URL (set after step 3)
    - `JWT_SECRET` → auto-generated or set your own (32+ chars)
+   - `ADMIN_EMAIL` → `admin@sananeke` (or your preferred admin email)
+   - `ADMIN_PASSWORD` → a unique password for the admin account; never commit it to Git
 5. Click **Deploy**
 
 ### Option B — Manual
@@ -63,6 +65,8 @@ git push -u origin main
      ```
      DATABASE_URL = <paste Internal Database URL>
      JWT_SECRET   = <generate a 32+ char random string>
+     ADMIN_EMAIL = admin@sananeke
+     ADMIN_PASSWORD = <set a unique password; do not commit it>
      FRONTEND_URL = https://your-app.vercel.app
      NODE_ENV     = production
      ```
@@ -70,6 +74,12 @@ git push -u origin main
 3. After first deploy, the DB schema is applied automatically.
 
 > ⚠️ **Note your Render URL**, e.g.: `https://sananeke-backend.onrender.com`
+
+Users can register on the site with an email and password (at least 8 characters). Psychologist accounts are created unverified and need administrator approval before appearing in user searches.
+
+### Database connection troubleshooting
+
+The API only starts after it connects to PostgreSQL and applies the schema. If startup reports `getaddrinfo ENOTFOUND`, Render cannot resolve the hostname in `DATABASE_URL`. In the Render dashboard, make sure `DATABASE_URL` is the current **Internal Database URL** for the `sananeke-db` database, and that the database and web service are in the same region. If the database was recreated, update the service variable with its new URL and redeploy. Check the Render service logs for the startup error if the site reports that the server is unavailable.
 
 ---
 
@@ -118,6 +128,7 @@ Click **Save** → service redeploys automatically.
 ## 🔒 Security Notes
 
 - Passwords are hashed with **bcrypt** (12 rounds) — never stored in plain text
+- Admin access is configured with `ADMIN_EMAIL` and `ADMIN_PASSWORD`; set these in the hosting provider and never commit real passwords
 - All protected routes require a **JWT Bearer token** (30-day expiry)
 - CORS restricts API calls to your Vercel domain only
 - `sslmode=require` enforced for all Render PostgreSQL connections

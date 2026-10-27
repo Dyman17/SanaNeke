@@ -8,13 +8,24 @@ const jwt       = require('jsonwebtoken');
 const { Pool }  = require('pg');
 const fs        = require('fs');
 const path      = require('path');
+const crypto    = require('crypto');
 
 /* ═══════════════════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════════════════ */
 const PORT         = process.env.PORT || 4000;
-const JWT_SECRET   = process.env.JWT_SECRET || 'fallback_dev_secret_change_me';
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL is required to start the API');
+}
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET is required in production');
+}
+const JWT_SECRET   = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const ADMIN_EMAIL  = (process.env.ADMIN_EMAIL || 'admin@sananeke').trim().toLowerCase();
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD
+  ? bcrypt.hash(process.env.ADMIN_PASSWORD, 12)
+  : Promise.resolve(null);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -36,13 +47,12 @@ app.use(express.json());
    DB INIT — Run schema.sql on first boot
 ═══════════════════════════════════════════════════════ */
 async function initDB() {
-  try {
-    const schemaPath = path.join(__dirname, 'db', 'schema.sql');
-    const schema     = fs.readFileSync(schemaPath, 'utf8');
-    await pool.query(schema);
+  const schemaPath = path.join(__dirname, 'db', 'schema.sql');
+  const schema     = fs.readFileSync(schemaPath, 'utf8');
+  await pool.query(schema);
 
-    // Ensure reviews table exists even if db was already initialized earlier
-    await pool.query(`
+  // Ensure reviews table exists even if db was already initialized earlier
+  await pool.query(`
       CREATE TABLE IF NOT EXISTS reviews (
         id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
         psych_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -56,8 +66,8 @@ async function initDB() {
       CREATE INDEX IF NOT EXISTS idx_reviews_user  ON reviews(user_id);
     `);
 
-    // ── Migration: psychologist verification + certificates ──
-    await pool.query(`
+  // ── Migration: psychologist verification + certificates ──
+  await pool.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified     BOOLEAN DEFAULT FALSE;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates    TEXT;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS achievements    TEXT;
@@ -65,19 +75,19 @@ async function initDB() {
       ALTER TABLE users ADD COLUMN IF NOT EXISTS experience_years INTEGER DEFAULT 0;
     `);
 
-    // ── Backfill (one-time, idempotent): psychologists created BEFORE the
-    // verification feature went live were already hand-checked via WhatsApp,
-    // so they stay visible. Cutoff date makes this safe to re-run:
-    // newer psychologists keep their manual verified/unverified status.
-    await pool.query(`
+  // ── Backfill (one-time, idempotent): psychologists created BEFORE the
+  // verification feature went live were already hand-checked via WhatsApp,
+  // so they stay visible. Cutoff date makes this safe to re-run:
+  // newer psychologists keep their manual verified/unverified status.
+  await pool.query(`
       UPDATE users SET is_verified = TRUE
       WHERE role = 'psychologist'
         AND (is_verified IS DISTINCT FROM TRUE)
         AND created_at < TIMESTAMPTZ '2026-09-21 00:00:00+00';
     `);
 
-    // ── Migration: transparent finance calculator fields ──
-    await pool.query(`
+  // ── Migration: transparent finance calculator fields ──
+  await pool.query(`
       ALTER TABLE test_results ADD COLUMN IF NOT EXISTS region           TEXT;
       ALTER TABLE test_results ADD COLUMN IF NOT EXISTS pm_value         INTEGER;
       ALTER TABLE test_results ADD COLUMN IF NOT EXISTS children_planned INTEGER DEFAULT 0;
@@ -88,8 +98,8 @@ async function initDB() {
       ALTER TABLE test_results ADD COLUMN IF NOT EXISTS case_answers     JSONB;
     `);
 
-    // ── Migration: in-platform chat (user ↔ psychologist per request) ──
-    await pool.query(`
+  // ── Migration: in-platform chat (user ↔ psychologist per request) ──
+  await pool.query(`
       CREATE TABLE IF NOT EXISTS messages (
         id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
         request_id  UUID        NOT NULL REFERENCES requests(id) ON DELETE CASCADE,
@@ -100,10 +110,7 @@ async function initDB() {
       CREATE INDEX IF NOT EXISTS idx_messages_request ON messages(request_id);
     `);
 
-    console.log('✅ Database schema applied');
-  } catch (err) {
-    console.error('❌ DB init error:', err.message);
-  }
+  console.log('✅ Database schema applied');
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -158,27 +165,91 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
    AUTH
 ═══════════════════════════════════════════════════════ */
 
-// POST /api/auth/register — Public self-registration directs to WhatsApp
+// POST /api/auth/register — Public self-registration
 app.post('/api/auth/register', async (req, res) => {
-  return res.status(403).json({
-    error: 'Платформаға тіркелу ақылы. Аккаунт ашу үшін WhatsApp-қа жазыңыз: +77751841434',
-    whatsapp: '+77751841434'
-  });
+  try {
+    const { name, email, password, role, specialization, bio, price } = req.body;
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    const normalizedName = typeof name === 'string' ? name.trim() : '';
+
+    if (!normalizedName || normalizedName.length > 120) {
+      return res.status(400).json({ error: 'Атыңызды енгізіңіз (ең көбі 120 таңба)' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) || normalizedEmail.length > 200) {
+      return res.status(400).json({ error: 'Жарамды email енгізіңіз' });
+    }
+    if (typeof password !== 'string' || password.length < 8 || Buffer.byteLength(password, 'utf8') > 72) {
+      return res.status(400).json({ error: 'Пароль кемінде 8 таңбадан және 72 байттан аспауы керек' });
+    }
+    if (role !== 'user' && role !== 'psychologist') {
+      return res.status(400).json({ error: 'Аккаунт түрін таңдаңыз' });
+    }
+    const psychologistPrice = role === 'psychologist' ? Number(price || 0) : 0;
+    if (!Number.isSafeInteger(psychologistPrice) || psychologistPrice < 0 || psychologistPrice > 2147483647) {
+      return res.status(400).json({ error: 'Кеңес бағасын дұрыс енгізіңіз' });
+    }
+    if (role === 'psychologist' && typeof specialization === 'string' && specialization.trim().length > 200) {
+      return res.status(400).json({ error: 'Мамандық атауы 200 таңбадан аспауы керек' });
+    }
+    if (role === 'psychologist' && typeof bio === 'string' && bio.length > 5000) {
+      return res.status(400).json({ error: 'Өзіңіз туралы мәтін 5000 таңбадан аспауы керек' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const result = await pool.query(
+      `INSERT INTO users (name, email, password_hash, role, specialization, bio, price, is_verified)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING *`,
+      [
+        normalizedName,
+        normalizedEmail,
+        passwordHash,
+        role,
+        role === 'psychologist' && typeof specialization === 'string' ? specialization.trim() || null : null,
+        role === 'psychologist' && typeof bio === 'string' ? bio.trim() || null : null,
+        psychologistPrice,
+        role === 'user',
+      ]
+    );
+    const user = safeUser(result.rows[0]);
+    res.status(201).json({ token: makeToken(user), user });
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'Бұл email тіркелген' });
+    }
+    console.error('registration error:', err);
+    res.status(500).json({ error: 'Сервер қатесі' });
+  }
 });
 
 // POST /api/auth/login
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: 'Email және пароль қажет' });
+    if (typeof email !== 'string' || !email.trim() || typeof password !== 'string' || !password) {
+      return res.status(400).json({ error: 'Email және пароль қажет' });
+    }
 
-    if (email === 'admin@sananeke' && password === '1234') {
-      const adminUser = { id: '00000000-0000-0000-0000-000000000000', name: 'Admin', email, role: 'admin' };
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    if (normalizedEmail === ADMIN_EMAIL) {
+      const passwordHash = await ADMIN_PASSWORD_HASH;
+      if (!passwordHash) {
+        return res.status(503).json({ error: 'Әкімші кіру деректері серверде бапталмаған' });
+      }
+      if (!(await bcrypt.compare(password, passwordHash))) {
+        return res.status(401).json({ error: 'Email немесе пароль қате' });
+      }
+      const adminUser = {
+        id: '00000000-0000-0000-0000-000000000000',
+        name: 'Admin',
+        email: ADMIN_EMAIL,
+        role: 'admin',
+      };
       const token = makeToken(adminUser);
       return res.json({ token, user: adminUser });
     }
 
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase().trim()]);
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [normalizedEmail]);
     const user   = result.rows[0];
     if (!user) return res.status(401).json({ error: 'Email немесе пароль қате' });
 
@@ -197,7 +268,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/auth/me', auth, async (req, res) => {
   try {
     if (req.userRole === 'admin') {
-      return res.json({ id: '00000000-0000-0000-0000-000000000000', name: 'Admin', email: 'admin@sananeke', role: 'admin' });
+      return res.json({ id: '00000000-0000-0000-0000-000000000000', name: 'Admin', email: ADMIN_EMAIL, role: 'admin' });
     }
     const result = await pool.query('SELECT * FROM users WHERE id = $1', [req.userId]);
     if (!result.rows.length) return res.status(404).json({ error: 'Пайдаланушы табылмады' });
@@ -584,6 +655,9 @@ app.post('/api/admin/users', auth, requireAdmin, async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Аты, email және пароль міндетті' });
     }
+    if (typeof password !== 'string' || password.length < 8 || Buffer.byteLength(password, 'utf8') > 72) {
+      return res.status(400).json({ error: 'Пароль кемінде 8 таңбадан және 72 байттан аспауы керек' });
+    }
     const userRole = role === 'psychologist' ? 'psychologist' : 'user';
 
     const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase().trim()]);
@@ -760,4 +834,7 @@ initDB().then(() => {
     console.log(`🚀 SanaNeke API running on port ${PORT}`);
     console.log(`   CORS allowed: ${FRONTEND_URL}`);
   });
+}).catch((err) => {
+  console.error('❌ API startup aborted; database initialization failed:', err.message);
+  process.exitCode = 1;
 });

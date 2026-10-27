@@ -127,7 +127,7 @@
         <p class="text-slate-500 text-center text-sm mb-8">Платформаны пайдалану үшін кіріңіз немесе тіркеліңіз</p>
         <div class="flex flex-col gap-3">
           <button class="btn-primary w-full py-3 text-base" onclick="showAuthForm('login')">🔑 Кіру</button>
-          <button class="btn-cyan w-full py-3 text-base" onclick="showAuthForm('register')">✨ Тіркелу (WhatsApp)</button>
+          <button class="btn-cyan w-full py-3 text-base" onclick="showAuthForm('register')">✨ Тіркелу</button>
         </div>
       </div>
 
@@ -150,49 +150,54 @@
           <button id="login-btn" class="btn-primary w-full py-3 mt-2" onclick="doLogin()">Кіру →</button>
         </div>
         <p class="text-center text-sm text-slate-500 mt-4">Аккаунт жоқ па?
-          <button onclick="showAuthForm('register')" class="text-emerald-600 font-bold hover:underline">Тіркелу (WhatsApp)</button></p>
+          <button onclick="showAuthForm('register')" class="text-emerald-600 font-bold hover:underline">Тіркелу</button></p>
       </div>
 
-      <!-- Register (WhatsApp based) -->
+      <!-- Register -->
       <div id="auth-register" style="display:none">
-        <div class="flex items-center gap-3 mb-4">
+        <div class="flex items-center gap-3 mb-6">
           <button onclick="showAuthForm('landing')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">←</button>
-          <h2 class="text-xl font-black text-slate-800">Тіркелу және аккаунт алу</h2>
+          <h2 class="text-xl font-black text-slate-800">Аккаунт ашу</h2>
         </div>
-        <div class="space-y-4 text-center">
-          <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl shadow-sm">
-            💬
+        <div class="space-y-4">
+          <div>
+            <label class="inp-label" for="reg-name">Аты-жөні</label>
+            <input type="text" id="reg-name" class="inp" maxlength="120" autocomplete="name" placeholder="Атыңызды енгізіңіз"/>
           </div>
           <div>
-            <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-2">
-              🔒 Платформаға кіру ақылы
-            </span>
-            <h3 class="text-base font-bold text-slate-800">Аккаунт ашу үшін WhatsApp-қа жазыңыз</h3>
-            <div class="text-xs text-slate-600 mt-2 leading-relaxed text-left bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
-              <div><b>1. WhatsApp арқылы хабарласып</b>, тіркелу ақысын төлеңіз.</div>
-              <div><b>2. Әкімші сізге жеке логин (email) мен құпиясөзді</b> жасап береді.</div>
-              <div><b>3. «Кіру» бөліміне өтіп</b>, берілген парольмен платформаны толық пайдалана бересіз.</div>
+            <label class="inp-label" for="reg-email">Email</label>
+            <input type="email" id="reg-email" class="inp" maxlength="200" autocomplete="email" placeholder="email@example.com"/>
+          </div>
+          <div>
+            <label class="inp-label" for="reg-password">Пароль</label>
+            <input type="password" id="reg-password" class="inp" minlength="8" maxlength="72" autocomplete="new-password" placeholder="Кемінде 8 таңба"/>
+          </div>
+          <div>
+            <label class="inp-label" for="reg-role">Аккаунт түрі</label>
+            <select id="reg-role" class="inp" onchange="togglePsychFields()">
+              <option value="user">Пайдаланушы</option>
+              <option value="psychologist">Психолог</option>
+            </select>
+          </div>
+          <div id="psych-extra" style="display:none" class="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div>
+              <label class="inp-label" for="reg-spec">Мамандығы</label>
+              <input type="text" id="reg-spec" class="inp" maxlength="200" placeholder="Мысалы: отбасылық психолог"/>
+            </div>
+            <div>
+              <label class="inp-label" for="reg-bio">Өзіңіз туралы</label>
+              <textarea id="reg-bio" class="inp" rows="3" placeholder="Тәжірибеңіз бен бағытыңыз"></textarea>
+            </div>
+            <div>
+              <label class="inp-label" for="reg-price">Кеңес бағасы (₸)</label>
+              <input type="number" id="reg-price" class="inp" min="0" step="1" value="0"/>
             </div>
           </div>
-
-          <div class="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-2 border-emerald-500/30 rounded-2xl p-3.5">
-            <div class="text-xs text-slate-500 font-semibold mb-1">Әкімшінің WhatsApp нөмірі:</div>
-            <div class="text-xl font-black text-emerald-700 tracking-wide font-mono">+7 775 184 14 34</div>
-          </div>
-
-          <a href="https://wa.me/77751841434?text=%D0%A1%D3%99%D0%BB%D0%B5%D0%BC%D0%B5%D1%82%D1%81%D1%96%D0%B7%20%D0%B1%D0%B5!%20SanaNeke%20%D0%BF%D0%BB%D0%B0%D1%82%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%81%D1%8B%D0%BD%D0%B0%20%D1%82%D1%96%D1%80%D0%BA%D0%B5%D0%BB%D1%96%D0%BF,%20%D0%B0%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82%20%D1%81%D0%B0%D1%82%D1%8B%D0%BF%20%D0%B0%D0%BB%D1%83%20%D2%AF%D1%88%D1%96%D0%BD%20%D0%B6%D0%B0%D0%B7%D1%8B%D0%BF%20%D1%82%D3%99%D1%80%D0%BC%D1%8B%D0%BD." 
-             target="_blank" 
-             rel="noopener noreferrer"
-             class="btn-green w-full py-3.5 flex items-center justify-center gap-2 text-sm font-bold shadow-lg shadow-emerald-600/20 block text-center">
-            <span>📲 WhatsApp-қа жазу (+77751841434)</span>
-          </a>
-
-          <div class="pt-1">
-            <button onclick="showAuthForm('login')" class="btn-ghost w-full py-2.5 text-xs font-bold">
-              🔑 Пароль алдым — Кіру
-            </button>
-          </div>
+          <p class="text-red-500 text-xs font-medium hidden" id="reg-error"></p>
+          <button id="reg-btn" class="btn-cyan w-full py-3" onclick="doRegister()">Тіркелу →</button>
         </div>
+        <p class="text-center text-sm text-slate-500 mt-4">Аккаунтыңыз бар ма?
+          <button onclick="showAuthForm('login')" class="text-emerald-600 font-bold hover:underline">Кіру</button></p>
       </div>
 
     </div>
@@ -250,7 +255,12 @@ async function api(method, path, body = null, requireAuth = true) {
   const opts = { method, headers };
   if (body) opts.body = JSON.stringify(body);
 
-  const res  = await fetch(API_BASE + path, opts);
+  let res;
+  try {
+    res = await fetch(API_BASE + path, opts);
+  } catch {
+    throw new Error('Серверге қосылу мүмкін болмады. Сервердің мекенжайы мен күйін тексеріңіз.');
+  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || 'Сервер қатесі');
   return data;
@@ -2440,17 +2450,16 @@ async function renderAdmin() {
     el.innerHTML = `
       <div class="animate-fadeInUp space-y-5">
         <h2 class="text-xl font-black mb-1 text-slate-800">👑 Әкімші панелі</h2>
-        <p class="text-xs text-slate-500">WhatsApp арқылы төлеген пайдаланушыларға аккаунт құру және деректерді басқару</p>
+        <p class="text-xs text-slate-500">Пайдаланушылар мен платформа деректерін басқару</p>
         
-        <!-- Create Account Form for WhatsApp clients -->
+        <!-- Optional administrator-created account -->
         <div class="card p-5 bg-gradient-to-br from-white to-emerald-50/40 border border-emerald-200">
           <div class="flex items-center justify-between mb-2">
             <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-              <span>➕ Жаңа аккаунт ашу (Пайдаланушы қосу)</span>
+              <span>➕ Аккаунтты қолмен қосу</span>
             </h3>
-            <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">WhatsApp төлемі</span>
           </div>
-          <p class="text-xs text-slate-600 mb-4">WhatsApp-қа (+77751841434) төлем жасаған адамға осы жерден аккаунт құрып беріңіз:</p>
+          <p class="text-xs text-slate-600 mb-4">Қажет болған жағдайда пайдаланушы аккаунтын осы жерден қосуға болады.</p>
           
           <div class="space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2466,7 +2475,7 @@ async function renderAdmin() {
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="inp-label text-xs">Құпиясөз (Пароль)</label>
-                <input type="text" id="adm-user-pwd" class="inp text-sm font-mono" placeholder="Кем дегенде 6 символ"/>
+                <input type="password" id="adm-user-pwd" class="inp text-sm font-mono" minlength="8" placeholder="Кемінде 8 таңба"/>
               </div>
               <div>
                 <label class="inp-label text-xs">Рөлі</label>
